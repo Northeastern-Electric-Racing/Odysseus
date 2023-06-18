@@ -28,10 +28,3 @@ In any terminal that is in the directory:
 2. Navigate to ```buildroot/output``` and flash an SD card with ```sdcard.img``` (I prefer Ubuntu's disk writer since its easy and in GUI, but can use ```dd``` or whatever you prefer)
 3. Put SD card into TPU and boot it (easier to verify connected to a monitor)
 
-## Tools / Utils
-
-    # to build project
-    make all
-
-    # to open a serial port (make sure /dev/tty0/ACM0 exists first)
-    minicom -b 115200 -o -D /dev/ttyACM0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from vars import AP_NAME
+from vars import HALOW_INTERFACE
 
 
 def main():
@@ -10,9 +10,9 @@ def main():
     os.system("sudo dhclient -r")
 
     print("Removing connection to AP")
-    os.system("sudo iwconfig {} essid off".format(AP_NAME))
-    os.system("sudo ifdown {} --force".format(AP_NAME))
-    os.system("sudo ifconfig {} up".format(AP_NAME))
+    os.system("sudo iwconfig {} essid off".format(HALOW_INTERFACE))
+    os.system("sudo ifdown {} --force".format(HALOW_INTERFACE))
+    os.system("sudo ifconfig {} up".format(HALOW_INTERFACE))
 
     print("Complete!")
 

@@ -1,1 +1,1 @@
-AP_NAME = "nrc1"
+HALOW_INTERFACE = "nrc1"

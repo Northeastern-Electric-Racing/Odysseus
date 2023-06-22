@@ -2,14 +2,14 @@
 
 import os
 from itertools import count
-from vars import AP_NAME
+from vars import HALOW_INTERFACE
 
 MAX_RETRIES = 100
 
 
 def main():
     print("Taking down other connections")
-    os.system("sudo ifdown -a --force -X \"{}\"".format(AP_NAME))
+    os.system("sudo ifdown -a --force -X \"{}\"".format(HALOW_INTERFACE))
 
     os.system("clear")
     print("Connecting to AP...\n")
@@ -17,10 +17,10 @@ def main():
     for i in count(MAX_RETRIES):
 
         # Attempts to connect to AP
-        os.system("sudo iwconfig {} essid SilexAH".format(AP_NAME))
+        os.system("sudo iwconfig {} essid SilexAH".format(HALOW_INTERFACE))
 
         # 0 if no connection (grep result) 256 if found connection (no grep result)
-        result = os.system("iwconfig {} | grep \"Access Point: Not-Associated\"".format(AP_NAME))
+        result = os.system("iwconfig {} | grep \"Access Point: Not-Associated\"".format(HALOW_INTERFACE))
 
         if result == 256:
 
@@ -28,19 +28,19 @@ def main():
             print("Attempting to get IP address...\n")
 
             # Runs dhclient to provision ip
-            os.system("sudo dhclient {}".format(AP_NAME))
+            os.system("sudo dhclient {}".format(HALOW_INTERFACE))
 
             # 0 if not connected (no result in terminal flipped) 256 if connected (result in terminal flipped)
-            result += abs(os.system("ip -4 address show dev {}".format(AP_NAME)) - 256)
+            result += abs(os.system("ip -4 address show dev {}".format(HALOW_INTERFACE)) - 256)
 
             if result == 256 + 256:
                 break
             else:
                 print("Failed, retrying.")
                 os.system("sudo dhclient -r")
-                os.system("sudo iwconfig {} essid off".format(AP_NAME))
-                os.system("sudo ifdown {} --force".format(AP_NAME))
-                os.system("sudo ifup {} --force".format(AP_NAME))
+                os.system("sudo iwconfig {} essid off".format(HALOW_INTERFACE))
+                os.system("sudo ifdown {} --force".format(HALOW_INTERFACE))
+                os.system("sudo ifup {} --force".format(HALOW_INTERFACE))
                 os.system("clear")
                 print("Connecting to AP...\n")
 

@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import os
+from itertools import count
+from vars import HALOW_INTERFACE
+
+MAX_RETRIES = 150
+
+
+def main():
+    print("Taking down other connections")
+    os.system("sudo ifdown -a --force -X \"{}\"".format(HALOW_INTERFACE))
+
+    os.system("clear")
+    print("Connecting to AP...\n")
+
+    for i in count():
+
+        # Attempts to connect to AP
+        os.system("sudo iwconfig {} essid SilexAH".format(HALOW_INTERFACE))
+
+        # 0 if no connection (grep result) 256 if found connection (no grep result)
+        result = os.system("iwconfig {} | grep \"Access Point: Not-Associated\"".format(HALOW_INTERFACE))
+
+        if result == 256:
+
+            print("Connected to AP.\n")
+            print("Attempting to get IP address...\n")
+
+            # Runs dhclient to provision ip
+            os.system("sudo dhclient {}".format(HALOW_INTERFACE))
+
+            # 0 if not connected (no result in terminal flipped) 256 if connected (result in terminal flipped)
+            result += abs(os.system("ip -4 address show dev {}".format(HALOW_INTERFACE)) - 256)
+
+            if result == 256 + 256:
+                break
+            else:
+                print("Failed, retrying.")
+                os.system("sudo dhclient -r")
+                os.system("sudo iwconfig {} essid off".format(HALOW_INTERFACE))
+                os.system("sudo ifdown {} --force".format(HALOW_INTERFACE))
+                os.system("sudo ifup {} --force".format(HALOW_INTERFACE))
+                os.system("clear")
+                print("Connecting to AP...\n")
+
+        if i == (MAX_RETRIES - 1):
+            print("Failed to connect to AP and assign address.")
+            raise ConnectionError         # throws error if exceeds retry limit
+
+    print("IP address assigned.\n")
+    print("Success!")
+
+
+if __name__ == "__main__":
+    main()

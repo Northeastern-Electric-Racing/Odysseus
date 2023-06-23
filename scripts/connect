@@ -4,7 +4,7 @@ import os
 from itertools import count
 from vars import HALOW_INTERFACE
 
-MAX_RETRIES = 100
+MAX_RETRIES = 150
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     os.system("clear")
     print("Connecting to AP...\n")
 
-    for i in count(MAX_RETRIES):
+    for i in count():
 
         # Attempts to connect to AP
         os.system("sudo iwconfig {} essid SilexAH".format(HALOW_INTERFACE))

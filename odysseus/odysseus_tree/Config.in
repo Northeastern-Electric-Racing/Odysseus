@@ -1,0 +1,2 @@
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc-module/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc-cli-app/Config.in"

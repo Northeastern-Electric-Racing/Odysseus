@@ -1,3 +1,6 @@
 [submodule "odysseus/buildroot"]
 	path = odysseus/buildroot
 	url = git@github.com:buildroot/buildroot.git
+[submodule "odysseus/odysseus_tree/src/nrc7292_sw_pkg"]
+	path = odysseus/odysseus_tree/src/nrc7292_sw_pkg
+	url = git@github.com:newracom/nrc7292_sw_pkg.git

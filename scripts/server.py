@@ -6,7 +6,7 @@ from threading import Lock
 from typing import List
 
 
-SERVER_IP = "192.168.0.147"
+SERVER_IP = "192.168.0.4"
 SERVER_PORT = 8765
 
 
@@ -32,12 +32,12 @@ class TestMessage():
         self.data_count += 1
 
     def get_string(self):
-        return f"T{self.time}{self.id:03x}{self.len}{self.get_data_string()}\r"
+        return "T{}{:03x}{}{}\r".format(self.time, self.id, self.len, self.get_data_string())
 
     def get_data_string(self):
         out = ""
         for d in self.data:
-            out += f"{d:02x}"
+            out += "{:02x}".format(d)
         return out
 
 
@@ -54,10 +54,11 @@ class Socket():
         }
 
     async def run(self):
+        print(self.socket)
         async for message in self.socket:
             if message in self.callbacks:
                 self.callbacks.get(message)() # call the function
-    
+
     async def send(self, message):
         try:
             await self.socket.send(message)
@@ -71,7 +72,7 @@ class Socket():
         self.started = False
 
 
-connections: List[Socket] = []
+connections = []
 connection_lock = Lock() # to prevent concurrency issues between tasks
 m = TestMessage()
 
@@ -100,13 +101,13 @@ async def monitor():
             closed = filter(lambda con: con.socket.closed, connections)
             for c in closed:
                 connections.remove(c)
-            print(f"Connections: {len(connections)}")
+            print("Connections: {}".format(len(connections)))
             for connection in connections:
-                print(f"  {connection.socket.remote_address} - started: {connection.started}")
+                print("  {} - started: {}".format(connection.socket.remote_address, connection.started))
         await asyncio.sleep(2)
 
 
-async def handle(websocket: WebSocketServerProtocol):
+async def handle(self, websocket: WebSocketServerProtocol):
     """
     Handles incoming connections by adding them to the connection list
     """
@@ -118,10 +119,12 @@ async def handle(websocket: WebSocketServerProtocol):
 
 async def main():
     async with websockets.serve(handle, SERVER_IP, SERVER_PORT):
-        asyncio.create_task(sender())
-        asyncio.create_task(monitor())
+        mloop = asyncio.get_event_loop()
+        mloop.create_task(sender())
+        mloop.create_task(monitor())
         await asyncio.Future()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

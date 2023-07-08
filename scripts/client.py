@@ -2,7 +2,7 @@ import asyncio
 import websockets
 from websockets.client import WebSocketClientProtocol
 
-SERVER_IP = "192.168.0.147"
+SERVER_IP = "192.168.0.4"
 SERVER_PORT = 8765
 
 

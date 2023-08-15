@@ -1,33 +1,48 @@
-#ifndef INCLUDED_SERVER
-#define INCLUDED_SERVER
+#ifndef SIREN_SERVER_H
+#define SIREN_SERVER_H
 
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <string>
+#include <map>
 
-namespace http {
+namespace NER {
 
-	class SirenServer {
+typedef int socket;
+
+class Connection {
 	public:
-		SirenServer(std::string ip, int port);
-		~SirenServer();
-
+		Connection();
+		~Connection();
 	private:
-		const int BUFFER_SIZE = 30720;
+		socket m_socket;
+};
 
-		SOCKET m_socket;
-		SOCKET new_socket;
-		sockaddr_in m_socketAddress;
-		unsigned int m_socketAddress_len;
-		
-		void startServer();
-		void startListen();
-		void stopListen();
-		void acceptConnection(SOCKET &new_socket);
-		void sendMessage();
-	};
-}
+class SirenServer {
+public:
+	SirenServer(std::string ip, int port);
+	~SirenServer();
 
-#endif
+	int startServer();
+	int startListen();
+	int stopListen();
+	int sendMessage(socket socket);
+
+private:
+	static const int BUFFER_SIZE = 30720;
+
+	//std::map<std::string, Connection> connections;
+	int opt = 1;
+
+	int serverFile;
+	sockaddr_in socketAddress;
+	uint socketAddressLen;
+
+	int acceptConnection(socket *newSocket);
+};
+
+} // NER
+
+#endif // SIREN_SERVER_H

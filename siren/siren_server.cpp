@@ -3,83 +3,109 @@
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
-namespace http {
-	SirenServer::SirenServer(std::string ip, int port) 
-		: m_socket(), new_socket(), m_socketAddress(), m_socketAddress_len()
-	{
-		m_socketAddress.sin_family = AF_INET;
-		m_socketAddress.sin_port = htons(port);
-		m_socketAddress.sin_addr.s_addr = inet_addr(ip.c_str());
+NER::SirenServer::SirenServer(std::string ip, int port)
+{
+	socketAddress.sin_family = AF_INET;
+	socketAddress.sin_port = htons(port);
+	socketAddress.sin_addr.s_addr = inet_addr(ip.c_str());
+	socketAddressLen = sizeof(socketAddress);
+}
 
-		m_socketAddress_len = sizeof(m_socketAddress);
+NER::SirenServer::~SirenServer()
+{
+	close(serverFile);
+}
 
-		startServer();
+int NER::SirenServer::startServer()
+{
+	int err;
+
+	serverFile = ::socket(AF_INET, SOCK_STREAM, 0);
+	if(serverFile < 0) {
+		perror("init socket");
+		return serverFile;
 	}
 
-	SirenServer::~SirenServer() {
-		close(m_socket);
-		exit(0);
+	err = setsockopt(serverFile, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+				   &opt, sizeof(opt));
+	if (err) {
+        perror("setsockopt");
+        return err;
+    }
+
+	err = bind(serverFile, (struct sockaddr*) &socketAddress, socketAddressLen);
+	if (err) {
+		perror("bind");
+		return err;
 	}
 
-	void SirenServer::startServer() {
-		m_socket = socket(AF_INET, SOCK_STREAM, 0);
-		if (m_socket < 0) {
-			// TODO: log error
-			exit(1);
-		}
+	return 0;
+}
 
-		if (bind(m_socket, (sockaddr*) &m_socketAddress, m_socketAddress_len)) {
-			// TODO: log error
-			exit(1);
-		}
+int NER::SirenServer::startListen()
+{
+	int err;
+	socket newSocket;
+
+	err = listen(serverFile, 1);
+	if (err) {
+		perror("listen");
+		return err;
 	}
 
-	void SirenServer::startListen() {
-		if (listen(m_socket, 1)) {
-			// TODO: log error
-			exit(1);
+	while (true) {
+		err = acceptConnection(&newSocket);
+		if (err)
+			return err;
+
+		char buffer[BUFFER_SIZE] = {0};
+
+		uint8_t bytesRecieved = read(newSocket, buffer, BUFFER_SIZE);
+		if (bytesRecieved < 0) {
+			perror("read");
+			return bytesRecieved;
 		}
 
-		while (true) {
-			
-			acceptConnection(new_socket);
-			
-			char buffer[BUFFER_SIZE] = {0};
-
-			bytesRecieved = read(new_socket, buffer, BUFFER_SIZE);
-			if (bytesRecieved < 0) {
-				// TODO: log error
-				exit(1);
-			}
-
-			// TODO: print buffer
-
-			sendMessage();
+		for (int i = 0; i++; i<BUFFER_SIZE) {
+			std::cout<<buffer[i];
 		}
+
+		err = sendMessage(newSocket);
+		if (err)
+			return err;
 	}
 
-	void SirenServer::acceptConnection(SOCKET &new_socket) {
-		new_socket = accept(m_socket, (sockaddr*)&m_socketAddress, &m_socketAddress_len);
+	return 0;
+}
 
-		if (new_socket < 0) {
-			// TODO: log error
-			exit(1);
-		}
+int NER::SirenServer::acceptConnection(socket *newSocket)
+{
+	*newSocket = accept(serverFile, (struct sockaddr*) &socketAddress, &socketAddressLen);
+
+	if (*newSocket < 0) {
+		perror("accept");
+		return *newSocket;
 	}
 
-	void SirenServer::sendMessage() {
-		
-		std::string body = "<!DOCTYPE html><html lang=\"en\"><body><h1> HOME </h1><p> Hello from your Server :) </p></body></html>";
+	return 0;
+}
 
-		std::ostringstream response;
-		response << "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " << body.size() << "\n\n" << body;
+int NER::SirenServer::sendMessage(socket socket)
+{
+	std::string body = "<!DOCTYPE html><html lang=\"en\"><body><h1> HOME </h1><p> Hello from your Server :) </p></body></html>";
 
-		long bytesSent = write(new_socket, response.str().c_str(), response.str().size());
+	std::ostringstream response;
+	response << "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " << body.size() << "\n\n" << body;
 
-		if (bytesSent != response.str().size()) {
-			// TODO: log error
-			exit(1);
-		}
+	long bytesSent = write(socket, response.str().c_str(), response.str().size());
+
+	if (bytesSent != response.str().size()) {
+		perror("Incorrect response");
+		return -1;
 	}
+
+	return 0;
 }

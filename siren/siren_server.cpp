@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <openssl/sha.h>
+#include <cstring>
 
 NER::SirenServer::SirenServer(std::string ip, int port)
 {
@@ -60,22 +62,20 @@ int NER::SirenServer::startListen()
 		err = acceptConnection(&newSocket);
 		if (err)
 			return err;
+		
+		char* buffer = new char[BUFFER_SIZE];
 
-		char buffer[BUFFER_SIZE] = {0};
-
-		uint8_t bytesRecieved = read(newSocket, buffer, BUFFER_SIZE);
-		if (bytesRecieved < 0) {
+		int bytesReceived = read(newSocket, buffer, BUFFER_SIZE);
+		if (bytesReceived <= 0) {
 			perror("read");
-			return bytesRecieved;
+			return bytesReceived;
 		}
 
-		for (int i = 0; i++; i<BUFFER_SIZE) {
-			std::cout<<buffer[i];
-		}
-
-		err = sendMessage(newSocket);
-		if (err)
-			return err;
+		std::cout << "read: " << bytesReceived << "::" << buffer << std::endl;
+		parseSocketKey("dGhlIHNhbXBsZSBub25jZQ==");
+		// err = sendMessage(newSocket);
+		// if (err)
+		// 	return err;
 	}
 
 	return 0;
@@ -95,6 +95,17 @@ int NER::SirenServer::acceptConnection(socket *newSocket)
 
 int NER::SirenServer::sendMessage(socket socket)
 {
+
+	std::ostringstream handshake;
+	handshake << "HTTP/1.1 200 OK\nUpgrade: websocket\nConnection: Upgrade\n" << 0 << "\n\n";
+
+	long hbytesSent = write(socket, handshake.str().c_str(), handshake.str().size());
+
+	if (hbytesSent != handshake.str().size()) {
+		perror("Incorrect response");
+		return -1;
+	}
+
 	std::string body = "<!DOCTYPE html><html lang=\"en\"><body><h1> HOME </h1><p> Hello from your Server :) </p></body></html>";
 
 	std::ostringstream response;
@@ -108,4 +119,17 @@ int NER::SirenServer::sendMessage(socket socket)
 	}
 
 	return 0;
+}
+
+std::string NER::SirenServer::parseSocketKey(std::string key)
+{
+	const unsigned char* input = reinterpret_cast<const unsigned char *> ((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").c_str());
+
+	unsigned char* hash = new unsigned char[SHA_DIGEST_LENGTH];
+
+	SHA1(input, sizeof(input), hash);
+
+	std::cout << sizeof(input) << "and" << hash << std::endl;
+
+	return "h";
 }

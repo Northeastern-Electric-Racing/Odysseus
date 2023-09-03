@@ -41,6 +41,7 @@ private:
 	uint socketAddressLen;
 
 	int acceptConnection(socket *newSocket);
+	std::string parseSocketKey(std::string key);
 };
 
 } // NER

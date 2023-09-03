@@ -16,6 +16,13 @@ RUN apt-get install -y \
     minicom \
     vim
 
+# Download Python, Pip, and install websocket support
+RUN apt-get install -y \
+    libssl-dev \
+    python3 \
+    pip 
+RUN pip install websocket-client
+
 # Download setup support for Rasperry Pi Probe
 RUN apt-get install -y \
     automake \

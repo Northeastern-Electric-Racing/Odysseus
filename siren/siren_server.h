@@ -41,6 +41,7 @@ private:
 	uint socketAddressLen;
 
 	int acceptConnection(socket *newSocket);
+	int handshake(socket socket, std::string acceptValue);
 	std::string parseSocketKey(std::string key);
 };
 

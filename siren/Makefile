@@ -1,7 +1,7 @@
 CC=g++
 
 all: main.o siren_server.o
-	$(CC) main.o siren_server.o -o siren.bin
+	$(CC) main.o siren_server.o -o siren.bin -lcrypto
 
 main.o: main.cpp siren_server.h
 	$(CC) -c main.cpp

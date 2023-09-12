@@ -27,7 +27,7 @@ def on_close(wsapp, close_status_code, close_msg):
         print("Closing message: " + close_msg)
 
 # Define the WebSocket server URL
-websocket_url = "ws://127.0.0.1:3000?pubTopic=test"
+websocket_url = "ws://127.0.0.1:3000"
 
 # Creating WebSocket connection object and attaching event handlers
 ws = websocket.WebSocketApp(

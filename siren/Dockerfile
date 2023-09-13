@@ -18,7 +18,6 @@ RUN apt-get install -y \
 
 # Download Python, Pip, and install websocket support
 RUN apt-get install -y \
-    libssl-dev \
     python3 \
     pip 
 RUN pip install websocket-client

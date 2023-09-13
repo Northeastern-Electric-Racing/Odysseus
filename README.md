@@ -2,10 +2,10 @@
 Code for Wireless22A project.
 
 ## Siren
-Siren is our (pub/sub|https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses the WebSocket protocol to send telemetry data from the car. Siren is built off of the (bun framework|https://bun.sh/), which is a JavaScript framework that has the capability to host extremely fast WebSocket servers using pub/sub messaging.
+Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses the WebSocket protocol to send telemetry data from the car. Siren is built off of the (bun framework|https://bun.sh/), which is a JavaScript framework that has the capability to host extremely fast WebSocket servers using pub/sub messaging.
 
 ### About WebSockets
-For information about WebSockets, check out (this confluence page|https://nerdocs.atlassian.net/wiki/spaces/NER/pages/161972226/WebSocket+Basics) about WebSocket basics.
+For information about WebSockets, check out [this confluence page](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/161972226/WebSocket+Basics) about WebSocket basics.
 
 ### Running with Docker
 Coming soon.

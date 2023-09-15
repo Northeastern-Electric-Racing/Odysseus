@@ -1,5 +1,6 @@
 import websocket
 import time
+import ssl
 
 # Callback for handling WebSocket open event
 def on_open(ws):
@@ -23,7 +24,7 @@ def on_close(wsapp, close_status_code, close_msg):
         print("Closing message: " + close_msg)
 
 # Define the WebSocket server URL
-websocket_url = "ws://127.0.0.1:3000?subTopics=test"
+websocket_url = "wss://127.0.0.1:3000?subTopics=test"
 
 # Creating WebSocket connection object and attaching event handlers
 ws = websocket.WebSocketApp(
@@ -35,4 +36,4 @@ ws = websocket.WebSocketApp(
 )
 
 # Start the WebSocket connection
-ws.run_forever()
+ws.run_forever(sslopt={"check_hostname": False, "cert_reqs": ssl.CERT_NONE})

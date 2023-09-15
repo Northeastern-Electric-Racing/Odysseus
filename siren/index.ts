@@ -29,6 +29,11 @@ const server = Bun.serve<WebSocketData>({
                 ws.unsubscribe(ws.data.subTopics); // TODO: parse for different topics and unsubscribe to them all
             }
         }
+    },
+    tls: {
+        key: Bun.file("./key.pem"),
+        cert: Bun.file("./cert.pem"),
+        passphrase: "nercert"
     }
 });
 

@@ -13,7 +13,7 @@ Coming soon.
 ### Local Setup
 To set up Siren locally on your machine, simply use the `install` script.
 
-- For Mac/Linux:
+- For Mac/Linux/WSL:
 ```
 $ ./install
 ```
@@ -22,18 +22,20 @@ $ ./install
 ```
 No script yet.
 ```
+Native Windows support coming. See [issue #11](https://github.com/Northeastern-Electric-Racing/Odyssey/issues/11).
+
 
 ### Running Locally
 To run Siren locally on your machine, simply use the `run` script.
 
-- For Mac/Linux:
+- For Mac/Linux/WSL:
 ```
 $ ./run
 ```
 
 - For Windows:
 ```
-No script yet.
+No script yet.  See above.
 ```
 
 After that, Siren should start up and it is open to connections.

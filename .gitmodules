@@ -1,3 +1,6 @@
 [submodule "odysseus/buildroot"]
 	path = odysseus/buildroot
 	url = git@github.com:buildroot/buildroot.git
+[submodule "Odyssey-base"]
+	path = Odyssey-base
+	url = https://github.com/Northeastern-Electric-Racing/Odyssey-base

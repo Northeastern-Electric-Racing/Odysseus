@@ -1,3 +1,4 @@
-[submodule "Odyssey-Base"]
-	path = Odyssey-Base
-	url = https://github.com/Northeastern-Electric-Racing/Odyssey-Base
+
+[submodule "siren/Odyssey-Base"]
+	path = siren/Odyssey-Base
+	url = git@github.com:Northeastern-Electric-Racing/Odyssey-Base.git

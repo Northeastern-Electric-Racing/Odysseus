@@ -34,6 +34,7 @@ const server = Bun.serve<WebSocketData>({
         key: Bun.file("./key.pem"),
         cert: Bun.file("./cert.pem"),
         passphrase: "nercert"
+        // ca:
     }
 });
 

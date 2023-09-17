@@ -40,4 +40,4 @@ ws = websocket.WebSocketApp(
 )
 
 # Start the WebSocket connection
-ws.run_forever(sslopt={"check_hostname": False, "cert_reqs": ssl.CERT_NONE})
+ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})

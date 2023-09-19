@@ -1,4 +1,5 @@
 import * as messagetypes from "./Odyssey-Base/src/types/message.types";
+import * as topics from "./Odyssey-Base/src/types/topic";
 
 const server = Bun.serve<WebSocketData>({
     port: 3000,
@@ -34,25 +35,35 @@ const server = Bun.serve<WebSocketData>({
             // then checks argument fields and subs/unsubs to arguments accordingly
             const subscriptionMessage = parsedMessage as messagetypes.SubscriptionMessage;
 
-            if (subscriptionMessage.argument && subscriptionMessage.topics) {
+            labelOperationLoop: if (subscriptionMessage.argument && subscriptionMessage.topics) {
+
+                // check the argument field for the correct operation, or break out of if block with an error logged
+                let isSubscribe: boolean;
                 if (subscriptionMessage.argument == "subscribe") {
-                    for (const topic of subscriptionMessage.topics) {
-                        ws.subscribe(topic);
-                    }
+                    isSubscribe = true;
                 } else if (subscriptionMessage.argument == "unsubscribe") {
-                    for (const topic of subscriptionMessage.topics) {
-                        ws.unsubscribe(topic);
+                    isSubscribe = false;
+                } else {
+                    console.log("Invalid argument present:", message.toString())
+                    break labelOperationLoop;
+                }
+
+                for (const topic of subscriptionMessage.topics) {
+                    if ((<any>Object).values(topics.Topic).includes(topic)) {
+                        if (isSubscribe) {
+                            ws.subscribe(topic);
+                        } else {
+                            ws.unsubscribe(topic)
+                        }
+                    } else {
+                        console.log("Invalid topic present:", topic.toString());
                     }
                 }
-                return;
             } else {
 
                 // TODO: handle JSON for ServerData checking and publishing in correct topic
                 server.publish("test", message);
             }
-
-
-
         },
         close(ws) {
 

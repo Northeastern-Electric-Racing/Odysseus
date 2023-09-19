@@ -31,13 +31,14 @@ const server = Bun.serve<WebSocketData>({
                 return;
             }
 
-            // checks if valid SubscriptionMessage, if not switch to publish block of code
-            // then checks argument fields and subs/unsubs to arguments accordingly
+            
             const subscriptionMessage = parsedMessage as messagetypes.SubscriptionMessage;
 
+            // checks if valid SubscriptionMessage, if not switch to publish block of code
+            // then checks argument fields and subs/unsubs to arguments accordingly
             labelOperationLoop: if (subscriptionMessage.argument && subscriptionMessage.topics) {
 
-                // check the argument field for the correct operation, or break out of if block with an error logged
+                // check the argument field for the correct operation, or break out of the if block with an error logged
                 let isSubscribe: boolean;
                 if (subscriptionMessage.argument == "subscribe") {
                     isSubscribe = true;
@@ -48,7 +49,9 @@ const server = Bun.serve<WebSocketData>({
                     break labelOperationLoop;
                 }
 
+                // iterate through the topics and either subscribe or unsubscribe
                 for (const topic of subscriptionMessage.topics) {
+                    // checks if the topic is present the topic enum in the topic.ts file of Odyssey-Base
                     if ((<any>Object).values(topics.Topic).includes(topic)) {
                         if (isSubscribe) {
                             ws.subscribe(topic);

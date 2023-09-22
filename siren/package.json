@@ -1,12 +1,16 @@
 {
-  "dependencies": {},
+  "dependencies": { "typia": "^5.0.5" },
   "devDependencies": {
-    "bun-types": "^1.0.1"
+    "bun-types": "^1.0.2",
+    "ts-node": "^10.9.1",
+    "ts-patch": "^3.0.2",
+    "typescript": "^5.2.2"
   },
   "name": "bun",
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "build": "bun typia generate --input ./typia/templates --output ./typia/generated --project ./tsconfig.json",
     "start": "bun run index.ts"
   },
   "peerDependencies": {

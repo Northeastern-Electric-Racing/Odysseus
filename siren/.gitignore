@@ -170,4 +170,4 @@ dist
 
 
 # typia generated code
-.typia/generated/*
+typia/generated/

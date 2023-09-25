@@ -1,3 +1,3 @@
 type WebSocketData = {
-    subTopics: string | null
+    subTopics: string[] = []
 }

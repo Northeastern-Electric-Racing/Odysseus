@@ -1,5 +1,5 @@
-import * as messagetypes from "./Odyssey-Base/src/types/message.types";
-import * as topics from "./Odyssey-Base/src/types/topic";
+import typia from "typia";
+import * as messageUtils from "./typia/generated/message.types";
 
 const server = Bun.serve<WebSocketData>({
     port: 3000,
@@ -21,7 +21,8 @@ const server = Bun.serve<WebSocketData>({
         },
         message(ws, message) {
 
-            // checks if valid JSON, if not log error and exit
+            // checks if valid JSON, if not log error and exit. 
+            // Note: typia has quicker support for this but we need to check for two objects so this is non viable ATM
             let parsedMessage: any;
             try {
                 parsedMessage = JSON.parse(message.toString());
@@ -31,35 +32,20 @@ const server = Bun.serve<WebSocketData>({
                 return;
             }
 
-            
-            const subscriptionMessage = parsedMessage as messagetypes.SubscriptionMessage;
+
 
             // checks if valid SubscriptionMessage, if not switch to publish block of code
             // then checks argument fields and subs/unsubs to arguments accordingly
-            labelOperationLoop: if (subscriptionMessage.argument && subscriptionMessage.topics) {
-
-                // check the argument field for the correct operation, or break out of the if block with an error logged
-                let isSubscribe: boolean;
-                if (subscriptionMessage.argument == "subscribe") {
-                    isSubscribe = true;
-                } else if (subscriptionMessage.argument == "unsubscribe") {
-                    isSubscribe = false;
-                } else {
-                    console.log("Invalid argument present:", message.toString())
-                    break labelOperationLoop;
-                }
+            // NOTE: If you want to debug malformed messages or messages of different types, switch to assert typeguard
+            if (messageUtils.strictCheckIsSubscriptionMessage(parsedMessage)) { // TODO: change to non-strict is typeguard for release
+                const subscriptionMessage = parsedMessage as messageUtils.SubscriptionMessage;
 
                 // iterate through the topics and either subscribe or unsubscribe
                 for (const topic of subscriptionMessage.topics) {
-                    // checks if the topic is present the topic enum in the topic.ts file of Odyssey-Base
-                    if ((<any>Object).values(topics.Topic).includes(topic)) {
-                        if (isSubscribe) {
-                            ws.subscribe(topic);
-                        } else {
-                            ws.unsubscribe(topic)
-                        }
+                    if (subscriptionMessage.argument == "subscribe") {
+                        ws.subscribe(topic);
                     } else {
-                        console.log("Invalid topic present:", topic.toString());
+                        ws.unsubscribe(topic)
                     }
                 }
             } else {

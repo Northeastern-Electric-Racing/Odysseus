@@ -1,5 +1,7 @@
-import typia from "typia";
 import * as messageUtils from "./typia/generated/message.types";
+
+// time messages must be within to be published, in miliseconds
+const EXPIRATION_DURATION = 300000 // (5 minutes)
 
 const server = Bun.serve<WebSocketData>({
     port: 3000,
@@ -48,10 +50,32 @@ const server = Bun.serve<WebSocketData>({
                         ws.unsubscribe(topic)
                     }
                 }
-            } else {
+            } else if (messageUtils.strictCheckIsServerMessage(parsedMessage)) {
+                const serverMessage = parsedMessage as messageUtils.ServerMessage;
 
-                // TODO: handle JSON for ServerData checking and publishing in correct topic
-                server.publish("test", message);
+                // check message time and ensure it is less than the expiration duration
+                if ((Date.now() - serverMessage.unix_time) < EXPIRATION_DURATION) {
+                    // overwrite message time with current time
+                    // TODO: switch to more accurate GPS time once it becomes available
+                    serverMessage.unix_time = Date.now();
+
+                    // use typia stringify as it claims to be faster, note it *does not* typecheck before it does so
+                    server.publish(serverMessage.node, messageUtils.stringifyServerMessage(serverMessage));
+                } else {
+                    console.log("Stale message:", message)
+                }
+            } else {
+                console.log("Invalid Message:", message);
+                // below indicates the first exact field that is incorrect when parsing of the type that had less erros
+                // use when debugging invalid JSON structure
+                // TODO: remove for production, expensive and verbose
+                const subscriptionErrors = messageUtils.strictValidateSubscriptionMessage(parsedMessage).errors;
+                const serverErrors = messageUtils.strictValidateServerMessage(parsedMessage).errors;
+                if (subscriptionErrors.length < serverErrors.length) {
+                    console.log("First subscription message error:", subscriptionErrors.at(0))
+                } else {
+                    console.log("First publish message error:", serverErrors.at(0))
+                }
             }
         },
         close(ws) {

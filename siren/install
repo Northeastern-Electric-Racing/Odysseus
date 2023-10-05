@@ -1,3 +1,0 @@
-curl -fsSL https://bun.sh/install | bash
-bun add -d bun-types
-bun add typia

@@ -1,7 +1,1 @@
-.vs/
-.vscode/
-
-*.o
-*.bin
-
 */__pycache__

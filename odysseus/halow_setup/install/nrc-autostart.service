@@ -1,0 +1,19 @@
+[Unit]
+Description=Control nrc using the pyton scripts provided.
+# ensure nrc-led is also started, but don't fail if nrc-led fails
+Wants=nrc-led.service
+
+[Service]
+User=pi
+Group=pi
+Type=forking
+# don't allow restarting as that could cause odd behavior with ExecStopPost
+Restart=no
+ExecStartPre=/usr/local/sbin/nrc-wizard stop
+ExecStart=/usr/local/sbin/nrc-wizard start
+# run this as post is it guarrantees running as cleanup
+ExecStopPost=/usr/local/sbin/nrc-wizard stop
+
+[Install]
+WantedBy=multi-user.target
+

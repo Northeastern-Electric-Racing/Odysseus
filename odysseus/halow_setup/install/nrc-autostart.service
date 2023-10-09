@@ -6,7 +6,7 @@ Wants=nrc-led.service
 [Service]
 User=pi
 Group=pi
-Type=forking
+Type=simple
 # don't allow restarting as that could cause odd behavior with ExecStopPost
 Restart=no
 ExecStartPre=/usr/local/sbin/nrc-wizard stop

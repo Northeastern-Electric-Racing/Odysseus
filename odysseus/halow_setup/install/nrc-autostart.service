@@ -1,20 +1,20 @@
 [Unit]
 Description=Control nrc using the pyton scripts provided.
-# ensure nrc-led is also started, but don't fail if nrc-led fails
+# ensure nrc-led.sh is also started, but don't fail if nrc-led.sh fails
 Wants=nrc-led.service
 
 [Service]
 User=pi
 Group=pi
-# use notify to alert nrc-led to turn on
+# use notify to alert nrc-led.sh to turn on
 Type=notify
 NotifyAccess=all
 
-ExecStartPre=/usr/local/sbin/nrc-wizard stop
+ExecStartPre=/usr/local/sbin/nrc-wizard.sh stop
 
-ExecStart=/usr/local/sbin/nrc-wizard start-systemd
+ExecStart=/usr/local/sbin/nrc-wizard.sh start-systemd
 # run this as post is it guarrantees running as cleanup
-ExecStopPost=/usr/local/sbin/nrc-wizard stop
+ExecStopPost=/usr/local/sbin/nrc-wizard.sh stop
 
 [Install]
 WantedBy=multi-user.target

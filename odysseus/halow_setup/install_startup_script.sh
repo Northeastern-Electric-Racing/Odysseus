@@ -6,11 +6,11 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "Installing systemd file and associated commands"
-chmod +x ./install/nrc-wizard
-chmod +x ./install/nrc-led
+chmod +x ./install/nrc-wizard.sh
+chmod +x ./install/nrc-led.sh
 # /usr/local/sbin is standard for user installed scripts, it is in path
-cp ./install/nrc-wizard /usr/local/sbin
-cp ./install/nrc-led /usr/local/sbin
+cp ./install/nrc-wizard.sh /usr/local/sbin
+cp ./install/nrc-led.sh /usr/local/sbin
 
 cp ./install/nrc-autostart.service /etc/systemd/system/
 cp ./install/nrc-led.service /etc/systemd/system/

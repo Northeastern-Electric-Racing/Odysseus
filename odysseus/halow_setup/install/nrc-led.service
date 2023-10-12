@@ -6,7 +6,7 @@ After=nrc-autostart.service
 PartOf=nrc-autostart.service
 # will not run if nrc-autostart is not running
 Requisite=nrc-autostart.service
-# cannot be started manually (run the nrc-led in path to manually test LEDs)
+# cannot be started manually (run the nrc-led.sh in path to manually test LEDs)
 RefuseManualStart=true
 
 
@@ -14,7 +14,7 @@ RefuseManualStart=true
 User=pi
 Group=pi
 Type=simple
-ExecStart=/usr/local/sbin/nrc-led
+ExecStart=/usr/local/sbin/nrc-led.sh
 
 [Install]
 WantedBy=multi-user.target

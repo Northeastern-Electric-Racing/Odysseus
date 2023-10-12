@@ -25,7 +25,7 @@ then
       sleep $SLEEP_TIME
       # get the latest string in startup-logs beginining in [DIGIT]
       # example : [7] Connect and DHCP
-      latest=$(/usr/local/sbin/nrc-wizard startup-logs | grep -o -P "\[\d\].*" | tail -n 1)
+      latest=$(/usr/local/sbin/nrc-wizard.sh startup-logs | grep -o -P "\[\d\].*" | tail -n 1)
     
       # update system status with latest message
       systemd-notify --status="Currently on $latest"
@@ -37,7 +37,7 @@ then
           break
       elif ! [ -d "/proc/$start_pid" ]; # if start.py has finished running
       then # refresh status message and exit the script, telling systemd to shutdown and cleanup
-          latest=$(/usr/local/sbin/nrc-wizard startup-logs | grep -o -P "\[\d\].*" | tail -n 1)
+          latest=$(/usr/local/sbin/nrc-wizard.sh startup-logs | grep -o -P "\[\d\].*" | tail -n 1)
     
           # update system status with latest message
           systemd-notify --status="Failed on $latest"

@@ -13,12 +13,12 @@ sudo apt-get install default-jre
 cd ~
 git clone https://github.com/newracom/nrc7292_sdk
 
-sudo cp $SCRIPT_DIR/install/nrc-firmware-flash /usr/local/sbin/
-sudo chmod +x /usr/local/sbin/nrc-firmware-flash
+sudo cp $SCRIPT_DIR/install/nrc-firmware-flash.sh /usr/local/sbin/
+sudo chmod +x /usr/local/sbin/nrc-firmware-flash.sh
 
 
-sudo cp $SCRIPT_DIR/install/nrc-at-cmd-test /usr/local/sbin
-sudo chmod +x /usr/local/sbin/nrc-at-cmd-test
+sudo cp $SCRIPT_DIR/install/nrc-at-cmd-test.sh /usr/local/sbin
+sudo chmod +x /usr/local/sbin/nrc-at-cmd-test.sh
 
 echo "Finished installing scripts"
 echo "Remember to run GUI binaries with X11 fowarding or a desktop"

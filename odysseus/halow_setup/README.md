@@ -73,9 +73,9 @@ See channels [here](https://github.com/newracom/nrc7292_sw_pkg/blob/master/packa
 
 If you would like to autostart the script:  
 `sudo systemctl enable nrc-autostart.service`  
-When using the systemd service, use the shortcut `nrc-wizard startup-logs` to get the most recent invocation of nrc-autostart and what it prints out.  Note: any parameters past startup-logs will get piped into journalctl (one useful one is `-f` to live-reload the log).
+When using the systemd service, use the shortcut `nrc-wizard.sh startup-logs` to get the most recent invocation of nrc-autostart and what it prints out.  Note: any parameters past startup-logs will get piped into journalctl (one useful one is `-f` to live-reload the log).
 
-Upon using the systemd unit, `nrc-led.service` is also run to allow for LED behaviors.  Manual `nrc-led` usage is not recommended as it is not aware of nrc status and can just write a bunch of errors to gpio.  
+Upon using the systemd unit, `nrc-led.service` is also run to allow for LED behaviors.  Manual `nrc-led.sh` usage is not recommended as it is not aware of nrc status and can just write a bunch of errors to gpio.  
 Current LED behavior:  
 Red light --> blinking: on no IP; solid: on IP recieved  
 Yellow light --> solid: pinged 8.8.8.8 successfully  
@@ -84,10 +84,10 @@ See [below](#change-configuration-and-other-fs-locations) for how to change such
 
 # Use NRC manually
 Start manually:  
-`nrc-wizard start`
+`nrc-wizard.sh start`
 
 Stop manually (recommended be run on every shutdown or after Ctrl^C of start, no matter what!):  
-`nrc-wizard stop`
+`nrc-wizard.sh stop`
 
 Scan for APs:  
 `iwlist wlan0 scan`
@@ -110,8 +110,8 @@ On computer connect with -X (only use when needed, sometimes makes networking in
 
 Usage:
 
-`nrc-firmware-flash` --> Flashes firmware in DOWNLOAD mode, probably never needed for HOST mode  
-`nrc-at-cmd-test` -->  ?  TODO: figure out what that does  
+`nrc-firmware-flash.sh` --> Flashes firmware in DOWNLOAD mode, probably never needed for HOST mode  
+`nrc-at-cmd-test.sh` -->  ?  TODO: figure out what that does  
 [Documentation here](https://github.com/newracom/nrc7292_sdk/tree/master/package/standalone/tools/external/docs)
 
 
@@ -123,15 +123,15 @@ Important: all scripts not home relative at the moment, **so user must be pi**
 There are many sources of configuration change, some not outlined above.  **All files meant to be edited to change configurations are in bold**
 
  - /home/pi/nrc_pkg/script/ -->
-     - **start.py** (sets up all driver + networking, used by nrc-wizard script), [see the google doc with info regarding module settings of interest to edit](https://docs.google.com/document/d/1o79gr1qESW38YnxxlvXTVY8_S3Yupzfv_w48i5PA4q4/edit?usp=sharing)
-     - stop.py (stops driver and associated process, used by nrc-wizard script)
+     - **start.py** (sets up all driver + networking, used by nrc-wizard.sh script), [see the google doc with info regarding module settings of interest to edit](https://docs.google.com/document/d/1o79gr1qESW38YnxxlvXTVY8_S3Yupzfv_w48i5PA4q4/edit?usp=sharing)
+     - stop.py (stops driver and associated process, used by nrc-wizard.sh script)
      - cli_app (communicates with driver to show, configure, and debug various aspects of halow) [see below for usage](#documentation-of-setup)
      - **conf/US/sta_halow_open.conf** (a wpa_supplicant.conf file loaded when STA mode without security is run in US country (0 0 US)), see [here](http://w1.fi/cgit/hostap/plain/wpa_supplicant/wpa_supplicant.conf) for all possible parameters.  Parameters of note are outlined [above](#configure-connection)
  - /usr/local/sbin (in $PATH) -->
-     - **nrc-wizard** (runs start and stop on systemd), edit START_PARAMETERS at the top of the file in order to change the configuration passed into start.py, including STA/AP, security, and country.  Default is `0 0 US`
+     - **nrc-wizard.sh** (runs start and stop on systemd), edit START_PARAMETERS at the top of the file in order to change the configuration passed into start.py, including STA/AP, security, and country.  Default is `0 0 US`
      - nrc-firmware-flash (download mode GUI firmware flash tool)
      - nrc-at-cmd-test (GUI scan networks, etc.)
-     - **nrc-led** (runs LED driver *only works automatically via systemd*), edit the paramters at the top of the file to change LED behavior
+     - **nrc-led.sh** (runs LED driver *only works automatically via systemd*), edit the paramters at the top of the file to change LED behavior
 
 ## Documentation of setup
 
@@ -180,11 +180,11 @@ Unless otherwise noted, all steps are from newracom documentation linked elsewhe
     
 
 ### System bootup order of events
-1. nrc-autostart runs nrc-wizard stop
-3. nrc-autostart begins running nrc-wizard start-systemd
+1. nrc-autostart runs nrc-wizard.sh stop
+3. nrc-autostart begins running nrc-wizard.sh start-systemd
 4. start.py completes insmod and awaits IP address or connects to AP
-5. nrc-wizard signals that startup is complete via reading output of start.py
-6. nrc-led.service triggers, running nrc-led, which begins setting LEDs
+5. nrc-wizard.sh signals that startup is complete via reading output of start.py
+6. nrc-led.service triggers, running nrc-led.sh, which begins setting LEDs
 
 Possible routes:
 start.py fails before step 7 --> service exits with failure
@@ -192,7 +192,7 @@ start.py fails after step 7 --> service enters run
 start.py completes normally --> service enters run
 nrc-led.service fails to start --> nrc-autostart.service ignores failure
 nrc-autostart.service fails to start --> nrc.led never called
-nrc-autostart nrc-wizard (main) process exits --> nrc-autostart.service fails
+nrc-autostart nrc-wizard.sh (main) process exits --> nrc-autostart.service fails
 
 ### GUI luanchers
 

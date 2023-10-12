@@ -15,7 +15,7 @@ Setup assumes:
 ### Image
 
 1. Download, install, and open: [Rpi Imager](https://www.raspberrypi.com/software/)
-2. Choose OS: Pi OS other > Raspberry OS lite (64-bit) Debian Bullseye (note once bookworm is released you may need to get the .img file via the internet and flahs via general disk image)
+2. Choose OS: Pi OS other > Raspberry OS lite (64-bit) Debian Bookworm
 3. Choose Storage: micro-sdcard (note on Linux motherboard connected sd card readers might not show up)
 4. Settings: Enable SSH, set username "pi" and password "Racecar202". Dont configure wifi or change username
 5. Write
@@ -53,7 +53,7 @@ Use `arp -a` to get the pi ip (it is a number higher than the gateway but on the
 
 open `sta_halow_open.conf` and edit in the `network={}`
 
-- uncomment and change ssid= to the SilexAH ssid
+- `ssid=SilexAH`
 - `scan_ssid=1` (TODO not needed?)
 - `scan_freq= <channel>`
 - `freq_list= <channel>`

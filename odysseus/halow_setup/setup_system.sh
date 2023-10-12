@@ -19,7 +19,11 @@ raspi-config nonint do_spi 0
 apt-get update
 apt-get upgrade -y
 echo "Installing necessary packages"
-apt-get install -y raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel raspberrypi-kernel-headers iperf iperf3 hostapd dnsmasq git
+apt-get install -y raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel raspberrypi-kernel-headers iperf3 hostapd dnsmasq git iptables dhcpcd5 wpasupplicant
+
+# disable and mask networkmanager so it cant mess with wpa_supplicant
+sudo systemctl disable NetworkManager
+sudo systemctl mask NetworkManager
 
 # validate/convert dts to dtbo
 echo "Creating spi-dev disable file"

@@ -14,8 +14,6 @@ RefuseManualStart=true
 User=pi
 Group=pi
 Type=simple
-# wait for all initialization in start.py to happen, usually takes 15-20 seconds on a pi 4.  A hook to call systemd-ready when initialization reaches [7] would be a better way to do this, but would add alot of complexity without making nrc-wizard systemd invokable only.
-ExecStartPre=/bin/sleep 30
 ExecStart=/usr/local/sbin/nrc-led
 
 [Install]

@@ -66,9 +66,9 @@ See channels [here](https://github.com/newracom/nrc7292_sw_pkg/blob/master/packa
 
 If you would like to autostart the script:  
 `sudo systemctl enable nrc-autostart.service`  
-When using the systemd service, use the shortcut `nrc-wizard startup-logs` to get the most recent invocation of nrc-autostart and what it prints out.
+When using the systemd service, use the shortcut `nrc-wizard startup-logs` to get the most recent invocation of nrc-autostart and what it prints out.  Note: any parameters past startup-logs will get piped into journalctl (one useful one is `-f` to live-reload the log).
 
-Upon using the systemd unit, `nrc-led.service` is also run to allow for LED behaviors.  Manual `nrc-led` usage is not recommended.  
+Upon using the systemd unit, `nrc-led.service` is also run to allow for LED behaviors.  Manual `nrc-led` usage is not recommended as it is not aware of nrc status and can just write a bunch of errors to gpio.  
 Current LED behavior:  
 Red light --> blinking: on no IP; solid: on IP recieved  
 Yellow light --> solid: pinged 8.8.8.8 successfully  
@@ -152,14 +152,20 @@ newracom.dts --> [for disabling userspace spidev](https://github.com/newracom/nr
 
 newracom-blacklist.conf --> [from pi setup docs](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-018-Raspberry_Pi_setup.pdf)
 
-### System bootup order of events
+### System bootup order of events (TODO: make less convoluted)
 1. nrc-autostart runs nrc-wizard stop
-2. nrc-autostart begins running nrc-wizard start
-3. nrc-led begins running nrc-led (script), which has a 30 second wait
-4. nrc-autostart completes insmod and awaits IP address or connects to AP
-5. a short time later nrc-led begins setting LEDs
+3. nrc-autostart begins running nrc-wizard start-systemd
+4. start.py completes insmod and awaits IP address or connects to AP
+5. nrc-wizard signals that startup is complete via reading output of start.py
+6. nrc-led.service triggers, running nrc-led, which begins setting LEDs
 
-This 30 second wait is hacky and ugly but the alternative is parsing the output of start.py to see if it reached `[7]`, which is too complex for a couple bash scripts.
+Possible routes:
+start.py fails before step 7 --> service exits with failure
+start.py fails after step 7 --> service enters run
+start.py completes normally --> service enters run
+nrc-led.service fails to start --> nrc-autostart.service ignores failure
+nrc-autostart.service fails to start --> nrc.led never called
+nrc-autostart nrc-wizard (main) process exits --> nrc-autostart.service fails
 
 ### Alfa sources
 

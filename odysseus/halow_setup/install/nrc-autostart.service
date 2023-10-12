@@ -6,11 +6,13 @@ Wants=nrc-led.service
 [Service]
 User=pi
 Group=pi
-Type=simple
-# don't allow restarting as that could cause odd behavior with ExecStopPost
-Restart=no
+# use notify to alert nrc-led to turn on
+Type=notify
+NotifyAccess=all
+
 ExecStartPre=/usr/local/sbin/nrc-wizard stop
-ExecStart=/usr/local/sbin/nrc-wizard start
+
+ExecStart=/usr/local/sbin/nrc-wizard start-systemd
 # run this as post is it guarrantees running as cleanup
 ExecStopPost=/usr/local/sbin/nrc-wizard stop
 

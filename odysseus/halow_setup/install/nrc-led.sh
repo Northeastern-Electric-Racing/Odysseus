@@ -2,7 +2,7 @@
 
 ######################
 # amount of time to wait in between loops
-SLEEP_TIME=1
+SLEEP_TIME=3
 #interface to check for connectivity, wlan0 for default newracom configuration
 INTERFACE_NAME=wlan0
 # the URL or IP to ping, if ping returns good yellow light is lit, if it doesnt then it is not lit

@@ -1,14 +1,17 @@
-This is the complete process to get Halow wifi working.
+This is the complete process to get Halow wifi working as a station in host mode.  Other modes and AP configuration may work with manual customization.
 
 #### Made for newracom version 1.4.1
 
 
-Setup assumes:
-
-- Developer computer is linux (any version)
-- SBC is Pi 4
-- Halow hat is ALFA AHPI7292S in HOST mode
-- An ethernet connection from computer to pi is available
+Required equipment:
+- Developer computer is **linux** (Ubuntu works fine) with...
+    - SSH insalled: on Ubuntu its package `openssh-client` (so `apt install openssh-client`), so you can SSH into the pi
+    - An internet connection: so the pi can recieve that connection, as the pi cannot network after step 1 of this guide!
+    - A way to ethernet connect to the pi (adapters work)
+    - A way to write to a microSD card
+- Raspberry Pi 4 SBC (the Pi 3 can work but requires different overlay files, not covered here)
+- A minimun 16 gb microSD card
+- Halow hat: ALFA AHPI7292S RevB or greater (for UART select) in HOST mode ([read "How to switch modes"](https://docs.alfa.com.tw/Product/AHPI7292S/30_Technical_Details/))
 
 # Setup Pi
 
@@ -16,21 +19,25 @@ Setup assumes:
 
 1. Download, install, and open: [Rpi Imager](https://www.raspberrypi.com/software/)
 2. Choose OS: Pi OS other > Raspberry OS lite (64-bit) Debian Bookworm
-3. Choose Storage: micro-sdcard (note on Linux motherboard connected sd card readers might not show up)
-4. Settings: Enable SSH, set username "pi" and password "Racecar202". Dont configure wifi or change username
-5. Write
+3. Choose Storage: micro-sdcard (note on Linux an external adapter is needed for laptop connection of microSD cards, or the card will not show up in the list)
+4. Settings: Enable SSH, set username "pi" and password "Racecar202". **Dont configure wifi or change username**
+5. Write and wait for completion
 
 ### Connect
-Boot up the pi, and connect ethernet between pi and linux computer.
+Boot up the pi, and connect ethernet between pi and linux computer.  Wait a solid 2-3 minutes as the first boot takes a considerable amount of time partitioning.
 
-On computer's NetworkManager GUI:
-Delete wired connection and create a wired connect (shared), then press connect.  Wait like 30 seconds.
+On computer's network management GUI:
+1. Open the list of network connections (not the tray applet)
+2. With the pi powered on and ethernet connected, wait until "wired connection" or "enps..." or "eth0" appears
+3. Click the plus and create a "wired connection (shared)", then press connect.  Wait like 30 seconds.
+4. Open a terminal and use `arp -a` to get the pi ip (it is the number that is higher than the "gateway" but still in the same range as it).  Wait until the command shows the MAC address instead of `<incomplete>`.  Ssh into rpi with above ip and correct username/password (`ssh pi@<IP>`).
 
-On CLI: (TODO)
+On CLI only: (TODO)
 
-Use `arp -a` to get the pi ip (it is a number higher than the gateway but on the same subnet).  Ssh into rpi with above ip and correct username/password (`ssh pi@<IP>`).  If it fails try a different IP or wait until `arp -a` shows the MAC address for that IP and not `<incomplete>`.
+Next, run `ping 8.8.8.8` to ensure the internet connection your computer has is being shared to the pi.  If it is working you will see a repetitive output and nothing along the lines of `unreachable` or `timed out`.
 
 ### Download scripts
+The following command line items are run inside the pi terminal.  If you reboot or otherwise lose connection, ensure these commands are being run in `pi@<IP>` NOT your own linux install.  
 `sudo apt install git`  
 `git clone https://github.com/Northeastern-Electric-Racing/Siren.git`  
 `mv ~/Siren/odysseus/halow_setup ~/`  
@@ -53,8 +60,8 @@ Use `arp -a` to get the pi ip (it is a number higher than the gateway but on the
 
 open `sta_halow_open.conf` and edit in the `network={}`
 
-- `ssid=SilexAH`
-- `scan_ssid=1` (TODO not needed?)
+- `ssid=SilexAH` (or SSID of another AP)
+- `scan_ssid=1`
 - `scan_freq= <channel>`
 - `freq_list= <channel>`
 
@@ -104,7 +111,8 @@ On computer connect with -X (only use when needed, sometimes makes networking in
 Usage:
 
 `nrc-firmware-flash` --> Flashes firmware in DOWNLOAD mode, probably never needed for HOST mode  
-`nrc-at-cmd-test` -->  ?  TODO: figure out what that does
+`nrc-at-cmd-test` -->  ?  TODO: figure out what that does  
+[Documentation here](https://github.com/newracom/nrc7292_sdk/tree/master/package/standalone/tools/external/docs)
 
 
 # Sources and more info
@@ -141,18 +149,37 @@ All documentation and bash scripts were made from [newracom documentation](https
      - `show sysconfig` (get MAC of board, and other info)
      
 
-### Board data file
+### Sources (see below for usage)
+Note that everything in the `./sources` directory is from ALFA or newracom, and everything in the `./install` directory is made custom for NER convenience.
 
-nrc7292_bd.dat --> [newracom made this for ALFA](https://github.com/newracom/nrc7292_sw_pkg/issues/60)
+ - nrc7292_bd.dat --> [newracom made this for ALFA](https://github.com/newracom/nrc7292_sw_pkg/issues/60).  Replaces the preinstalled board data file at `nrc_pkg/sw/firmware` in the script `install_nrc.sh`.
 
-The actual process by which this file was made is not definite, all documentation [here](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-015-Transmit_Power_Control.pdf).  A GUI tool to make board data files was moved in 1.3.4, changelogs do not allude to why. **A newracom update could break ALFA compatability**, and ALFA has not updated their file since 1.3.4 rev2, and it does not work in 1.4.1 due to newracom breaking changes.  TODO: come up with a way to compile the above file and/or find the BoardDataEditor.exe.
+    The actual process by which this file was made is not definite, all documentation [here](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-015-Transmit_Power_Control.pdf).  A GUI tool to make board data files was moved in 1.3.4, changelogs do not allude to why. **A newracom update could break ALFA compatability**, and ALFA has not updated their file since 1.3.4 rev2, and it does not work in 1.4.1 due to newracom breaking changes.  TODO: come up with a way to compile the above file and/or find the BoardDataEditor.exe.
 
-### More sources
-newracom.dts --> [for disabling userspace spidev](https://github.com/newracom/nrc7292_sw_pkg/blob/master/dts/newracom_for_5.16_or_later.dts)
+ - newracom.dts --> [from pi setup docs](https://github.com/newracom/nrc7292_sw_pkg/blob/master/dts/newracom_for_5.16_or_later.dts)
 
-newracom-blacklist.conf --> [from pi setup docs](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-018-Raspberry_Pi_setup.pdf)
+ - newracom-blacklist.conf --> [from pi setup docs](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-018-Raspberry_Pi_setup.pdf)
 
-### System bootup order of events (TODO: make less convoluted)
+### System setup guide step-by-step (from setup_system.sh)
+Unless otherwise noted, all steps are from newracom documentation linked elsewhere here.
+1. Enables serial hardware for connection to the HAT, but turns off showing the TTY over the serial as we do not want a terminal running over the HAT
+2. Turns on SPI, so we can connect to the HAT over SPI
+3. Install and stop necessary packages
+    - Installs packages necessary:
+        - `raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel-headers`: For exposing otherwise inaccessible files to the nrc.ko kernel driver
+        - `hostapd iptables`: (AP) For controlling DNS loaning and STA management.  Not technically needed for STA usecase
+        - `git`: A sanity check for those who `scp`ed the repo over
+        - `dhcpcd5 dnsmasq`: For controlling the management and loaning of IPs and DNS servers
+        - `wpasupplicant`: For managing the system recpetion of the wifi and recognition that nrc.ko provides a wifi driver.  Incompatible with NetworkManager!  
+    - (b) (not newracom documented) Mask NetworkManager to prevent it from also trying to start network interfaces, we have wpa_supplicant for that
+4. Build and install the /sources/newracom.dts. This file blocks the loading of userspace spidev, which allows for the kernel level SPI control.  This file was changed in kernel 5.16.
+5. Install /sources/newracom-blacklist.conf. This file blacklists the modules that allow the onboard pi broadcom wifi to work, as the userspace can often conflcit with two wifi drivers. (teledatics has found a way around this, not highlighted here.)
+6. Backup the default wpa_supplicant.conf in case the user wants it, as `start.py` overwrites it with the `sta_halow_open.conf` we edited above. (Unecessary for clean install).
+7. Enable i2c, mac80211 modules for linux as nrc.ko depends on them.  TODO: Does nrc actually use i2c??
+8. Install /sources/newracom-blacklist.conf to blacklist brcmfmac and brcmutil (the onboard broadcom wifi), as these modules can in some cases conflict with the userspace utilities that configure halow.  However, at the driver level no reason exists for them to necessitate removal, so technically both WiFi networks *could* run at once.
+    
+
+### System bootup order of events
 1. nrc-autostart runs nrc-wizard stop
 3. nrc-autostart begins running nrc-wizard start-systemd
 4. start.py completes insmod and awaits IP address or connects to AP
@@ -167,9 +194,9 @@ nrc-led.service fails to start --> nrc-autostart.service ignores failure
 nrc-autostart.service fails to start --> nrc.led never called
 nrc-autostart nrc-wizard (main) process exits --> nrc-autostart.service fails
 
-### Alfa sources
+### GUI luanchers
 
-The gui launchers (mainly changing GPIO) were adapted from ALFA's 1.3.4 nrc_pkg .deb file, found [here](https://downloads.alfa.com.tw/raspbian/pool/contrib/n/nrc7292-sw-pkg/nrc7292-nrc-pkg_1.3.4-64-20220525_all.deb).
+The gui launchers (mainly changing GPIO) were adapted from ALFA's 1.3.4 nrc_pkg .deb file, found [here](https://downloads.alfa.com.tw/raspbian/pool/contrib/n/nrc7292-sw-pkg/nrc7292-nrc-pkg_1.3.4-64-20220525_all.deb).  The gpio is changed in accordance with the [tech docs](https://docs.alfa.com.tw/Product/AHPI7292S/30_Technical_Details/), such that gpio pin 13 (hw 33) allows for a temporary change in mode.  The binaries are suffixed .exe however they are cross platform java applications with no depencies not provided by `default-jre`.
 
 #### Updating to new newracom release (untested)
 [See above for caveat](#board-data-file)

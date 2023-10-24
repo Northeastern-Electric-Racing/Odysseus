@@ -1,0 +1,20 @@
+[Unit]
+Description=Control nrc LEDs (AP mode).
+# starts after nrc-autostart
+After=nrc-autostart-ap.service
+# starts and stops when nrc-autostart starts and stops
+PartOf=nrc-autostart-ap.service
+# will not run if nrc-autostart is not running
+Requisite=nrc-autostart-ap.service
+# cannot be started manually (run the nrc-led-sta.sh in path to manually test LEDs)
+RefuseManualStart=true
+# ensure other mode isnt also set to start
+Conflicts=nrc-led-sta.service
+
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/nrc-led-ap.sh
+
+[Install]
+WantedBy=multi-user.target

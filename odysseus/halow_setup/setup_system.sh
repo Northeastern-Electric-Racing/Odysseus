@@ -19,7 +19,7 @@ raspi-config nonint do_spi 0
 apt-get update
 apt-get upgrade -y
 echo "3. Installing necessary packages"
-apt-get install -y raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel-headers iperf3 hostapd dnsmasq git iptables dhcpcd5 wpasupplicant
+apt-get install -y raspberrypi-bootloader raspberrypi-kernel raspberrypi-kernel-headers iperf3 hostapd dnsmasq git iptables dhcpcd5 wpasupplicant bridge-utils
 
 # disable and mask networkmanager so it cant mess with wpa_supplicant
 echo "3b. Masking NetworkManager"

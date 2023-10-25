@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "For STA Mode: Installing systemd file and associated commands"
-cd ./install/sta
+cd ./install/sta || exit
 
 chmod +x ./nrc-led-sta.sh
 chmod + ./nrc-wizard-sta.sh

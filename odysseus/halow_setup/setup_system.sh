@@ -28,12 +28,12 @@ sudo systemctl mask NetworkManager
 
 # validate/convert dts to dtbo
 echo "4. Creating spi-dev disable file"
-dtc -I dts -O dtb -o $SCRIPT_DIR/sources/newracom.dtbo $SCRIPT_DIR/sources/newracom.dts
-cp $SCRIPT_DIR/sources/newracom.dtbo /boot/overlays/
+dtc -I dts -O dtb -o "$SCRIPT_DIR"/sources/newracom.dtbo "$SCRIPT_DIR"/sources/newracom.dts
+cp "$SCRIPT_DIR"/sources/newracom.dtbo /boot/overlays/
 
 # if newracom block not present, add dt overlays mandate
 echo "5. Blacklisting bt, wifi, custom newracom spidev"
-output="$(cat "/boot/config.txt" | grep -F "[newracom]")"
+output="$(cmd "/boot/config.txt" | grep -F "[newracom]")"
 if [ -n "$output" ];
 then
     echo "newracom already set"
@@ -50,8 +50,8 @@ mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.co
 
 
 echo "7. Enabling i2c, mac80211"
-output_i2c="$(cat "/etc/modules" | grep -e "i2c-dev")"
-output_mac="$(cat "/etc/modules" | grep -e "mac80211")"
+output_i2c="$(cmd "/etc/modules" | grep -e "i2c-dev")"
+output_mac="$(cmd "/etc/modules" | grep -e "mac80211")"
 if [ -n "$output_i2c" ] && [ -n "$output_mac" ];
 then
     cp "/etc/modules" "/etc/modules.backup-$(date +%s)"
@@ -76,7 +76,7 @@ if  [ -f "/etc/modprobe.d/newracom-blacklist.conf" ];
 then
     echo "blacklist already exists"
 else
-    cp $SCRIPT_DIR/sources/newracom-blacklist.conf /etc/modprobe.d/
+    cp "$SCRIPT_DIR"/sources/newracom-blacklist.conf /etc/modprobe.d/
 fi
 
 # this is for the future update.sh script which has hardcoded username pi (yuck)

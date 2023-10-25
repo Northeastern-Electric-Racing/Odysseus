@@ -13,11 +13,11 @@ fi
 
 if [ "$1" == "start" ];
 then
-    python -u $HOME/nrc_pkg/script/start.py $START_PARAMETERS
+    python -u "$HOME"/nrc_pkg/script/start.py "$START_PARAMETERS"
 elif [ "$1" == "start-systemd" ];
 then
     echo "Begin start.py ----------------"
-    python -u $HOME/nrc_pkg/script/start.py $START_PARAMETERS &
+    python -u "$HOME"/nrc_pkg/script/start.py "$START_PARAMETERS" &
     # capture start.py pid
     start_pid="$!"
     while true;
@@ -50,7 +50,7 @@ then
 elif [ "$1" == "stop" ];
 then
     echo "Begin stop.py -----------------"
-    python -u $HOME/nrc_pkg/script/stop.py
+    python -u "$HOME"/nrc_pkg/script/stop.py
 elif [ "$1" == "startup-logs" ];
 then 
   # this displays the most recent invocation ID of nrc-autostart and filters the logs by that invocation, otherwise journalctl would display all logs since nrc-autostart was first started.  It also passes in any other parameters given to journalctl.

@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "For AP Mode: Installing systemd file and associated commands"
-cd ./install/ap/
+cd ./install/ap/ || exit
 
 chmod +x ./nrc-led-ap.sh
 chmod + ./nrc-wizard-ap.sh

@@ -12,11 +12,11 @@ Group=pi
 Type=notify
 NotifyAccess=all
 
-ExecStartPre=/usr/local/sbin/nrc-wizard.sh stop
+ExecStartPre=/usr/local/sbin/nrc-wizard-sta.sh stop
 
-ExecStart=/usr/local/sbin/nrc-wizard.sh sta-start-systemd
+ExecStart=/usr/local/sbin/nrc-wizard-sta.sh start-systemd
 # run this as post is it guarrantees running as cleanup
-ExecStopPost=/usr/local/sbin/nrc-wizard.sh stop
+ExecStopPost=/usr/local/sbin/nrc-wizard-sta.sh stop
 
 [Install]
 WantedBy=multi-user.target

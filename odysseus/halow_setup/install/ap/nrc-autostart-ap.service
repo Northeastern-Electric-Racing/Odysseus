@@ -13,11 +13,11 @@ Type=oneshot
 # keep state as active after startup finishes, so follow up units start
 RemainAfterExit=yes
 
-ExecStartPre=/usr/local/sbin/nrc-wizard.sh stop
+ExecStartPre=/usr/local/sbin/nrc-wizard-ap.sh stop
 
-ExecStart=/usr/local/sbin/nrc-wizard.sh ap-start-systemd
+ExecStart=/usr/local/sbin/nrc-wizard-ap.sh start-systemd
 # run this as post is it guarrantees running as cleanup
-ExecStopPost=/usr/local/sbin/nrc-wizard.sh stop
+ExecStopPost=/usr/local/sbin/nrc-wizard-ap.sh stop
 
 [Install]
 WantedBy=multi-user.target

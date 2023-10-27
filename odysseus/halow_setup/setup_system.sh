@@ -33,7 +33,7 @@ cp "$SCRIPT_DIR"/sources/newracom.dtbo /boot/overlays/
 
 # if newracom block not present, add dt overlays mandate
 echo "5. Blacklisting bt, wifi, custom newracom spidev"
-output="$(cmd "/boot/config.txt" | grep -F "[newracom]")"
+output="$(grep -F "[newracom]" < "/boot/config.txt")"
 if [ -n "$output" ];
 then
     echo "newracom already set"
@@ -50,8 +50,8 @@ mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.co
 
 
 echo "7. Enabling i2c, mac80211"
-output_i2c="$(cmd "/etc/modules" | grep -e "i2c-dev")"
-output_mac="$(cmd "/etc/modules" | grep -e "mac80211")"
+output_i2c="$(grep -e "i2c-dev" < "/etc/modules")"
+output_mac="$(grep -e "mac80211" < "/etc/modules")"
 if [ -n "$output_i2c" ] && [ -n "$output_mac" ];
 then
     cp "/etc/modules" "/etc/modules.backup-$(date +%s)"

@@ -333,18 +333,18 @@ Unless otherwise noted, all steps are from newracom documentation linked elsewhe
 
 #### Possible bootup routes:
 (BOTH):
-nrc-led.service fails to start --> nrc-autostart.service ignores failure
-nrc-autostart.service fails to start --> nrc.led never called
+nrc-led.service fails to start --> nrc-autostart.service ignores failure  
+nrc-autostart.service fails to start --> nrc.led never called  
 
 (STA):
-start.py fails before step 7 --> service exits with failure
-start.py fails after step 7 --> service enters run
-start.py completes normally --> service enters run
-nrc-autostart nrc-wizard.sh (main) process exits --> nrc-autostart.service fails
+start.py fails before step 7 --> service exits with failure  
+start.py fails after step 7 --> service enters run  
+start.py completes normally --> service enters run  
+nrc-autostart nrc-wizard.sh (main) process exits --> nrc-autostart.service fails  
 
 (AP):
-start.py fails --> **service enters run** TODO: prevent this
-nrc-autostart nrc-wizard.sh (main) process exits --> service enters run
+start.py fails --> **service enters run** TODO: prevent this  
+nrc-autostart nrc-wizard.sh (main) process exits --> service enters run  
 
 
 ### GUI launchers
@@ -352,7 +352,7 @@ nrc-autostart nrc-wizard.sh (main) process exits --> service enters run
 The gui launchers (mainly changing GPIO) were adapted from ALFA's 1.3.4 nrc_pkg .deb file, found [here](https://downloads.alfa.com.tw/raspbian/pool/contrib/n/nrc7292-sw-pkg/nrc7292-nrc-pkg_1.3.4-64-20220525_all.deb).  The gpio is changed in accordance with the [tech docs](https://docs.alfa.com.tw/Product/AHPI7292S/30_Technical_Details/), such that gpio pin 13 (hw 33) allows for a temporary change in mode.  The binaries are suffixed .exe however they are cross platform java applications with no depencies not provided by `default-jre`.
 
 #### Updating to new newracom release (untested)
-[See above for caveat](#board-data-file)
+[See above for caveat](#sources-see-below-for-usage)
 
 Re-run `install-nrc.sh` which runs:
 

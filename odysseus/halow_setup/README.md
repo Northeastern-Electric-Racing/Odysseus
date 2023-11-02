@@ -88,7 +88,7 @@ open `etc/CONFIG_IP`
 - `HALOW_STA_NETMASK=24`
 - `HALOW_STA_DEFAULT_GW=192.168.100.1`
 
-Example `CONFIG_IP`:
+Example STA `CONFIG_IP` (truncated):
 ```
 # Config for Ethernet with DHCP server
 USE_ETH_DHCP_SERVER=N   # Use DHCP Sever : Y(use DHCP Server) or N(use DHCP Client)
@@ -153,6 +153,29 @@ and for wireless:
 - `HALOW_AP_NETMASK=24`
 - `HALOW_AP_DHCPS_CONFIG=192.168.200.10,192.168.200.50,255.255.255.0,24h`
 
+Example AP `CONFIG_IP` (truncated):
+```
+# Config for Ethernet with DHCP server
+USE_ETH_DHCP_SERVER=N   # Use DHCP Sever : Y(use DHCP Server) or N(use DHCP Client)
+ETH_DHCPS_IP=192.168.100.1    # only valid when using DHCP Server
+ETH_DHCPS_CONFIG=192.168.100.10,192.168.100.15,255.255.255.0,24h # only valid when using DHCP Server
+
+# Config for static IP on Ethernet without DHCP server
+USE_ETH_STATIC_IP=Y            # Use ETH STATIC IP : Y(use ETH_IP for static ip) or N(use DHCP Client)
+ETH_STATIC_IP=192.168.100.11   # only valid when using static IP without DHCP Server
+ETH_STATIC_NETMASK=24          # only valid when using static IP without DHCP Server
+
+# Config for HaLow STA's IP and Defautl GW
+USE_HALOW_STA_STATIC_IP=N     # Use STATIC IP :  Y(use Static IP) or N(use Dynamic IP(DHCP))
+HALOW_STA_IP=192.168.200.11   # only valid when using static IP
+HALOW_STA_NETMASK=24          # only valid when using static IP
+HALOW_STA_DEFAULT_GW=192.168.200.1 # only valid when using static IP
+
+# Config for HaLow AP's IP and DHCPS configuration
+HALOW_AP_IP=192.168.100.11
+HALOW_AP_NETMASK=24
+HALOW_AP_DHCPS_CONFIG=192.168.200.10,192.168.200.50,255.255.255.0,24h
+```
 Note that the above activates DHCP, but we only want IP setting from dhcpd and no DHCP server from `dnsmasq`.  That is when the below configuration comes into play.
 
 open `~/nrc_pkpg/script/start.py`
@@ -163,7 +186,7 @@ run `sudo systemctl mask dnsmasq`
 
 
 Once started with these changes connecting over SSH hardwired will become **significantly harder**.  Also, this will only occur when the pi is booted into nrc-wizard-ap.sh.  If it fails, then failsafes will undo the IP changes if it made it there, resulting in the previous IP behavior.  However, giving proper router DHCP static leases, the IP of the AP will remain the same on the network.  
-In order to hardwire to a computer when running nrc, you must set up a route of the 192.168.100.x and configure IPv4 forwarding.  Only connect to an AP over hard wired SSH if really needed, otherwise connect the sd card to a computer and undo and/or disable nrc-autostart-ap.service by [removing the symlink](https://www.baeldung.com/linux/create-remove-systemd-services).  If you must, connection instructions as follows:  
+In order to hardwire to a computer when running nrc, you must set up a route of the 192.168.100.x and configure IPv4 forwarding.  Only connect to an AP over hard wired SSH if really needed, otherwise connect the sd card to a computer and undo and/or disable nrc-autostart-ap.service by [removing the symlink](https://www.baeldung.com/linux/create-remove-systemd-services) and/or change in `CONFIG_IP` to `USE_ETH_STATIC_IP=N`.  If you must, connection instructions as follows:  
 First, add a static IP address to the laptop's eth0:  
 `ip addr add 192.168.2.1/24 dev eth0`  
 Enable IP forwarding on the laptop:  

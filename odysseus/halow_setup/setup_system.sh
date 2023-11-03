@@ -27,7 +27,7 @@ sudo systemctl disable NetworkManager
 sudo systemctl mask NetworkManager
 
 # validate/convert dts to dtbo
-echo "4. Creating spi-dev disable file"
+echo "4. Creating spi-dev disable for SPI 0 file"
 dtc -I dts -O dtb -o "$SCRIPT_DIR"/sources/newracom.dtbo "$SCRIPT_DIR"/sources/newracom.dts
 cp "$SCRIPT_DIR"/sources/newracom.dtbo /boot/overlays/
 

@@ -1,6 +1,6 @@
 This is the complete process to get Halow wifi working as a station or access point in host mode.  Other modes may work with manual customization.
 
-#### Made for newracom version 1.4.1
+#### Made for Newracom sw_pkg v1.5, RPi setup v1.6, SDK v1.6
 
 
 Required equipment:
@@ -140,6 +140,7 @@ ieee80211n=1
 macaddr_acl=0
 driver=nl80211
 beacon_int=100
+ap_max_inactivity=-1
 ```
 
 open `etc/CONFIG_IP`:  
@@ -180,7 +181,7 @@ Note that the above activates DHCP, but we only want IP setting from dhcpd and n
 
 open `~/nrc_pkpg/script/start.py`
 - `use_bridge_setup = 1`
-- comment out startNAT() in run_ap on lines 916 and 917
+- comment out startNAT() in run_ap on lines 959 and 960
 
 run `sudo systemctl mask dnsmasq`
 
@@ -188,11 +189,11 @@ run `sudo systemctl mask dnsmasq`
 Once started with these changes connecting over SSH hardwired will become **significantly harder**.  Also, this will only occur when the pi is booted into nrc-wizard-ap.sh.  If it fails, then failsafes will undo the IP changes if it made it there, resulting in the previous IP behavior.  However, giving proper router DHCP static leases, the IP of the AP will remain the same on the network.  
 In order to hardwire to a computer when running nrc, you must set up a route of the 192.168.100.x and configure IPv4 forwarding.  Only connect to an AP over hard wired SSH if really needed, otherwise connect the sd card to a computer and undo and/or disable nrc-autostart-ap.service by [removing the symlink](https://www.baeldung.com/linux/create-remove-systemd-services) and/or change in `CONFIG_IP` to `USE_ETH_STATIC_IP=N`.  If you must, connection instructions as follows:  
 First, add a static IP address to the laptop's eth0:  
-`ip addr add 192.168.2.1/24 dev eth0`  
+`sudo ip addr add 192.168.2.1/24 dev eth0`  
 Enable IP forwarding on the laptop:  
-`sysctl -w net.ipv4.ip_forward=1`  
+`sudo sysctl -w net.ipv4.ip_forward=1`  
 Enable NAT on the laptop:  
-`iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE`
+`sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE`
 
 Connect to `pi@192.168.100.11`
 
@@ -333,7 +334,7 @@ Unless otherwise noted, all steps are from newracom documentation linked elsewhe
         - `dhcpcd5 dnsmasq`: For controlling the management and loaning of IPs and DNS servers
         - `wpasupplicant`: For managing the system recpetion of the wifi and recognition that nrc.ko provides a wifi driver.  Incompatible with NetworkManager!  
     - (b) (not newracom documented) Mask NetworkManager to prevent it from also trying to start network interfaces, we have wpa_supplicant for that
-4. Build and install the /sources/newracom.dts. This file blocks the loading of userspace spidev, which allows for the kernel level SPI control.  This file was changed in kernel 5.16.
+4. Build and install the /sources/newracom.dts. This file blocks the loading of userspace spidev for SPI 0, which allows for the kernel level SPI control.  This file was changed in kernel 5.16.
 5. Install /sources/newracom-blacklist.conf. This file blacklists the modules that allow the onboard pi broadcom wifi to work, as the userspace can often conflcit with two wifi drivers. (teledatics has found a way around this, not highlighted here.)
 6. Backup the default wpa_supplicant.conf in case the user wants it, as `start.py` overwrites it with the `sta_halow_open.conf` we edited above. (Unecessary for clean install).
 7. Enable i2c, mac80211 modules for linux as nrc.ko depends on them.  TODO: Does nrc actually use i2c??

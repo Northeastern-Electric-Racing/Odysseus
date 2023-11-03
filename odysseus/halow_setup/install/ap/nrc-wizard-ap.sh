@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # the parameters to pass into stop.py for ap mode
-START_PARAMETERS="1 0 US"
+START_PARAMETERS=(1 0 US)
 
 
 if [ "$EUID" -eq 0 ]; then
@@ -11,7 +11,7 @@ fi
 
 if [ "$1" == "start" ] || [ "$1" == "start-systemd" ];
 then
-    python -u "$HOME"/nrc_pkg/script/start.py "$START_PARAMETERS"
+    python -u "$HOME"/nrc_pkg/script/start.py "${START_PARAMETERS[@]}"
 elif [ "$1" == "stop" ];
 then
     echo "Begin stop.py -----------------"

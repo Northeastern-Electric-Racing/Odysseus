@@ -85,7 +85,6 @@ Now set a static IP to ensure stability and easy connection to AP-side programs 
 open `etc/CONFIG_IP`
 - `USE_HALOW_STA_STATIC_IP=Y`
 - `HALOW_STA_IP=192.168.100.12`
-- `HALOW_STA_NETMASK=24`
 - `HALOW_STA_DEFAULT_GW=192.168.100.1`
 
 Example STA `CONFIG_IP` (truncated):
@@ -384,6 +383,9 @@ Re-run `install-nrc.sh` which runs:
 This should simply pull new git sources and rebuild all necessary modules.
 
 
+## Current Bugs
+- On AP mode, the leds will not run until a device is initially connected to the AP Pi's ethernet.
 
+More Info: If no ethernet device makes a handshake with br0, the process start.py never exits, which tells systemd to not change from activating to activated.  Thankfully though the oneshot unit type does not kill start.py because of this, but it does hold up the boot process and could cause issues with items that await targets past multi-user.  One possible fix is by implementing a notify system similar to STA mode, but such a process is undesirable.
 
 

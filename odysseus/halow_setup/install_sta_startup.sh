@@ -9,12 +9,12 @@ echo "For STA Mode: Installing systemd file and associated commands"
 cd ./install/sta || exit
 
 chmod +x ./nrc-led-sta.sh
-chmod + ./nrc-wizard-sta.sh
+chmod +x ./nrc-wizard-sta.sh
 
 # /usr/local/sbin is standard for user installed scripts, it is in path
-cp ./nrc-wizard-sta.sh /usr/local/sbin
+cp ./nrc-wizard-sta.sh /usr/local/sbin/
 
-cp ./nrc-led-sta.sh /usr/local/sbin
+cp ./nrc-led-sta.sh /usr/local/sbin/
 
 cp ./nrc-autostart-sta.service /etc/systemd/system/
 

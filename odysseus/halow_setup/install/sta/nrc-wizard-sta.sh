@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # the parameters to pass into start.py for sta mode
-START_PARAMETERS="0 0 US"
+START_PARAMETERS=(0 0 US)
 # check every x seconds if the nrc system has booted
 SLEEP_TIME=1
 
@@ -13,11 +13,11 @@ fi
 
 if [ "$1" == "start" ];
 then
-    python -u "$HOME"/nrc_pkg/script/start.py "$START_PARAMETERS"
+    python -u "$HOME"/nrc_pkg/script/start.py "${START_PARAMETERS[@]}"
 elif [ "$1" == "start-systemd" ];
 then
     echo "Begin start.py ----------------"
-    python -u "$HOME"/nrc_pkg/script/start.py "$START_PARAMETERS" &
+    python -u "$HOME"/nrc_pkg/script/start.py "${START_PARAMETERS[@]}" &
     # capture start.py pid
     start_pid="$!"
     while true;

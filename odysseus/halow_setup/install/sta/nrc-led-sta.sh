@@ -51,7 +51,7 @@ do
     then 
         $CLI_APP gpio write 3 1 >> /dev/null
     else
-        oscillate=$(1-"$oscillate")
+        oscillate=$((1-"$oscillate"))
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
         continue
     fi

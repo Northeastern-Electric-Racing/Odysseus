@@ -49,25 +49,14 @@ echo "6. Backing up default wpa_supplicant.conf"
 mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.unused
 
 
-echo "7. Enabling i2c, mac80211"
-output_i2c="$(grep -e "i2c-dev" < "/etc/modules")"
+echo "7. Enabling mac80211"
 output_mac="$(grep -e "mac80211" < "/etc/modules")"
-if [ -n "$output_i2c" ] && [ -n "$output_mac" ];
-then
-    cp "/etc/modules" "/etc/modules.backup-$(date +%s)"
-fi
-
-if [ -n "$output_i2c" ];
-then
-    echo "i2c already set"
-else
-    echo "i2c-dev" >> "/etc/modules"
-fi
 
 if [ -n "$output_mac" ];
 then
     echo "mac80211 already set"
 else
+    cp "/etc/modules" "/etc/modules.backup-$(date +%s)"
     echo "mac80211" >> "/etc/modules"
 fi
 

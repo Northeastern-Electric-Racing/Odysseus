@@ -20,7 +20,7 @@ Required equipment:
 1. Download, install, and open: [Rpi Imager](https://www.raspberrypi.com/software/)
 2. Choose OS: Pi OS other > Raspberry OS lite (64-bit) Debian Bookworm
 3. Choose Storage: micro-sdcard
-4. Settings: Enable SSH, set username "pi" and password "Racecar202". Set time zone and keyboard according to your location. **Dont configure wifi or change username**
+4. Settings: Enable SSH, set username "pi" and password. Set time zone and keyboard according to your location. **Dont configure wifi or change username**
 5. Write and wait for completion
 
 ### Connect
@@ -335,7 +335,7 @@ Unless otherwise noted, all steps are from newracom documentation linked elsewhe
 4. Build and install the /sources/newracom.dts. This file blocks the loading of userspace spidev, which allows for the kernel level SPI control.  This file was changed in kernel 5.16.
 5. Install /sources/newracom-blacklist.conf. This file blacklists the modules that allow the onboard pi broadcom wifi to work, as the userspace can often conflcit with two wifi drivers. (teledatics has found a way around this, not highlighted here.)
 6. Backup the default wpa_supplicant.conf in case the user wants it, as `start.py` overwrites it with the `sta_halow_open.conf` we edited above. (Unecessary for clean install).
-7. Enable i2c, mac80211 modules for linux as nrc.ko depends on them.  TODO: Does nrc actually use i2c??
+7. Enable mac80211 module for linux as nrc.ko depends on them.
 8. Install /sources/newracom-blacklist.conf to blacklist brcmfmac and brcmutil (the onboard broadcom wifi), as these modules can in some cases conflict with the userspace utilities that configure halow.  However, at the driver level no reason exists for them to necessitate removal, so technically both WiFi networks *could* run at once.
     
 

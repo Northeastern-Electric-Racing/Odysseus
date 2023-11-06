@@ -1,5 +1,5 @@
 [Unit]
-Description=Control nrc using the pyton scripts provided (AP mode).
+Description=Control nrc using the python scripts provided (AP mode).
 # ensure nrc-led.sh is also started, but don't fail if nrc-led.sh fails
 Wants=nrc-led-ap.service
 # ensure other mode isnt also set to start

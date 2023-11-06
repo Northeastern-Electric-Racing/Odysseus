@@ -1,4 +1,4 @@
-This is the complete process to get the NEO-M8Q-0 working with PPS over GPIO for second start and NMEA sentences over UART for time and date.  The GPIO pin should be set at the top of the `configure_pps.sh` file.
+This is the complete process to get the NEO-M8Q-0 working with PPS over GPIO for second start and NMEA sentences over UART for time and date.
 
 Required equipment:
 - Developer computer is **linux** (Ubuntu works fine) with...
@@ -15,7 +15,7 @@ See the ../halow_setup/README.md file under "Setup Pi", change out `mv ~/Siren/o
 If the use of GPS is not for the TPU, wireless can be enabled and used to connect to the Pi, ethernet is only required to allow for compatability with Halow configuration of the TPU.
 
 # Install and configure PPS and GPSD
-**IMPORTANT:** Before running `configure.sh` set the Pi GPIO pin connected to the `timepulse` pin of the NEO module using the parameter at the top of the file.
+**IMPORTANT:** Before running `configure.sh` set the Pi GPIO pin connected to the `timepulse` pin of the NEO module using the parameter at the top of the file.  Additionaly, depending on your exact UART connection, the device name may need to be changed.
 ```
 cd ~/gnss_setup
 sudo ./install.sh
@@ -26,9 +26,9 @@ sudo reboot now
 ### Configure hardware
 Edit /etc/chrony/chrony.conf 
 - Comment out any other ntp servers
-- Add:
+- Add (be sure to put your device name in (no slashes, without dev.  Like /dev/ttyS0 becomes ttyS0)):
 ```
-refclock SOCK /run/chrony.ttyACM0.sock refid GPS precision 1e-1 offset 0.9999
+refclock SOCK /run/chrony.<device name here>.sock refid GPS precision 1e-1 offset 0.9999
 refclock SOCK /run/chrony.pps0.sock refid PPS precision 1e-7
 ```
 

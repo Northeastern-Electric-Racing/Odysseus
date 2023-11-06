@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PPS_GPIO_PIN=18
+UART_DEV_FILENAME=/dev/ttyAMA0
 
 
 if [ "$EUID" -ne 0 ]; then
@@ -10,7 +11,14 @@ fi
 
 # add the new gpsd file pointing to correct UART and GPIO locations
 cp "/etc/default/gpsd" "/etc/default/gpsd.backup-$(date +%s)"
-cp ./install/gpsd /etc/default/
+echo "# custom replaced gpsd configuration script
+
+# devices are ACM0 for UART and pps0 for pps-gpio
+DEVICES=\"$UART_DEV_FILENAME /dev/pps0\"
+
+# ensure GPSD properly exits
+GPSD_OPTIONS=\"-n\" 
+" > "/etc/default/gpsd"
 
 
 # add the pps line to the dt overlay

@@ -1,7 +1,0 @@
-# custom replaced gpsd configuration script
-
-# devices are ACM0 for UART and pps0 for pps-gpio
-DEVICES="/dev/ttyACM0 /dev/pps0"
-
-# ensure GPSD properly exits
-GPSD_OPTIONS="-n" 

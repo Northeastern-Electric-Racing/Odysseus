@@ -8,7 +8,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # how to build: https://gpsd.io/building.html
-apt install pps-tools scons python3-serial libncurses-dev build-essential manpages-dev pkg-config chrony
+apt install pps-tools scons python3-serial python3-distutils libncurses-dev build-essential manpages-dev pkg-config chrony
 
 # for xgps and gpsplot: libgtk-3-dev python3-gi python3-gi-cairo python3-matplotlib
 
@@ -31,6 +31,8 @@ export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 scons && scons check && scons udev-install
 
 echo "If the above processes completed, without error, assume gpsd was installed correctly."
+echo "If there was an error, gpsd probably never got installed!  
+Override this by running scons udev-install in the gpsd source folder."
 
 
 

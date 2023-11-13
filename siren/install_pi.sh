@@ -22,7 +22,7 @@ apt install mosquitto
 
 # clone and make the message-timestamp file
 echo "Building and installing timestamping plugin"
-git clone --depth 1 --branch v$MOSQUITTO_VERSION https://github.com/eclipse/mosquitto -o /tmp/mosquitto
+git clone --depth 1 --branch v$MOSQUITTO_VERSION https://github.com/eclipse/mosquitto /tmp/mosquitto
 cd "/tmp/mosquitto/plugins/message-timestamp" || exit
 make
 
@@ -34,6 +34,8 @@ cp "./mosquitto_message_timestamp.so" "/usr/lib/$ARCH-linux-gnu/mosquitto_messag
 
 # add a conf file to load the plugin
 echo "plugin /usr/lib/$ARCH-linux-gnu/mosquitto_message_timestamp.so" > "/etc/mosquitto/conf.d/plugins.conf"
+
+./conf_update_pi.sh
 
 
 

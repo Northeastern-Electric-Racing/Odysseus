@@ -1,21 +1,48 @@
-import paho.mqtt.client as mqtt
+import asyncio
+import signal
+import json
+from gmqtt import Client as MQTTClient
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+STOP = asyncio.Event()
 
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
+def on_connect(client, flags, rc, properties):
+    print('Connected')
+
+def on_message(client, topic, payload, qos, properties):
+    dict = json.loads(payload)
+    print(f'RECV MSG: {topic} {payload} {dict["topic"]} {dict["data"]}')
+
+def on_subscribe(client, mid, qos, properties):
+    print('SUBSCRIBED')
+
+def on_disconnect(client, packet, exc=None):
+    print('Disconnected')
+
+def ask_exit(*args):
+    STOP.set()
+
+async def main(broker_host, port = 1883):
+    client = MQTTClient("test-subscriber")
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.on_subscribe = on_subscribe
+    client.on_disconnect = on_disconnect
+
+    # Connectting the MQTT broker
+    await client.connect(broker_host, port)
+
+    # Subscribe to topic
     client.subscribe("/mpu")
 
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    print(msg.topic+" "+ msg.payload.decode("utf-8"))
+    await STOP.wait()
+    await client.disconnect()
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
 
-client.connect("127.0.0.1", 1883, 60)
+    loop.add_signal_handler(signal.SIGINT, ask_exit)
+    loop.add_signal_handler(signal.SIGTERM, ask_exit)
 
-client.loop_forever()
+    host = '127.0.0.1'
+    loop.run_until_complete(main(host))

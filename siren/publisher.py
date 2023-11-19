@@ -1,27 +1,50 @@
-import paho.mqtt.client as mqtt
-import time as time
+import asyncio
+import signal
+import json
+from gmqtt import Client as MQTTClient
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+STOP = asyncio.Event()
 
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    print(msg.topic+" "+ msg.payload.decode("utf-8"))
+def on_connect(client, flags, rc, properties):
+    print('Connected')
 
-def publish(client):
-    while(True):
-        message_info = client.publish("/mpu", "Hello from the publisher!")
-        message_info.wait_for_publish()
-        print(message_info.rc)
-        time.sleep(3)
+def on_message(client, topic, payload, qos, properties):
+    dict = json.loads(payload)
+    print(f'RECV MSG: {topic} {payload} {dict["topic"]}')
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+def on_subscribe(client, mid, qos, properties):
+    print('SUBSCRIBED')
 
-client.connect("127.0.0.1", 1883, 60)
+def on_disconnect(client, packet, exc=None):
+    print('Disconnected')
 
-client.loop_start()
-publish(client)
-client.loop_stop()
+def ask_exit(*args):
+    STOP.set()
+
+async def main(broker_host, port = 1883):
+    client = MQTTClient("test-publisher")
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.on_subscribe = on_subscribe
+    client.on_disconnect = on_disconnect
+
+    # Connectting the MQTT broker
+    await client.connect(broker_host, port)
+
+    json_msg = json.loads('{"topic": "mpu", "data": 4}')
+
+    # Send the data of test
+    client.publish("/mpu", json_msg)
+
+    await STOP.wait()
+    await client.disconnect()
+
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+
+    loop.add_signal_handler(signal.SIGINT, ask_exit)
+    loop.add_signal_handler(signal.SIGTERM, ask_exit)
+
+    host = '127.0.0.1'
+    loop.run_until_complete(main(host))

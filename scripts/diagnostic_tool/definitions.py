@@ -6,6 +6,7 @@ class OPTIONS(Enum):
     GPS = "gps"
     HALOW = "halow"
     MQTT = "mqtt"
+    DB = "db"
     SYSTEM = "system"
 
     def __str__(self):

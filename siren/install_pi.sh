@@ -35,7 +35,7 @@ cp "./mosquitto_message_timestamp.so" "/usr/lib/$ARCH-linux-gnu/mosquitto_messag
 # add a conf file to load the plugin
 echo "plugin /usr/lib/$ARCH-linux-gnu/mosquitto_message_timestamp.so" > "/etc/mosquitto/conf.d/plugins.conf"
 
-./conf_update_pi.sh
+echo "Done. now run conf_update_pi.sh to install acl and conf.  Also run when updating either conf file."
 
 
 

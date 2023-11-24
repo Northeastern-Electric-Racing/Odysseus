@@ -1,5 +1,5 @@
 # Wireless22A
-Code for Wireless22A project.
+Our HaLow-WiFi-based telemetry system 
 
 ## Siren
 Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses a MQTT server to send telemetry data from the car. Siren is a custom [Mosquitto](https://mosquitto.org) server.

@@ -1,6 +1,1 @@
-<<<<<<< HEAD
 mosquitto -c mosquitto.conf
-=======
-bun run build
-bun run start
->>>>>>> main

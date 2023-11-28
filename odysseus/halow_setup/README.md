@@ -1,8 +1,8 @@
 This is the code for Newracom/HaLow setup for Odysseus 22A.  Full details can be found in the NER Confluence.
 
 This setup process is tested for:
-- [NRC sw v1.4.1](https://github.com/newracom/nrc7292_sw_pkg) (+ [NRC RPi setup instructions v1.5](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-018-Raspberry_Pi_setup.pdf))
-- [NRC SDK v1.5.2](https://github.com/newracom/nrc7292_sdk)
+- [NRC sw v1.5](https://github.com/newracom/nrc7292_sw_pkg) (+ [NRC RPi setup instructions v1.6](https://github.com/newracom/nrc7292_sw_pkg/blob/master/package/doc/UG-7292-018-Raspberry_Pi_setup.pdf))
+- [NRC SDK v1.6](https://github.com/newracom/nrc7292_sdk)
 - OS: Raspberry Pi Lite 64 bit (Bookworm).
 - Hardware: [ALFA AHPI7292S PiHAT](https://docs.alfa.com.tw/Product/AHPI7292S/30_Technical_Details/) (the board data file is different, and in terms of these setup scripts is otherwise interchangable with a NRC EVK)
 

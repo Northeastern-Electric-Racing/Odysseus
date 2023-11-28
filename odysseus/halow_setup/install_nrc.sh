@@ -10,20 +10,20 @@ fi
 
 
 echo "Updating sw pkg"
-cd ~
+cd ~ || exit
 git clone https://github.com/newracom/nrc7292_sw_pkg.git
-cd nrc7292_sw_pkg/package/evk/sw_pkg
+cd nrc7292_sw_pkg/package/evk/sw_pkg || exit
 chmod +x update.sh
 ./update.sh
 
 echo "Building nrc.ko"
-cd ~/nrc7292_sw_pkg/package/src/nrc
+cd ~/nrc7292_sw_pkg/package/src/nrc || exit
 make
 
 cp -b nrc.ko ~/nrc_pkg/sw/driver
 
 echo "Building cli_app"
-cd ~/nrc7292_sw_pkg/package/src/cli_app
+cd ~/nrc7292_sw_pkg/package/src/cli_app || exit
 make
 chmod +x cli_app
 
@@ -31,4 +31,4 @@ cp -b cli_app ~/nrc_pkg/script
 
 # install custom board data file for alfa, see README for source
 echo "Adding correct board data for alfa"
-cp -b $SCRIPT_DIR/sources/nrc7292_bd.dat ~/nrc_pkg/sw/firmware
+cp -b "$SCRIPT_DIR"/sources/nrc7292_bd.dat ~/nrc_pkg/sw/firmware

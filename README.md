@@ -1,19 +1,36 @@
 # Wireless22A
 Our HaLow-WiFi-based telemetry system 
 
-## Directory Structure
-```
-.
-|
-|───odysseus  # OS Configuration Files
-|───scripts   # Scripts for data collection and automation
-|───siren     # MQTT server configuration and setup
-|
-└───README.md
-```
+## Siren
+Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses a MQTT server to send telemetry data from the car. Siren is a custom [Mosquitto](https://mosquitto.org) server.
 
-## Development
-> Note that this serves as a single node in the `Odyssey` system, where [Calypso](https://github.com/Northeastern-Electric-Racing/Calypso) publishes decoded CAN data to the MQTT server and [Argos](https://github.com/Northeastern-Electric-Racing/Argos) visualizes the data broadcasted by the MQTT server
+### About MQTT
+For information about MQTT, check out [this confluence page](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/173113345/Delving+into+MQTT).
 
 ### Running with Docker
 Coming soon.
+
+### Local Setup
+To set up Siren locally on your machine, simply install using [these instructions](https://mosquitto.org/download/).
+
+
+### Running Locally
+To run Siren locally on your machine, simply use the `run` script from the `siren` directory.
+
+- For Mac/Linux/WSL:
+```console
+$ ./run
+```
+
+- For Windows:
+
+No script yet. Run the command:
+
+```console
+mosquitto -c mosquitto.conf
+```
+
+After that, Siren should start up and it is open to connections.
+
+### Testing Siren
+To test that Siren is working properly, run the `subscriber.py` and `publisher.py` scripts in the same environment that Siren is hosted in. After a few seconds, the terminal running the `subscriber.py` script should begin receiving messages, which means that Siren is working properly.

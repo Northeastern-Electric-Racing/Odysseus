@@ -1,2 +1,1 @@
-bun run build
-bun run start
+mosquitto -c mosquitto.conf

@@ -1,42 +1,50 @@
-import websocket
-import time
+import asyncio
+import signal
+import json
+from gmqtt import Client as MQTTClient
 
-# Callback for handling WebSocket open event
-def on_open(ws):
-    print("Started")
-    
-    while True:
-        time.sleep(5)
-        ws.send("Sending message to test topic!")
+STOP = asyncio.Event()
 
-# Callback for handling WebSocket message event
-def on_message(ws, message):
-    print("Received message: {}".format(message))
+def on_connect(client, flags, rc, properties):
+    print('Connected')
 
-# Callback for handling WebSocket error event
-def on_error(ws, error):
-    print("Error encountered: {}".format(error))
+def on_message(client, topic, payload, qos, properties):
+    dict = json.loads(payload)
+    print(f'RECV MSG: {topic} {payload} {dict["topic"]}')
 
-# Callback for handling WebSocket close event
-def on_close(wsapp, close_status_code, close_msg):
-    print("WebSocket connection closed.")
-    
-    if (close_status_code):
-        print("Closing status code: " + close_status_code)
-    if (close_msg):
-        print("Closing message: " + close_msg)
+def on_subscribe(client, mid, qos, properties):
+    print('SUBSCRIBED')
 
-# Define the WebSocket server URL
-websocket_url = "ws://127.0.0.1:3000"
+def on_disconnect(client, packet, exc=None):
+    print('Disconnected')
 
-# Creating WebSocket connection object and attaching event handlers
-ws = websocket.WebSocketApp(
-    websocket_url,
-    on_open=on_open,
-    on_message=on_message,
-    on_error=on_error,
-    on_close=on_close
-)
+def ask_exit(*args):
+    STOP.set()
 
-# Start the WebSocket connection
-ws.run_forever()
+async def main(broker_host, port = 1883):
+    client = MQTTClient("test-publisher")
+
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.on_subscribe = on_subscribe
+    client.on_disconnect = on_disconnect
+
+    # Connectting the MQTT broker
+    await client.connect(broker_host, port)
+
+    json_msg = json.loads('{"topic": "mpu", "data": 4}')
+
+    # Send the data of test
+    client.publish("/mpu", json_msg)
+
+    await STOP.wait()
+    await client.disconnect()
+
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+
+    loop.add_signal_handler(signal.SIGINT, ask_exit)
+    loop.add_signal_handler(signal.SIGTERM, ask_exit)
+
+    host = '127.0.0.1'
+    loop.run_until_complete(main(host))

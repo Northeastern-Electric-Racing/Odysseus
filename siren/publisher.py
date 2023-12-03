@@ -1,5 +1,6 @@
 import asyncio
 import signal
+import time
 import json
 from gmqtt import Client as MQTTClient
 
@@ -32,7 +33,7 @@ async def main(broker_host, port = 1883):
     # Connectting the MQTT broker
     await client.connect(broker_host, port)
 
-    json_msg = json.loads('{"topic": "mpu", "data": 4}')
+    json_msg = json.loads('{"data": 4, "units": "klubecks"}')
 
     # Send the data of test
     client.publish("/mpu", json_msg)

@@ -2,6 +2,7 @@ import asyncio
 import signal
 import json
 from gmqtt import Client as MQTTClient
+from multiprocessing import Pool
 
 STOP = asyncio.Event()
 
@@ -10,7 +11,8 @@ def on_connect(client, flags, rc, properties):
 
 def on_message(client, topic, payload, qos, properties):
     dict = json.loads(payload)
-    print(f'RECV MSG: {topic} {payload} {dict["topic"]} {dict["data"]}')
+    print(properties)
+    print(f'RECV MSG: {topic} {payload} {dict["data"]} {dict["units"]}')
 
 def on_subscribe(client, mid, qos, properties):
     print('SUBSCRIBED')

@@ -1,6 +1,8 @@
 [submodule "odysseus/buildroot"]
 	path = odysseus/buildroot
 	url = git@github.com:buildroot/buildroot.git
-[submodule "odysseus/odysseus_tree/src/nrc7292_sw_pkg"]
-	path = odysseus/odysseus_tree/src/nrc7292_sw_pkg
-	url = git@github.com:newracom/nrc7292_sw_pkg.git
+	branch = 2023.08.x
+[submodule "odysseus/odysseus_tree/sources/nrc7292_sw_pkg"]
+	path = odysseus/odysseus_tree/sources/nrc7292_sw_pkg
+	url = https://github.com/newracom/nrc7292_sw_pkg
+        branch = v1.5

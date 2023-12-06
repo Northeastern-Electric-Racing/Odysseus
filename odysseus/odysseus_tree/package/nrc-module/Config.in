@@ -1,6 +1,7 @@
-config BR2_PACKAGE_NRC_MODULE
-	bool "nrc-module"
-	depends on BR2_LINUX_KERNEL
-	help
-		This is the driver for the NRC7292 Wifi HaLow SoC
+config BR2_PACKAGE_HAS_NRC_MODULE
+    depends on BR2_LINUX_KERNEL
+    bool
 
+config BR2_PACKAGE_PROVIDES_NRC_MODULE
+    depends on BR2_PACKAGE_HAS_NRC_MODULE
+    string

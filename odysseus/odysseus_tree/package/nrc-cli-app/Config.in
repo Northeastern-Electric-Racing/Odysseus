@@ -1,4 +1,0 @@
-config BR2_PACKAGE_NRC_CLI
-	bool "nrc cli app"
-	help
-		This is the application used for configuring the NRC7292 Wifi HaLow SoC

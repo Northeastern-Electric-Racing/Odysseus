@@ -298,7 +298,7 @@ def run_common():
     print("Copy and Set Module Parameters")
     insmod_arg = setModuleParam()
 
-    insmod_arg = insmod_arg.replace(" ", " nrc.")
+    # insmod_arg = insmod_arg.replace(" ", " nrc.")
 
     # print("Adding", insmod_arg)
 

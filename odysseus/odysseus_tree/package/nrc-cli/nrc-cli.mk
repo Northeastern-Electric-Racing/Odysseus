@@ -1,18 +1,15 @@
-PKGNAME = nrc-cli
-#_PKGNAME = cli_app
-
-${PKGNAME}_VERSION = 1.5
-${PKGNAME}_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/sources/nrc7292_sw_pkg/src/cli_app
-${PKGNAME}_SITE_METHOD = local
+NRC_CLI_VERSION = 1.5
+NRC_CLI_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/sources/nrc7292_sw_pkg/package/src/cli_app
+NRC_CLI_SITE_METHOD = local
 #NRC7292_DEPENDENCIES = ncurses
-${PKGNAME}_LICENSE = Proprietary
+NRC_CLI_LICENSE = Proprietary
 
 
 
-define ${PKGNAME}_BUILD_CMDS
+define NRC_CLI_BUILD_CMDS
    $(MAKE) $(TARGET_CONFIGURE_OPTS) all -C $(@D)
 endef
-define ${PKGNAME}_INSTALL_TARGET_CMDS
+define NRC_CLI_INSTALL_TARGET_CMDS
    $(INSTALL) -D -m 0755 $(@D)/cli_app $(TARGET_DIR)/usr/bin
 endef
 

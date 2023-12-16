@@ -1,0 +1,11 @@
+config BR2_PACKAGE_NRC7292
+	bool "nrc7292"
+        select BR2_PACKAGE_HAS_NRC
+	help
+		This is the driver for the NRC7292 Wifi HaLow SoC
+
+if BR2_PACKAGE_NRC7292
+config BR2_PACKAGE_PROVIDES_NRC
+    default "nrc7292"
+endif
+

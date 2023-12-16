@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HAS_NRC
+    depends on BR2_LINUX_KERNEL
+    bool
+
+config BR2_PACKAGE_PROVIDES_NRC
+    depends on BR2_PACKAGE_HAS_NRC
+    string

@@ -1,5 +1,5 @@
-source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc-module/Config.in"
-source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc7292-module/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc7292/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc-cli/Config.in"
 #source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nrc-userspace-sta/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/alfa-led-sta/Config.in"

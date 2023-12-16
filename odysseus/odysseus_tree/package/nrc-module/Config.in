@@ -1,7 +1,0 @@
-config BR2_PACKAGE_HAS_NRC_MODULE
-    depends on BR2_LINUX_KERNEL
-    bool
-
-config BR2_PACKAGE_PROVIDES_NRC_MODULE
-    depends on BR2_PACKAGE_HAS_NRC_MODULE
-    string

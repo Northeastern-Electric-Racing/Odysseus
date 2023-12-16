@@ -83,8 +83,8 @@ config BR2_PACKAGE_NANOMQ_STATICLIB
     help
         Builds as a static library
 
-config BR2_PACKAGE_NANOMQ_SHAREDLIB
-    bool "Shared library"
+config BR2_PACKAGE_NANOMQ_DISABLE_SHAREDLIB
+    bool "Disable shared library"
     help
         Builds as a shared library
 

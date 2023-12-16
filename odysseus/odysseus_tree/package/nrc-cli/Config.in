@@ -1,5 +1,5 @@
 config BR2_PACKAGE_NRC_CLI
 	bool "nrc-cli"
-        depends on BR2_PACKAGE_HAS_NRC_MODULE
+        depends on BR2_PACKAGE_HAS_NRC
 	help
 		This is the application used for configuring the NRC Wifi HaLow SoC

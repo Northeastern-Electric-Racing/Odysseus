@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ######################
 # amount of time to wait in between loops
@@ -38,7 +38,7 @@ do
     #gateway=$(ip route show 0.0.0.0/0 dev $INTERFACE_NAME | cut -d\  -f3)
     # check gateway for ip being given
     gateway_connect=$(ip a s $INTERFACE_NAME | grep "inet")
-    if [[ -n $gateway_connect ]];
+    if [ -n "$gateway_connect" ];
     then 
         $CLI_APP gpio write 3 1 >> /dev/null
     else
@@ -49,7 +49,7 @@ do
     
     # check custom url for connectivity, if packet recieved then write to led
     gateway_connect=$(ping -c1 -I $INTERFACE_NAME -q -w $MAX_PING_TIME $YELLOW_LED_CHECK_URL | grep "1 received")
-    if [[ -n $gateway_connect ]];
+    if [ -n "$gateway_connect" ];
     then 
         $CLI_APP gpio write 2 1 >> /dev/null
     else

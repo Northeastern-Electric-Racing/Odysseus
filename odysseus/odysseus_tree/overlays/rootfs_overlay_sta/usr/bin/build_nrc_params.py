@@ -14,7 +14,7 @@ Second arg --> path/to/cmdline.txt
 # Firmware Conf.
 model = 7292      # 7292/7393/7394
 fw_download = 1         # 0(FW Download off) or 1(FW Download on)
-fw_name = 'uni_s1g.bin'
+fw_name = 'nrc7292_cspi.bin'
 ##################################################################################
 # DEBUG Conf.
 # NRC Driver log

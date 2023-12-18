@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# STATION MODE led script for ALFA AHPI7292
 ######################
 # amount of time to wait in between loops
 SLEEP_TIME=3
@@ -12,7 +13,6 @@ CLI_APP="/usr/bin/cli_app"
 # maximum time to wait for a yellow light ping, minimun 1 second
 MAX_PING_TIME=1
 ######################
-
 
 # bit flipper for blinking function
 oscillate=0
@@ -31,6 +31,7 @@ cleanup() {
     $CLI_APP gpio write 2 0
 }
 
+echo "Starting STATION Mode LEDs"
 while true;
 do
     sleep "$SLEEP_TIME"s
@@ -42,7 +43,7 @@ do
     then 
         $CLI_APP gpio write 3 1 >> /dev/null
     else
-        oscillate=$((1-"$oscillate"))
+        oscillate="$((1-oscillate))"
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
         continue
     fi

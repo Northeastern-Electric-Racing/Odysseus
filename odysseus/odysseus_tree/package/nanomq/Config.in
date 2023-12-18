@@ -12,7 +12,10 @@ config BR2_PACKAGE_NANOMQ_QUIC
     bool "QUIC"
     default n
     help
-        to build NanoMQ with QUIC bridging feature
+        to build NanoMQ with QUIC bridging feature.
+
+        Custom note: Uses a custom patched OpenSSL which complicates build.
+        Edit the makefile to achieve correct build params.
 
 config BR2_PACKAGE_NANOMQ_AWS_BRIDGE
     bool "AWS Bridging"

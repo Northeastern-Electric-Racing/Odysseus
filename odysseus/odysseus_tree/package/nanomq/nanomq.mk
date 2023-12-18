@@ -1,19 +1,28 @@
+# must use later version then stable due to build issue with log_err function.
+# Fix upon next nanomq release, as the build system is somewhat complicated and often changes
 NANOMQ_VERSION = 9828d7b0c432d9495c5f940d75df0a621203b814
 NANOMQ_SITE_METHOD = git
 NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES
 NANOMQ_LICENSE = MIT
+# Note: this doesn't seem to be in use despite setting it?
 NANOMQ_CMAKE_BACKEND = ninja
+# so it uses a build subdirectory
 NANOMQ_SUPPORTS_IN_SOURCE_BUILD = NO
+
+define NANOMQ_INSTALL_INIT_SYSV
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/S75nanomq
+endef
 
 
 ifeq ($(BR2_PACKAGE_NANOMQ_QUIC), y)
 NANOMQ_CONF_OPTS += -DNNG_ENABLE_QUIC=ON
+# So cmake doesn't search sysroot for the msquic.h header
 NANOMQ_CONF_OPTS += -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=NEVER
+# This is all for the QUIC OpenSSL to correctly ID the target arch as it uses custom perl configuration to prepare makefile
 NANOMQ_CONF_OPTS += -DONEBRANCH=YES -DCMAKE_TARGET_ARCHITECTURE=arm64 -DGNU_MACHINE=aarch64-buildroot- -DFLOAT_ABI_SUFFIX=linux-gnu
+# since nanomq expects ./build for the cmake dir, but buildroot uses ./buildroot-build, symlink them before doing anything
 define NANOMQ_OPENSSL_FIXUP
-#	$(call $(@D)/nng/extern/msquic/submodules/openssl/Configure, linux-aarch64)
-#	$(call mkdir, $(@D)/buildroot-build)	
 	ln -s $(@D)/buildroot-build $(@D)/build
 endef
 

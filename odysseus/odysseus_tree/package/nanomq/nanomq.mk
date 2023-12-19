@@ -4,6 +4,7 @@ NANOMQ_VERSION = 9828d7b0c432d9495c5f940d75df0a621203b814
 NANOMQ_SITE_METHOD = git
 NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES
+NANOMQ_GIT_LFS = YES
 NANOMQ_LICENSE = MIT
 # Note: this doesn't seem to be in use despite setting it?
 NANOMQ_CMAKE_BACKEND = ninja

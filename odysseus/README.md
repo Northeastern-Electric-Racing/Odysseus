@@ -4,6 +4,9 @@ Custom Linux Build being used to drive the TPU
 ## Setting up Docker Environment
 TBD, for now build locally on Linux
 
+## Setting up loal environment
+1. Install `git-lfs` (for nanomq submodules)
+
 ## Start Container on MacOS/Linux
 In any terminal that is in the directory:
 

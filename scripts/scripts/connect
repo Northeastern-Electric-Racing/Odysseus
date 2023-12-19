@@ -31,7 +31,7 @@ def main():
             os.system("sudo dhclient {}".format(HALOW_INTERFACE))
 
             # 0 if not connected (no result in terminal flipped) 256 if connected (result in terminal flipped)
-            result += abs(os.system("ip -4 address show dev {}".format(HALOW_INTERFACE)) - 256)
+            result += abs(os.system("ip -4 address show dev {} | grep i".format(HALOW_INTERFACE)) - 256)
 
             if result == 256 + 256:
                 break

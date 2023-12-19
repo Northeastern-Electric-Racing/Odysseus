@@ -1,0 +1,24 @@
+[Unit]
+Description=Control nrc using the python scripts provided (AP mode).
+# ensure nrc-led.sh is also started, but don't fail if nrc-led.sh fails
+Wants=nrc-led-ap.service
+# ensure other mode isnt also set to start
+Conflicts=nrc-autostart-sta.service
+
+[Service]
+User=pi
+Group=pi
+# for main process which exits
+Type=oneshot
+# keep state as active after startup finishes, so follow up units start
+RemainAfterExit=yes
+
+ExecStartPre=/usr/local/sbin/nrc-wizard-ap.sh stop
+
+ExecStart=/usr/local/sbin/nrc-wizard-ap.sh start-systemd
+# run this as post is it guarrantees running as cleanup
+ExecStopPost=/usr/local/sbin/nrc-wizard-ap.sh stop
+
+[Install]
+WantedBy=multi-user.target
+

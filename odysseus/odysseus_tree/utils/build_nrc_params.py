@@ -1,1 +1,1 @@
-/home/jack/Projects/NER/buildroot/Siren/odysseus/odysseus_tree/overlays/rootfs_overlay_sta/usr/bin/build_nrc_params.py
+../overlays/rootfs_overlay_sta/usr/bin/build_nrc_params.py

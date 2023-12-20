@@ -5,7 +5,14 @@ Custom Linux Build being used to drive the TPU
 TBD, for now build locally on Linux
 
 ## Setting up loal environment
-1. Install `git-lfs` (for nanomq submodules)
+1. Install `git-lfs` (for nanomq submodules), and `libelf` (or `libelf-dev`) (for nrc7292 objtool build)
+2. Install all buildroot dependencies, including:
+    - [All mandatory packages](https://buildroot.org/downloads/manual/manual.html#requirement) (most preinstalled on a normal linux system)
+    - python3
+    - ncurses5 (or 6) (for menuconfig)
+    - Git, rsync
+    - graphviz, python-matplotlib, and dotx for graph creation (optional)
+    
 
 ## Start Container on MacOS/Linux
 In any terminal that is in the directory:
@@ -20,7 +27,7 @@ In any terminal that is in the directory:
 1. Run ```git submodule update --init``` to clone the buildroot repo locally
 2. Edit `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig` and change `BR2_CCACHE_DIR=` to a directory prepared to hold around ~5G of data.
 3. ```cd``` into the ```Siren/odysseus/buildroot``` directory
-4. Run ```make BR2_EXTERNAL=../odysseus_tree/raspberrypi4_64_tpu_defconfig```
+4. Run ```make BR2_EXTERNAL=../odysseus_tree raspberrypi4_64_tpu_defconfig```
 5. All future config loads should be easier: `make raspberrypi4_64_tpu_defconfig`
 
 ## Configuring the Project

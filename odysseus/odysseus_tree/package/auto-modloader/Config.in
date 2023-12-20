@@ -1,0 +1,5 @@
+config BR2_PACKAGE_AUTO_MODLOADER
+    bool "auto-modloader"
+    help
+        A init script that modprobes all modules located in /etc/modules
+        Use /etc/modprobe.d to specify params for loading

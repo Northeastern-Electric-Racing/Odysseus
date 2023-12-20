@@ -1,0 +1,146 @@
+config BR2_PACKAGE_NANOMQ
+    bool "nanomq"
+    help
+        An edge computing MQTT broker and bridge engine from emgx
+
+
+if BR2_PACKAGE_NANOMQ
+
+comment "Build options"
+
+config BR2_PACKAGE_NANOMQ_QUIC
+    bool "QUIC"
+    default n
+    help
+        to build NanoMQ with QUIC bridging feature.
+
+        Custom note: Uses a custom patched OpenSSL which complicates build.
+        Edit the makefile to achieve correct build params.
+
+config BR2_PACKAGE_NANOMQ_AWS_BRIDGE
+    bool "AWS Bridging"
+    default n
+    help
+        Enables the AWS IoT Core bridging feature.
+
+        Note: This feature is not compatible with MQTT over QUIC bridging. 
+        Users can operate only one type of bridging at a time.
+
+config BR2_PACKAGE_NANOMQ_TLS
+    bool "TLS"
+    default n
+    depends on BR2_PACKAGE_MBEDTLS
+    help
+        to build with TLS support
+
+config BR2_PACKAGE_NANOMQ_CLIENT_SUITE
+    bool "client suite"
+    default y
+    help
+        nanomq tools client suite (including pub / sub / conn )
+
+config BR2_PACKAGE_NANOMQ_ZMQ_GATEWAY
+    bool "ZMQ gateway"
+    default n
+    help
+        to build nanomq_cli with zeromq gateway too
+
+config BR2_PACKAGE_NANOMQ_DDS_PROXY
+    bool "DDS Proxy"
+    default n
+    help
+        to build nanomq_cli with dds client ( proxy / sub / pub )
+
+config BR2_PACKAGE_NANOMQ_VSOMEIP_GATEWAY
+    bool "vsomeip gateway"
+    default n
+    help
+        Build vsomeip gateway
+
+config BR2_PACKAGE_NANOMQ_NNG_PROXY
+    bool "NNG Proxy"
+    default n
+    help
+        Build nng proxy
+
+config BR2_PACKAGE_NANOMQ_BENCH
+    bool "bench"
+    default n
+    help
+        to build nanomq_cli mqtt bench
+
+config BR2_PACKAGE_NANOMQ_JWT
+    bool "JWT"
+    default n
+    help
+        to build JWT dependency for http server
+
+config BR2_PACKAGE_NANOMQ_SQLITE
+    bool "sqlite"
+    help
+        to build nanomq with sqlite support
+
+config BR2_PACKAGE_NANOMQ_STATICLIB
+    bool "Static library"
+    default n
+    help
+        Builds as a static library
+
+config BR2_PACKAGE_NANOMQ_DISABLE_SHAREDLIB
+    bool "Disable shared library"
+    help
+        Builds as a shared library
+
+config BR2_PACKAGE_NANOMQ_DEBUG
+    bool "ddebug"
+    help
+        Enables the debug flag.
+
+config BR2_PACKAGE_NANOMQ_DASAN
+    bool "Sanitizer"
+    help
+        Enables sanitizer.
+
+config BR2_PACKAGE_NANOMQ_LOG
+    bool "Logging"
+    default y
+    help
+        Disable the log system to improve system performance
+
+config BR2_PACKAGE_NANOMQ_TRACE
+    bool "trace"
+    default n
+    help
+        Enables ptrace, allowing process tracing and inspection.
+
+config BR2_PACKAGE_NANOMQ_RULE_ENGINE
+    bool "Rule engine"
+    default n
+    help
+        Enable rule engine
+
+config BR2_PACKAGE_NANOMQ_MYSQL
+    bool "MySQL"
+    default n
+    help
+        Enable MySQL
+
+config BR2_PACKAGE_NANOMQ_ACL
+    bool "ACL"
+    default y
+    help
+        Enable ACL
+
+config BR2_PACKAGE_NANOMQ_SYSLOG
+    bool "syslog"
+    default y
+    help
+        Enable syslog
+
+config BR2_PACKAGE_NANOMQ_TESTS
+    bool "tests"
+    default n
+    help
+        Enable nanomqy unit tests
+
+endif

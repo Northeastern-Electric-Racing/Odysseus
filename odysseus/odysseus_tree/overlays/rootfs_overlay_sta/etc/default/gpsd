@@ -1,0 +1,2 @@
+DEVICES=/dev/ttyAMA0
+GPSD_OPTIONS="-n"  

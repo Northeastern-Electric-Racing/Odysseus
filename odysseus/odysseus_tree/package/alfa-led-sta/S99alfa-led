@@ -1,0 +1,25 @@
+#!/bin/sh
+
+PIDFILE=/var/run/alfa-led-sta.sh.pid
+EXECUTABLE=/usr/bin/alfa-led-sta
+
+case "$1" in
+  start)
+    echo "Starting LEDs..."
+    # start (S) executable (x) in background (b), make pid file (m) at p
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
+    ;;
+  stop)
+    echo "Stopping LEDs..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -x "$EXECUTABLE" -p "$PIDFILE" --remove-pidfile
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac
+

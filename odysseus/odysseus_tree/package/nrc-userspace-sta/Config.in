@@ -1,8 +1,0 @@
-config BR2_PACKAGE_NRC_USERSPACE_STA
-    bool "nrc-userspace-sta"
-    depends on BR2_PACKAGE_NRC_CLI
-    select BR2_PACKAGE_WPA_SUPPLICANT
-    select BR2_PACKAGE_DHCPCD
-    help
-      Extra misc scripting for STA mode of nrc-userspace.
-      Includes a hook to set txpwr and guard interval

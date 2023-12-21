@@ -1,7 +1,0 @@
-config BR2_PACKAGE_ALFA_LED_STA
-    bool "alfa-led-sta"
-    depends on BR2_PACKAGE_NRC_CLI
-    depends on BR2_PACKAGE_IPUTILS
-    depends on BR2_PACKAGE_IPROUTE2
-    help
-      Installs the ALFA led userspace runner for the NRC networking board 

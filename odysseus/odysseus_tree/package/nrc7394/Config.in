@@ -1,0 +1,24 @@
+config BR2_PACKAGE_NRC7394
+	bool "nrc7394"
+    select BR2_PACKAGE_HAS_NRC
+	help
+		This is the driver for the NRC7394 Wifi HaLow SoC
+
+if BR2_PACKAGE_NRC7394
+
+config BR2_PACKAGE_PROVIDES_NRC
+	default "nrc7394"
+
+config BR2_PACKAGE_NRC7394_CUSTOM_BD_FILE
+	string "custom BD file"
+	help
+		Custom board data file to be installed to firmware (ex. ALFA's)
+		If not specified, will use board data file for nrc7394 EVK hardware
+
+config BR2_PACKAGE_NRC7394_CUSTOM_DTOVERLAY_FILE
+	string "custom DTO file"
+	help
+		Custom dtoverlay file to be installed to overlays.
+		If not specified, the default linux > 5.16 spi 0.1 will be used.
+
+endif

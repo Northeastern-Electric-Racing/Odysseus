@@ -1,0 +1,6 @@
+config BR2_PACKAGE_NRC_INIT_EXTRA
+    bool "nrc init extra"
+    depends on BR2_PACKAGE_NRC_CLI
+    help
+      Extra misc scripting for nrc userspace.
+      Includes a hook to set txpwr and guard interval

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PIDFILE=/var/run/alfa-led-sta.sh.pid
-EXECUTABLE=/usr/bin/alfa-led-sta
+PIDFILE=/var/run/alfa-led.sh.pid
+EXECUTABLE=/usr/bin/alfa-led
 
 case "$1" in
   start)

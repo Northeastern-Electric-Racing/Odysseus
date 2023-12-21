@@ -1,0 +1,17 @@
+config BR2_PACKAGE_ALFA_LED
+    bool "alfa-led"
+    depends on BR2_PACKAGE_NRC_CLI
+    depends on BR2_PACKAGE_IPUTILS
+    depends on BR2_PACKAGE_IPROUTE2
+    help
+      Installs the ALFA led userspace runner for the NRC networking board in STA mode
+
+if BR2_PACKAGE_ALFA_LED
+
+config BR2_PACKAGE_ALFA_LED_AP
+    bool "ap mode"
+    default n
+    depends on BR2_PACKAGE_HOSTAPD
+    help
+        Show LEDs in AP mode instead of STA mode if selected
+endif

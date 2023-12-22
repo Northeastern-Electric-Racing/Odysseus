@@ -4,7 +4,7 @@ ALFA_LED_SITE_METHOD = local
 
 ALFA_LED_SCRIPT_PATH = $(@D)/alfa-led-sta.sh
 
-ifeq ($(BR2_PACKAGE_ALFA_LED_MODE), y)
+ifeq ($(BR2_PACKAGE_ALFA_LED_AP), y)
 ALFA_LED_SCRIPT_PATH = $(@D)/alfa-led-ap.sh
 endif
 

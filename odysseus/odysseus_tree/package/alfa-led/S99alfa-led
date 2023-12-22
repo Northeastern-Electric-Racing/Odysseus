@@ -12,7 +12,8 @@ case "$1" in
   stop)
     echo "Stopping LEDs..."
     # stop (K) and remove pidfile
-    start-stop-daemon -K -x "$EXECUTABLE" -p "$PIDFILE" --remove-pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
     ;;
   restart|reload)
     "$0" stop

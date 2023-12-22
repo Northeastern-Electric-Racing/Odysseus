@@ -1,0 +1,26 @@
+#!/bin/sh
+
+PIDFILE=/var/run/hostapd.pid
+EXECUTABLE=/usr/sbin/hostapd
+CONF=/etc/hostapd.conf
+
+case "$1" in
+  start)
+    echo "Starting hostapd..."
+    # start (S) executable (x), make pid file (m) at p, run in background (-- -B),
+    start-stop-daemon -S -x "$EXECUTABLE" -m -p "$PIDFILE" -- -B "$CONF"
+    ;;
+  stop)
+    echo "Stopping hostapd..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    hostapd_cli reload
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac
+

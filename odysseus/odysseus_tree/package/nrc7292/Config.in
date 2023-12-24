@@ -15,10 +15,4 @@ config BR2_PACKAGE_NRC7292_CUSTOM_BD_FILE
 		Custom board data file to be installed to firmware (ex. ALFA's)
 		If not specified, will use board data file for nrc7292 EVK hardware
 
-config BR2_PACKAGE_NRC7292_CUSTOM_DTOVERLAY_FILE
-	string "custom DTO file"
-	help
-		Custom dtoverlay file to be installed to overlays.
-		If not specified, the default linux > 5.16 spi 0.1 will be used.
-
 endif

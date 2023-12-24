@@ -1,0 +1,17 @@
+config BR2_PACKAGE_RPI_DTLOADER
+    bool "load more RPI DTS files"
+    help
+        Load extra device tree overlay (DTS) files into
+        the sdcard.img
+
+
+if BR2_PACKAGE_RPI_DTLOADER
+
+config BR2_PACKAGE_RPI_DTLOADER_FILES
+    string "extra RPI DTS files"
+    help
+        Extra DTS files to be compiled and loaded in the sdcard.img.
+        Space seperated list, to activate each enter dtoverlay=<name>
+        in the config.txt of the pi.
+
+endif

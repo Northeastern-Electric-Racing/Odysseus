@@ -40,7 +40,7 @@ arm_64bit=1
 [newracom]
 dtoverlay=disable-bt
 dtoverlay=disable-wifi
-dtoverlay=newracom_for_5.16_or_later
+dtoverlay=newracom_for_5-16_or_later
 dtparam=spi=on
 
 [pps]

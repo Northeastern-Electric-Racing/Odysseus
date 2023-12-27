@@ -24,23 +24,25 @@ $CLI_APP gpio direction 2 1
 # pin 2 = yellow red (TX)
 
 # a cleanup script run upon any exit (like ctrl^c), to turn the lights off and not leave them on and unresponsive.  Should run before module is unloaded.
-trap cleanup EXIT
+trap cleanup INT HUP TERM
 cleanup() {
     $CLI_APP gpio write 3 0
     $CLI_APP gpio write 2 0
+    exit
 }
 
+echo "Starting ACCESS POINT Mode LEDs"
 while true;
 do
     sleep "$SLEEP_TIME"s
     # see list of connected clients (if non empty)
     # check gateway for ip being given
-    clients_present=$(sudo hostapd_cli list_sta -i $INTERFACE_NAME)
+    clients_present=$(hostapd_cli list_sta -i $INTERFACE_NAME)
     if [ -n "$clients_present" ];
     then
         $CLI_APP gpio write 3 1 >> /dev/null
     else
-        oscillate=$((1-"$oscillate"))
+        oscillate="$((1-oscillate))"
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
     fi
 

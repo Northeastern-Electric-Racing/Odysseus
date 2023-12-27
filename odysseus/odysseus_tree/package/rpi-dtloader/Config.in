@@ -12,6 +12,8 @@ config BR2_PACKAGE_RPI_DTLOADER_FILES
     help
         Extra DTS files to be compiled and loaded in the sdcard.img.
         Space seperated list, to activate each enter dtoverlay=<name>
-        in the config.txt of the pi.
+        (without the .dts) in the config.txt of the pi.
+        
+        Note: periods in filename besides extension period not allowed!!
 
 endif

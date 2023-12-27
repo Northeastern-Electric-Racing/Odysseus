@@ -5,12 +5,12 @@ CONF_FILE=/etc/nanomq.conf
 
 case "$1" in
   start)
-    echo "Starting LEDs..."
+    echo "Starting nanomq..."
     # start (S) executable (x) in background (b) -- send in conf file and run as daemon
     start-stop-daemon -S -x "$EXECUTABLE" -- start --conf "$CONF_FILE" -d
     ;;
   stop)
-    echo "Stopping LEDs..."
+    echo "Stopping nanomq..."
     # stop using nanomq binary
     "$EXECUTABLE" stop
     ;;

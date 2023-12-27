@@ -25,10 +25,11 @@ $CLI_APP gpio direction 2 1
 # pin 2 = yellow red (TX)
 
 # a cleanup script run upon any exit (like ctrl^c), to turn the lights off and not leave them on and unresponsive.  Should run before module is unloaded.
-trap cleanup EXIT
+trap cleanup INT HUP TERM
 cleanup() {
     $CLI_APP gpio write 3 0
     $CLI_APP gpio write 2 0
+    exit
 }
 
 echo "Starting STATION Mode LEDs"

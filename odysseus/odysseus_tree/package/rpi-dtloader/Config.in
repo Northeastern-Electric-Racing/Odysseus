@@ -1,5 +1,6 @@
 config BR2_PACKAGE_RPI_DTLOADER
     bool "load more RPI DTS files"
+    depends on BR2_LINUX_KERNEL_DTB_OVERLAY_SUPPORT
     help
         Load extra device tree overlay (DTS) files into
         the sdcard.img

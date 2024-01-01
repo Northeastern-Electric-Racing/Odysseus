@@ -1,0 +1,10 @@
+config BR2_PACKAGE_CALYPSO
+    depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+    select BR2_PACKAGE_HOST_RUSTC
+    select BR2_PACKAGE_SOCKETCAND
+    help
+        The NER CAN message decoding software.
+        
+        Written in Rust, utlizing socketcand.
+        
+        https://github.com/Northeastern-Electric-Racing/Calypso

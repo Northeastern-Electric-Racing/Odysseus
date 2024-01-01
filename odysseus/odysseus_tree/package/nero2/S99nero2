@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PIDFILE=/var/run/nero2.pid
+EXECUTABLE=/usr/bin/NEROApp
+KMS_EGLFS_CONF_FILE=/etc/eglfs.json
+
+case "$1" in
+  start)
+    echo "Starting nero2..."
+    # start (S) executable (x) in background (b), make pid file (m) at p
+    QT_QPA_EGLFS_KMS_CONFIG=$KMS_EGLFS_CONF_FILE start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --platform eglfs
+    ;;
+  stop)
+    echo "Stopping nero2..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac
+

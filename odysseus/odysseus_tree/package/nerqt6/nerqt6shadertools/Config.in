@@ -1,0 +1,15 @@
+# NER: new package (no in tree equivalent)
+config BR2_PACKAGE_NERQT6SHADERTOOLS
+	bool "nerqt6shadertools"
+	select BR2_PACKAGE_HOST_NERQT6BASE
+	select BR2_PACKAGE_NERQT6BASE_GUI
+	select BR2_PACKAGE_HOST_NERQT6BASE_GUI
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  The Qt Shader Tools module builds on the SPIR-V Open
+	  Source Ecosystem as described at the Khronos SPIR-V web
+	  site.
+
+	  https://doc.qt.io/qt-6/qtshadertools-index.html

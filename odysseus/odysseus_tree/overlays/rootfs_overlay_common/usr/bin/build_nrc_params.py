@@ -6,9 +6,9 @@ import configparser
 
 '''
 Args: (in order first to last)
-# -> 0 (STA) or 1 (AP) (required)
-# -> path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)
-# -> path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)
+#1 -> 0 (STA) or 1 (AP) (required)
+#2 -> path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)
+#3 -> path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)
 
 '''
 
@@ -127,15 +127,15 @@ def setModuleParam(config):
     if int(config['discard_deauth']) == 1:
         discard_deauth_arg = " discard_deauth=1"
 
-    # module param for driver debug (debug only)
-    # default: debug_level_all(0: disabled)
-    if int(config['driver_debug']) == 1:
-        drv_dbg_arg = " debug_level_all=1"
-
     # module param for flow control debug (debug only)
     # default: dbg_flow_control(0: disabled)
     if int(config['dbg_flow_control']) == 1:
         dbg_fc_arg = " debug_level_all=1 dbg_flow_control=1"
+    else:
+        # module param for driver debug (debug only)
+        # default: debug_level_all(0: disabled)
+        if int(config['driver_debug']) == 1:
+            drv_dbg_arg = " debug_level_all=1"
 
     # module param for bitmap encoding
     # default: use bitmap encoding (1: enabled)
@@ -196,11 +196,11 @@ def run_common():
 
     ini_path = ""
     # if not passed in, use live buildroot default
-    if not (sys.argv[2]):
-        if strSTA == 'STA':
-            ini_path = "/etc/nrc_opt_sta.ini"
+    if len(sys.argv) <= 2:
+        if strSTA() == 'STA':
+            ini_path = "/etc/nrc_opts_sta.ini"
         else:
-            ini_path = "/etc/nrc_opt_ap.ini"
+            ini_path = "/etc/nrc_opts_ap.ini"
     else:
         ini_path = sys.argv[2]
 
@@ -214,7 +214,7 @@ def run_common():
     file_txt = ""
     mod_path = ""
     # if not passed in, use live buildroot default
-    if not (sys.argv[3]):
+    if len(sys.argv) <= 3:
         mod_path = "/etc/modprobe.d/nrc.conf"
     else:
         mod_path = sys.argv[3]
@@ -222,7 +222,7 @@ def run_common():
     with open(mod_path, "w") as mod_file:
         file_txt = "options nrc" + insmod_arg
         file_txt = file_txt.strip("\n")
-        mod_file.write(file_txt)
+        mod_file.writelines([file_txt, "\n"])
 
 
 if __name__ == '__main__':

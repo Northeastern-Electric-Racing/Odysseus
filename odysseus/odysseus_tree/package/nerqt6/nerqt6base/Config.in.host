@@ -1,0 +1,24 @@
+# NER: new file!
+config BR2_PACKAGE_HOST_NERQT6BASE
+	bool "host QT6Base"
+	depends on BR2_HOST_GCC_AT_LEAST_8
+	help
+	  This option enables the host Qt6 framework.
+
+	  http://qt.io
+
+if BR2_PACKAGE_HOST_NERQT6BASE
+
+config BR2_PACKAGE_HOST_NERQT6BASE_GUI
+  bool "GUI support"
+  help
+    Enable GUI support. Needed for the qsb package from
+    the host-qt6shadertools packages
+
+config BR2_PACKAGE_HOST_NERQT6BASE_NETWORK
+  bool "Networking support"
+  help
+    Enables networking support. Needed for the qmlprofiler
+    tool in host-qt6declarative
+
+endif

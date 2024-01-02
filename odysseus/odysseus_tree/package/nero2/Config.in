@@ -1,0 +1,11 @@
+config BR2_PACKAGE_NERO2
+    bool "nero2"
+    depends on BR2_PACKAGE_NERQT6 && BR2_PACKAGE_NERQT6BASE_NETWORK && BR2_PACKAGE_NERQT6BASE_WIDGETS
+    depends on BR2_PACKAGE_NERQT6DECLARATIVE && BR2_PACKAGE_NERQT6DECLARATIVE_QUICK
+    depends on BR2_PACKAGE_NERQT6MQTT
+    help
+        Nero v2.0 custom dashboard for NER.
+
+        Built with qt6.
+        
+        https://github.com/Northeastern-Electric-Racing/Nero-2.0

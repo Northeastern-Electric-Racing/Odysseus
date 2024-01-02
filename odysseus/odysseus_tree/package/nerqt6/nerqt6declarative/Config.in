@@ -1,0 +1,28 @@
+# NER: new package!
+config BR2_PACKAGE_NERQT6DECLARATIVE
+	bool "nerqt6declarative"
+	select BR2_PACKAGE_NERQT6SHADERTOOLS
+	select BR2_PACKAGE_HOST_NERQT6BASE_NETWORK
+	help
+            Qt is a cross-platform application and UI framework for
+            developers using C++.
+
+             Qt Declarative module provides the Qt QML and Qt Quick
+             modules for developing UIs with the QML language
+
+              https://doc.qt.io/qt-6/qtqml-index.html
+              https://doc.qt.io/qt-6/qtquick-index.html
+
+
+
+if BR2_PACKAGE_NERQT6DECLARATIVE
+
+config BR2_PACKAGE_NERQT6DECLARATIVE_QUICK
+	bool "quick module"
+	select BR2_PACKAGE_NERQT6BASE_GUI
+	select BR2_PACKAGE_NERQT6BASE_OPENGL if BR2_PACKAGE_NERQT6_GL_SUPPORTS
+
+endif
+
+
+

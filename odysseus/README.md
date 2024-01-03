@@ -13,7 +13,12 @@ TBD, for now build locally on Linux
 2. Install all buildroot dependencies, including:
     - [All mandatory packages](https://buildroot.org/downloads/manual/manual.html#requirement) (most preinstalled on a normal linux system)
     - python3
-    - libxcrypt (for linux kernel)
+    - libxcrypt or glibc with libcrypt enabled (libcrypt-dev in ubuntu/focal or debian bullseye).  If you encounter the error below in the `Finalizing target directory` phase, you may need to install a legacy version of libxcrypt that supports sha-256.  If the package fails at `crypt.h not found`, you need to install at least one of the above packages.
+    ```
+    /usr/bin/sed -i -e s,^root:[^:]*:,root:"`/home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/host/bin/mkpasswd -m "sha-256" "password"`":, /home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/target/etc/shadow
+    crypt failed
+    ```
+
     - ncurses5 (or 6) (for menuconfig)
     - Git, rsync
     - graphviz, python-matplotlib, and dotx for graph creation (optional)
@@ -29,7 +34,7 @@ In any terminal that is in the directory:
     
 ## Initializing the Project
 1. Run ```git submodule update --init``` to clone the buildroot repo locally
-2. Edit `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig` and `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig`; in both files change `BR2_CCACHE_DIR=` to a directory prepared to hold around ~5G of data.
+2. Optional: Edit `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig` and `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig`; in both files change `BR2_CCACHE_DIR=` to a directory prepared to hold around ~5G of data.
 3. ```cd``` into the ```Siren/odysseus/buildroot``` directory
 4. Run ```make BR2_EXTERNAL=../odysseus_tree <config>``` supplanting `<config>` with either `raspberrypi4_64_tpu_defconfig` for TPU deployment or `raspberrypi3_64_ap_defconfig` for the base station access point deployment.
 5. All future config loads can omit BR2_EXTERNAL.
@@ -41,9 +46,13 @@ In any terminal that is in the directory:
 
 ## Building the Project
 1. Run `make <config>` using the config you want to build (see above), note that any `menuconfig` changes are overwritten with this command.
-2. Run ```make``` (Note: this can take a few hours on first build, subsequent builds take less time)
+2. Run ```make -j$(($(nproc)+1)) --output-sync=target``` (Note: this can take a few hours on first build, subsequent builds take less time).  Lower the -jN number to use less cores of your CPU to make your system usable during the build, at the expense of time.
 3. Navigate to ```buildroot/output``` and flash an SD card with ```sdcard.img``` (I prefer Ubuntu's disk writer since its easy and in GUI, but can use ```dd``` or whatever you prefer)
 4. Put SD card into TPU or AP and boot it.  Connection via HDMI to ensure it works, as well as serial pins (baud rate 115200), or ethernet hardwired to your computer with your computer in network sharing mode (note AP has a static eth0 address so it would be difficult to hard wire).
+
+### Working with multiple defconfigs
+TODO: out-of-tree build guide
+<!-- Since there are multiple machines this repo deploys to, one can save the build output of multiple defconfigs side-by-side so outputs can be stored easily.  To do this, simply run `make my_dir=O <config>`, where my_dir is a path relative to the buildroot submodule.  Change the directory for each `<config>`, and make sure to `make clean` in between! -->
 
 STA Networking:  
 - interfaces file brings up eth0, wlan0, calls wpa_supplicant with correct config file for wlan0

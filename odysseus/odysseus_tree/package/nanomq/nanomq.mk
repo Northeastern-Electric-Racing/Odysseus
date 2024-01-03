@@ -11,8 +11,6 @@ NANOMQ_CMAKE_BACKEND = ninja
 # so it uses a build subdirectory
 NANOMQ_SUPPORTS_IN_SOURCE_BUILD = NO
 
-NANOMQ_DEPENDENCIES = host-openssl
-
 define NANOMQ_INSTALL_INIT_SYSV
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/S75nanomq
 endef

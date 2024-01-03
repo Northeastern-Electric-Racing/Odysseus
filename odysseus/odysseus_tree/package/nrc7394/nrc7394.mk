@@ -4,8 +4,7 @@ NRC7394_VERSION = 1.2
 NRC7394_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/sources/nrc7394_sw_pkg/package/src/nrc
 NRC7394_SITE_METHOD = local
 NRC7394_LICENSE = LGPLv2.1/GPLv2
-# require dtc for overlay compilation
-NRC7394_DEPENDENCIES += host-dtc
+
 # set the makefile KDIR to buildroot kernel, as otherwise it will use host headers
 NRC7394_MODULE_MAKE_OPTS = KDIR=$(LINUX_DIR)
 

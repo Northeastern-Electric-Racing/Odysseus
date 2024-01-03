@@ -1,7 +1,7 @@
 RPI_DTLOADER_VERSION = 1.0
 RPI_DTLOADER_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/package/rpi-dtloader
 RPI_DTLOADER_SITE_METHOD = local
-RPI_DTOVERLAY_DEPENDENCIES += host-dtc
+RPI_DTLOADER_DEPENDENCIES += host-dtc
 
 define RPI_DTLOADER_BUILD_CMDS
 	# iterate through dts files, write to $(@D)/file_name.dtbo

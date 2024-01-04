@@ -22,6 +22,7 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 - SFTP server (scp server support)
 - htop
 - bmon
+- fsck
 - python3
 - GPIO read/write utilities
 - dtoverlay support

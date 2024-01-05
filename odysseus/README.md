@@ -69,7 +69,7 @@ In any terminal that is in the directory:
 
 ## Building the Project
 1. Run `make <config>` using the config you want to build (see above), note that any `menuconfig` changes are overwritten with this command.
-2. Run ```make -j$(($(nproc)+1)) --output-sync=target``` (Note: this can take a few hours on first build, subsequent builds take less time).  Lower the -jN number to use less cores of your CPU to make your system usable during the build, at the expense of time.
+2. Run ```make -j$(nproc) --output-sync=target``` (Note: this can take a few hours on first build, subsequent builds take less time).  Lower the -jN number to use less cores of your CPU to make your system usable during the build, at the expense of time.
 3. Navigate to ```buildroot/output``` and flash an SD card with ```sdcard.img``` (I prefer Ubuntu's disk writer since its easy and in GUI, but can use ```dd``` or whatever you prefer)
 4. Put SD card into TPU or AP and boot it.  Connection via HDMI to ensure it works, as well as serial pins (baud rate 115200), or ethernet hardwired to your computer with your computer in network sharing mode (note AP has a static eth0 address so it would be difficult to hard wire).
 

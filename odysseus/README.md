@@ -18,7 +18,6 @@ TBD, for now build locally on Linux
     /usr/bin/sed -i -e s,^root:[^:]*:,root:"`/home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/host/bin/mkpasswd -m "sha-256" "password"`":, /home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/target/etc/shadow
     crypt failed
     ```
-
     - ncurses5 (or 6) (for menuconfig)
     - Git, rsync
     - graphviz, python-matplotlib, and dotx for graph creation (optional)

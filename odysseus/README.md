@@ -13,10 +13,10 @@ TBD, for now build locally on Linux
 2. Install all buildroot dependencies, including:
     - [All mandatory packages](https://buildroot.org/downloads/manual/manual.html#requirement) (most preinstalled on a normal linux system)
     - python3
+    - libxcrypt (for linux kernel)
     - ncurses5 (or 6) (for menuconfig)
     - Git, rsync
     - graphviz, python-matplotlib, and dotx for graph creation (optional)
-    
 
 <!-- ## Start Container on MacOS/Linux
 In any terminal that is in the directory:

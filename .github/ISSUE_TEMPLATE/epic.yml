@@ -1,0 +1,64 @@
+name: Epic
+description: A collection of many tasks
+title: '[Area] - Short Description'
+labels: [epic]
+body:
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: Provide a brief summary of this epic
+    validations:
+      required: true
+  - type: textarea
+    id: stakeholders
+    attributes:
+      label: Stakeholders
+      description: Who to contact for this epic?
+      value: |
+        Product Stakeholder:
+        Software Stakeholder:
+        Reference Users:
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Success Metrics
+      description: What are the metrics we will use to determine if this is successful?
+    validations:
+      required: true
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout Plan
+      description: How will this be released? All at once? In parts?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Out of Scope
+      description: What is not included in this epic?
+    validations:
+      required: true
+  - type: textarea
+    id: background-context
+    attributes:
+      label: Background / Context
+      description: What is the context for this epic? What already exists?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How are we evaluating the success of this epic?
+    validations:
+      required: true
+  - type: textarea
+    id: tickets
+    attributes:
+      label: Tickets
+      description: What tickets will be a part of this epic?
+      value: " - [ ] #\n - [ ] #"
+    validations:
+      required: true

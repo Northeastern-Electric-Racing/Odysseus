@@ -21,7 +21,12 @@ NANOMQ_CONF_OPTS += -DNNG_ENABLE_QUIC=ON
 # So cmake doesn't search sysroot for the msquic.h header
 NANOMQ_CONF_OPTS += -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=NEVER
 # This is all for the QUIC OpenSSL to correctly ID the target arch as it uses custom perl configuration to prepare makefile
-NANOMQ_CONF_OPTS += -DONEBRANCH=YES -DCMAKE_TARGET_ARCHITECTURE=arm64 -DGNU_MACHINE=aarch64-buildroot- -DFLOAT_ABI_SUFFIX=linux-gnu
+# Must remove trailing hyphen
+# See https://github.com/microsoft/msquic/blob/93ea72460fd6d7127d8dcfcc7a8b7e2e2acc914b/submodules/CMakeLists.txt#L228
+NANOMQ_PRIVATE_ARCH=arm64
+$(info Using this toolchain for openssl module-> $(notdir $(TARGET_CROSS:-=)))
+$(warning Using $(NANOMQ_PRIVATE_ARCH) for openssl module! Must change via edit!:)
+NANOMQ_CONF_OPTS += -DONEBRANCH=YES -DCMAKE_TARGET_ARCHITECTURE=$(NANOMQ_PRIVATE_ARCH) -DGNU_MACHINE=$(notdir $(TARGET_CROSS:-=)) -DFLOAT_ABI_SUFFIX=""
 # since nanomq expects ./build for the cmake dir, but buildroot uses ./buildroot-build, symlink them before doing anything
 define NANOMQ_OPENSSL_FIXUP
 	ln -s $(@D)/buildroot-build $(@D)/build

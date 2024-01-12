@@ -2,6 +2,7 @@
 	path = odysseus/buildroot
 	url = https://gitlab.com/buildroot.org/buildroot.git
 	branch = 96d0d677790e659b822761b50561b0316b4abf43
+	ignore = dirty
 [submodule "odysseus/odysseus_tree/sources/nrc7292_sw_pkg"]
 	path = odysseus/odysseus_tree/sources/nrc7292_sw_pkg
 	url = https://github.com/newracom/nrc7292_sw_pkg

@@ -1,13 +1,13 @@
 #!/bin/sh
 
 PIDFILE=/var/run/calypso.pid
-EXECUTABLE=/usr/bin/
+EXECUTABLE=/usr/bin/calypso
 
 case "$1" in
   start)
     echo "Starting calypso..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- mqtt localhost:1883
     ;;
   stop)
     echo "Stopping calypso..."

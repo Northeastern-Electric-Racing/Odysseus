@@ -1,0 +1,7 @@
+# for nrc
+spi_bcm2835
+nrc
+
+# for in-built wifi (important: put second!)
+brcmfmac
+brcmutil

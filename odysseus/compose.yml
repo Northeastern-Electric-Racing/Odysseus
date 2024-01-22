@@ -13,7 +13,7 @@ services:
         volumes:
             - ./odysseus_tree:/home/odysseus/build/odysseus_tree
             - shared_data:/home/odysseus/shared_data
-            - outputs:/home/odysseus/outputs
+            - ./outputs:/home/odysseus/outputs
         environment:
             - BR2_DL_DIR=/home/odysseus/shared_data/dl 
             - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
@@ -21,6 +21,3 @@ volumes:
     shared_data:
         labels:
             com.northeastern_electric_racing.description: "Shared output between buildroot runs"
-    outputs:
-        labels:
-            com.northeastern_electric_racing.description: "Build output and sd card image"

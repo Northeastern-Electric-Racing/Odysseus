@@ -1,7 +1,9 @@
 #!/bin/sh
 
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
 echo "change dhcpcd version to 10.0.5 from 10.0.4"
-cd ../buildroot/package/dhcpcd/ || exit
+cd $SCRIPT_DIR/../buildroot/package/dhcpcd/ || exit
 # remove integrity file for dhcpcd 10.0.4
 rm ./dhcpcd.hash
 # replace old version with new one

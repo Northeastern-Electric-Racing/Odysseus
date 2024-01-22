@@ -45,21 +45,19 @@ The container has a directory structure as so:
     - `./odysseus_tree`: The odyssues external tree, bound to the same directory in the git repository on your local machine!
 - `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name `odysseus_shared_data`.
 - `./outputs/*`:
-    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. A persistent docker volume with the name `odysseus_outputs`.** *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
+    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. This is bound to the `./odysseus/outputs` directory in the repository. *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
 
 ### Extra docker tips
 
 #### Writing the sd card
-TODO
+The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.
 
 #### Pulling source files for scp, etc.
-TODO
+The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
 
 #### Cleaning system
 `docker image prune --all` (this will not touch volumes)
 
-**IMPORTANT**: this WILL wipe all outputs:  
-`docker volume rm odysseus_outputs`
 **IMPORTANT**: this WILL wipe all shared cache (don't do this unless you need the space):  
 `docker volume rm odysseus_shared_data`
 

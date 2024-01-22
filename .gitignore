@@ -7,4 +7,4 @@
 */__pycache__
 
 .DS_Store
-./odysseus/outputs/
+.odysseus/outputs/

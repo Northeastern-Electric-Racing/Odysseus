@@ -15,7 +15,6 @@ Custom Linux Build being used to drive the TPU
     - NanoMQ MQTT
     - Calypso CAN decoding (TBD)
 
-
 All defconfigs come with (in addition to busybox and util_linux utilities):
 
 - SSH server/client (and scp client)
@@ -69,8 +68,6 @@ Find the container ID of odysseus-odysseus then run:
 Docker limitations:
 - Build time may be slower due to docker isolations (not dramatic, about 5-15%)
 - Launch time is longer
-- Writing an sd card is harder.
-- Viewing build files in detail is harder (no GUI)
 - Space is used up by rebuilds, prune often or omit `--build`
 
 

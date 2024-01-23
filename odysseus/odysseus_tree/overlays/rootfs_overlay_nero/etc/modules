@@ -1,9 +1,0 @@
-# for in-built wifi
-brcmfmac
-brcmutil
-
-# for GPU (nero)
-i2c_brcmstb
-vc4
-v3d
-snd_soc_hdmi_codec

@@ -1,7 +1,3 @@
-# for nrc
-spi_bcm2835
-nrc
-
 # for GPU (nero)
 i2c_brcmstb
 vc4

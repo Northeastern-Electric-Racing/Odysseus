@@ -1,15 +1,39 @@
 # Odysseus
 Custom Linux Build being used to drive the TPU
 
-### Current configurations (see below for how to use)
-- `raspberrypi4_64_tpu_defconfig` for TPU (pi 4 with various attached devices).
-- `raspberrypi3_64_ap_defconfig` for base station access point using a pi 3 and an ALFA HaLow HAT.
+### Current configurations (see below for how to build)
+- `raspberrypi4_64_tpu_defconfig` for TPU
+    - NRC HaLow station
+    - NanoMQ MQTT
+    - Calypso CAN decoding (TBD)
+    - GPS support
+    - Docker
+- `raspberrypi3_64_ap_defconfig` for base station HaLow access point
+    - NRC HaLow access point
+- `raspberrypi4_64_nero_defconfig` for in-car dashboard
+    - 2.4 Ghz integrated access point (TBD)
+    - NanoMQ MQTT
+    - Calypso CAN decoding (TBD)
+
+
+All defconfigs come with (in addition to busybox and util_linux utilities):
+
+- SSH server/client (and scp client)
+- SFTP server (scp server support)
+- htop
+- bmon
+- fsck
+- python3
+- GPIO read/write utilities
+- dtoverlay support
+- iperf3, iw, iputils, and other network configuration utilities
+
 
 ## Setting up Docker Environment
 TBD, for now build locally on Linux
 
 ## Setting up loal environment
-1. Install `git-lfs` (for nanomq submodules), and `libelf` (or `libelf-dev`) (for nrc7292/7394 objtool build)
+1. Install `git-lfs` (for nanomq submodules)
 2. Install all buildroot dependencies, including:
     - [All mandatory packages](https://buildroot.org/downloads/manual/manual.html#requirement) (most preinstalled on a normal linux system)
     - python3
@@ -49,11 +73,18 @@ In any terminal that is in the directory:
 3. Navigate to ```buildroot/output``` and flash an SD card with ```sdcard.img``` (I prefer Ubuntu's disk writer since its easy and in GUI, but can use ```dd``` or whatever you prefer)
 4. Put SD card into TPU or AP and boot it.  Connection via HDMI to ensure it works, as well as serial pins (baud rate 115200), or ethernet hardwired to your computer with your computer in network sharing mode (note AP has a static eth0 address so it would be difficult to hard wire).
 
-### Working with multiple defconfigs
-TODO: out-of-tree build guide
-<!-- Since there are multiple machines this repo deploys to, one can save the build output of multiple defconfigs side-by-side so outputs can be stored easily.  To do this, simply run `make my_dir=O <config>`, where my_dir is a path relative to the buildroot submodule.  Change the directory for each `<config>`, and make sure to `make clean` in between! -->
+### Working with multiple defconfigs simultaneously
+Since there are multiple machines this repo deploys to, one can save the build output of multiple defconfigs side-by-side so outputs can be stored easily.  To do this, simply run `make O=my_dir BR2_EXTERNAL=../odysseus_tree <config>` inside the buildroot submodule, where my_dir is a path relative to the buildroot submodule.  Then `cd ./my_dir` and run all make commands from there, and output will be generated into `my_dir`. The `O=` can be omitted as long as your working directory is `my_dir` when running `make`. Make a new directory for each `<config>`, and if you run out of space feel free to `make clean` or delete all the directories (space used about 10 to 22gb).
 
-STA Networking:  
+For example, my system looks like:
+- `./buildroot` (each subdir has its own `Makefile`)
+    - `./tpu`
+    - `./nero`
+    - `./ap`
+- `./buildroot/dl` (downloads, shared between defconfigs)
+- `~/.buildroot-ccache` (shared between defconfigs)
+
+STA Networking:
 - interfaces file brings up eth0, wlan0, calls wpa_supplicant with correct config file for wlan0
 - dhcpcd listens/probes for addresses on eth0 + wlan0 while wpa_supplicant attempts to connect to an access point
 

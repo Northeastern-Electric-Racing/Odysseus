@@ -1,1 +1,1 @@
-../overlays/rootfs_overlay_common/usr/bin/build_nrc_params.py
+../overlays/rootfs_overlay_nrc_common/usr/bin/build_nrc_params.py

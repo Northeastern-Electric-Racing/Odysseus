@@ -27,26 +27,34 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 - dtoverlay support
 - iperf3, iw, iputils, and other network configuration utilities
 
-
-## Build with docker (recommended)
-First, clone and then run: ```git submodule update --init```  
-Now, enter to the `odysseus` directory, and run the below command to setup your docker container.  
+## Quick start
+Download and install to PATH git and docker.
 ```
-docker compose run --rm --build odysseus
-```  
-Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or `docker_out_of_tree.sh` files change.  
+git clone https://github.com/Northeastern-Electric-Racing/Siren.git
+git checkout develop-initial-hw-validation
+git submodule update --init -recursive
+cd ./odysseus
+docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+```
+Now you are in the docker container.  To build cd into the defconfig directory (either ap, nero, or tpu), then run the make command alias:
+```
+cd ./<defconfig>
+make-current
+```
+You can view the `output.log` for more info.
 
-### More on outputs
+### More on docker configuration
 The container has a directory structure as so:
 (everything is in `/home/odysseus)
 - `./build`
     - `./buildroot`: The buildroot tree 
     - `./odysseus_tree`: The odyssues external tree, bound to the same directory in the git repository on your local machine!
-- `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name `odysseus_shared_data`.
+- `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name   `odysseus_shared_data`.
 - `./outputs/*`:
     - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. This is bound to the `./odysseus/outputs` directory in the repository. *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
 
 ### Extra docker tips
+All paths relative to Siren root.
 
 #### Writing the sd card
 The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.
@@ -64,6 +72,13 @@ The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
 `docker ps`
 Find the container ID of odysseus-odysseus then run:  
 `docker exec -it <container_id> bash` 
+
+#### Run in background
+One can still build, but in the background.  This can be done by using docker-compose with `-d` and running docker exec like so:
+```
+docker exec <container_id> -d -w /home/odysseus/outputs/<defconfig> make-current`
+```
+Be careful with this.
     
 Docker limitations:
 - Build time may be slower due to docker isolations (not dramatic, about 5-15%)
@@ -119,12 +134,3 @@ For example, my system looks like:
     - `./ap`
 - `./buildroot/dl` (downloads, shared between defconfigs)
 - `~/.buildroot-ccache` (shared between defconfigs)
-
-STA Networking:
-- interfaces file brings up eth0, wlan0, calls wpa_supplicant with correct config file for wlan0
-- dhcpcd listens/probes for addresses on eth0 + wlan0 while wpa_supplicant attempts to connect to an access point
-
-AP Networking:
-- interfaces file brings up eth0, bridges it to br0
-- hostapd brings up wlan0 and bridges it it br0
-- dhcpcd sets static IP addresses for AP on both eth0 and wlan0.

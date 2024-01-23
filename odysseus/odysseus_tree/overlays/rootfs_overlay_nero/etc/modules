@@ -1,3 +1,7 @@
+# for in-built wifi
+brcmfmac
+brcmutil
+
 # for GPU (nero)
 i2c_brcmstb
 vc4

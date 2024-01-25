@@ -143,4 +143,21 @@ config BR2_PACKAGE_NANOMQ_TESTS
     help
         Enable nanomqy unit tests
 
+config BR2_PACKAGE_NANOMQ_PLUGIN
+    bool "plugin support"
+    default n
+    help
+	Enable plugin support
+
+if BR2_PACKAGE_NANOMQ_PLUGIN
+    
+config BR2_PACKAGE_NANOMQ_PLUGIN_LIST
+    string "list of plugins"
+    help
+	Space seperated path lists of plugins.
+        Remeber to add them to the conf file yourself.
+
+endif
+
+
 endif

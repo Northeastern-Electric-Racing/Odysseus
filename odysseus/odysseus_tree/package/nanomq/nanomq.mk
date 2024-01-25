@@ -1,6 +1,6 @@
 # must use later version then stable due to build issue with log_err function.
 # Fix upon next nanomq release, as the build system is somewhat complicated and often changes
-NANOMQ_VERSION = 9828d7b0c432d9495c5f940d75df0a621203b814
+NANOMQ_VERSION = 75b68eab969be39ebee1c6774b47917a029c4d80
 NANOMQ_SITE_METHOD = git
 NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES
@@ -15,6 +15,32 @@ define NANOMQ_INSTALL_INIT_SYSV
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/S75nanomq
 endef
 
+ifeq ($(BR2_PACKAGE_NANOMQ_PLUGIN),y)
+NANOMQ_CONF_OPTS += -DENABLE_PLUGIN=ON
+
+define NANOMQ_PLUGIN_COMPILATION
+	# basename strips extension, notdir strips everything but file name
+	
+endef
+
+define NANOMQ_PLUGIN_INSTALLATION
+	cp $(TARGET_DIR)/usr/include/nanomq/plugin.h $(TARGET_DIR)/usr/include/
+	$(foreach plugin,$(call qstrip,$(BR2_PACKAGE_NANOMQ_PLUGIN_LIST)), \
+                $(TARGET_CC) -I$(TARGET_DIR)/usr/ -I$(TARGET_DIR)/usr/include/ -shared -fPIC $(plugin) -o $(@D)/$(notdir $(basename $(plugin))).so
+        )
+        
+	$(INSTALL) -d $(TARGET_DIR)/usr/lib/nanomq/
+	$(foreach plugin,$(call qstrip,$(BR2_PACKAGE_NANOMQ_PLUGIN_LIST)), \
+		$(info, "Installing $(plugin)!") \
+                $(INSTALL) -D -m 0755 $(@D)/$(notdir $(basename $(plugin))).so $(TARGET_DIR)/usr/lib/nanomq/
+                
+        )
+endef
+
+#NANOMQ_POST_BUILD_HOOKS += NANOMQ_PLUGIN_COMPILATION
+NANOMQ_POST_INSTALL_TARGET_HOOKS += NANOMQ_PLUGIN_INSTALLATION
+
+endif
 
 ifeq ($(BR2_PACKAGE_NANOMQ_QUIC), y)
 NANOMQ_CONF_OPTS += -DNNG_ENABLE_QUIC=ON

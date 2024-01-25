@@ -37,3 +37,15 @@ dtoverlay=imx219
 # enable 64bits support
 arm_64bit=1
 
+# for NER 22A dashboard
+#Set the Monitor mode to DMT.
+hdmi_group=2
+#Use a custom resolution.
+hdmi_mode=87
+#Use an 800 x 480 resolution @ 60Hz
+hdmi_cvt= 800 480 60 6 0 0 0
+#Deliver max current through USB
+# # Max_usb_current=1 # is this needed (external power??)
+hdmi_drive=1
+hdmi_force_hotplug=1
+

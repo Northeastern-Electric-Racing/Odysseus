@@ -1,0 +1,25 @@
+From 4bb0c8ff02521809ee012cb5aacfa9a8a5f797cc Mon Sep 17 00:00:00 2001
+From: Roy Marples <roy@marples.name>
+Date: Thu, 9 Nov 2023 09:21:20 +0000
+Subject: [PATCH] privsep: Allow dup3 on Linux
+
+It seems some libc will really call dup3 rather than dup2.
+Another fix for #260.
+---
+ src/privsep-linux.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index 1192eb6c..a40f2979 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -313,6 +313,9 @@ static struct sock_filter ps_seccomp_filter[] = {
+ #ifdef __NR_dup2
+ 	SECCOMP_ALLOW(__NR_dup2), // daemonising dups stderr to stdin(/dev/null)
+ #endif
++#ifdef __NR_dup3
++	SECCOMP_ALLOW(__NR_dup3),
++#endif
+ #ifdef __NR_epoll_ctl
+ 	SECCOMP_ALLOW(__NR_epoll_ctl),
+ #endif

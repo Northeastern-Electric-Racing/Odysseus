@@ -1,14 +1,13 @@
 auto lo
 iface lo inet loopback
 
-allow-hotplug eth0
+auto eth0
 iface eth0 inet manual
  
-auto wlan0
+allow-hotplug wlan0
 iface wlan0 inet manual
 
 auto br0
 iface br0 inet manual
-    hostapd /etc/hostapd.conf
-    bridge_ports eth0
+        bridge_ports eth0
 

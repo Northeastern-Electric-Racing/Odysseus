@@ -10,7 +10,7 @@ def on_connect(client, flags, rc, properties):
     print('Connected')
 
 def on_message(client, topic, payload, qos, properties):
-    dict = json.loads(payload)
+    dict = json.loads(payload) # no json
     print(f'RECV MSG: {topic} {payload} {dict["topic"]}')
 
 def on_disconnect(client, packet, exc=None):

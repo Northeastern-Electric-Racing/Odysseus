@@ -77,6 +77,7 @@ config BR2_PACKAGE_NANOMQ_JWT
 
 config BR2_PACKAGE_NANOMQ_SQLITE
     bool "sqlite"
+    select BR2_PACKAGE_SQLITE3
     help
         to build nanomq with sqlite support
 
@@ -154,8 +155,9 @@ if BR2_PACKAGE_NANOMQ_PLUGIN
 config BR2_PACKAGE_NANOMQ_PLUGIN_LIST
     string "list of plugins"
     help
-	Space seperated path lists of plugins.
-        Remeber to add them to the conf file yourself.
+        Space seperated path lists of plugins.
+        Remember to add them to the conf file yourself.
+        They are installed to /usr/lib/nanomq/
 
 endif
 

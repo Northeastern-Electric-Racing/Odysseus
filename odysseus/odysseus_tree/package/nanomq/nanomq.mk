@@ -6,7 +6,6 @@ NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES
 NANOMQ_GIT_LFS = YES
 NANOMQ_LICENSE = MIT
-# Note: this doesn't seem to be in use despite setting it?
 NANOMQ_CMAKE_BACKEND = ninja
 # so it uses a build subdirectory
 NANOMQ_SUPPORTS_IN_SOURCE_BUILD = NO

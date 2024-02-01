@@ -16,6 +16,7 @@ int cb(void *data)
 	char **property = data;
 	if (property != NULL) {
 		
+		// key of ts, add 1 bc termination byte
 		property[0] = malloc(strlen("ts") + 1);
 		strcpy(property[0], "ts");
 		
@@ -27,11 +28,14 @@ int cb(void *data)
 			(unsigned long long)(tv.tv_sec) * 1000 +
 			(unsigned long long)(tv.tv_usec) / 1000;
 			
-		char str[sizeof(char)]; 
-        sprintf(str, "%ld", millisecondsSinceEpoch);
-		
-		property[1] = malloc(strlen(str)+1);
-		strcpy(property[1], str);
+		// currently the time is using 13 characters, so 30 should be enough
+ 		char str[30]; 
+ 		// convert the epoch time to a char arr
+		sprintf(str, "%llu", millisecondsSinceEpoch);
+// 		
+// 		// value of the time, add 1 bc termination byte
+ 		property[1] = malloc(strlen(str)+1);
+ 		strcpy(property[1], str);
 	}
 
 	return 0;

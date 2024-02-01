@@ -18,7 +18,7 @@ endef
 
 ifeq ($(BR2_PACKAGE_NANOMQ_PLUGIN),y)
 NANOMQ_CONF_OPTS += -DENABLE_PLUGIN=ON
-
+NANOMQ_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS="-export-dynamic"
 define NANOMQ_PLUGIN_INSTALLATION
 	$(foreach plugin,$(call qstrip,$(BR2_PACKAGE_NANOMQ_PLUGIN_LIST)), \
                 $(TARGET_CC) $(NANOMQ_CFLAGS) -I$(STAGING_DIR)/usr/include/nanomq $(plugin) -fPIC -shared -o $(@D)/$(notdir $(basename $(plugin))).so

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+PIDFILE=/var/run/nanomq_br.pid
 EXECUTABLE=/usr/bin/nanomq
 CONF_FILE=/etc/nanomq.conf
 
@@ -7,16 +8,17 @@ case "$1" in
   start)
     echo "Starting nanomq..."
     # start (S) executable (x) in background (b) -- send in conf file and run as daemon
-    start-stop-daemon -S -x "$EXECUTABLE" -- start --conf "$CONF_FILE" -d
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- start --conf "$CONF_FILE"
     ;;
   stop)
     echo "Stopping nanomq..."
-    # stop using nanomq binary
-    "$EXECUTABLE" stop
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
     ;;
   restart|reload)
-     # reload using nanomq binary, conf requires re-send
-    "$EXECUTABLE" -- reload --conf "$CONF_FILE"
+    "$0" stop
+    "$0" start
     ;;
   *)
     echo "Usage: {start|stop|restart/reload}"

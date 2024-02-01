@@ -8,7 +8,7 @@ case "$1" in
   start)
     echo "Starting hostapd..."
     # start (S) executable (x), make pid file (m) at p, run in background (-- -B),
-    start-stop-daemon -S -x "$EXECUTABLE" -m -p "$PIDFILE" -- -B "$CONF"
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- "$CONF"
     ;;
   stop)
     echo "Stopping hostapd..."

@@ -22,4 +22,3 @@ NRC7292_POST_BUILD_HOOKS += NRC7292_BUILD_DTO
 
 $(eval $(kernel-module))
 $(eval $(generic-package))
-

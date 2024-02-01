@@ -1,6 +1,6 @@
 # must use later version then stable due to build issue with log_err function.
 # Fix upon next nanomq release, as the build system is somewhat complicated and often changes
-NANOMQ_VERSION = 0.21.1
+NANOMQ_VERSION = 0.21.2
 NANOMQ_SITE_METHOD = git
 NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES

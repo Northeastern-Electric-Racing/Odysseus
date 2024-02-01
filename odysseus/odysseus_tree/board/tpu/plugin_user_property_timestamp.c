@@ -5,12 +5,7 @@
 
 #include "nanomq/plugin.h"
 
-/*
- * How to compile:
- * gcc -I../ -fPIC -shared plugin_user_property.c -o plugin_user_property.so
- */
-
-
+// upstream calls this function and accesses property from the data variable, then frees the properties after message is sent
 int cb(void *data)
 {
 	char **property = data;
@@ -20,10 +15,13 @@ int cb(void *data)
 		property[0] = malloc(strlen("ts") + 1);
 		strcpy(property[0], "ts");
 		
+		
+		// the below is used to get the time in miliseconds, required since there is no api for milisecond precision 
 		struct timeval tv;
   
 		gettimeofday(&tv, NULL);
   
+		// do the math to get the miliseconds since unix epoch
 		unsigned long long millisecondsSinceEpoch =
 			(unsigned long long)(tv.tv_sec) * 1000 +
 			(unsigned long long)(tv.tv_usec) / 1000;
@@ -32,8 +30,8 @@ int cb(void *data)
  		char str[30]; 
  		// convert the epoch time to a char arr
 		sprintf(str, "%llu", millisecondsSinceEpoch);
-// 		
-// 		// value of the time, add 1 bc termination byte
+ 		
+ 		// value of the time, add 1 bc termination byte
  		property[1] = malloc(strlen(str)+1);
  		strcpy(property[1], str);
 	}

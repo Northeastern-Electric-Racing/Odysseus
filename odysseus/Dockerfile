@@ -29,6 +29,7 @@ RUN apt-get install -y \
     libncurses5-dev \
     git \
     python3-matplotlib \
+    python3-setuptools \
     graphviz \
     git-lfs \
     util-linux

@@ -12,7 +12,7 @@ NANOMQ_SUPPORTS_IN_SOURCE_BUILD = NO
 NANOMQ_INSTALL_STAGING = YES
 
 define NANOMQ_INSTALL_INIT_SYSV
-    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/S75nanomq
+    $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/masked.S75nanomq
 endef
 
 ifeq ($(BR2_PACKAGE_NANOMQ_PLUGIN),y)

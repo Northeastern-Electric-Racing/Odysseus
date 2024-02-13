@@ -6,7 +6,7 @@
 /plugin/;
 
 / {
-	compatible = "brcm,bcm2835", "brcm,bcm2836", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2711";
+        compatible = "brcm,bcm2835", "brcm,bcm2836", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2711";
     /* disable spi-dev for spi4.0 */
     fragment@0 {
         target = <&spi4>;
@@ -15,18 +15,11 @@
         };
     };
 
-    fragment@1 {
-	target = <&spidev4>;
-	__overlay__ {
-	    status = "disabled";
-	};
-    };
-
     /* the interrupt pin of the can-controller. NOTE: Unused???? */
-    fragment@2 {
+    fragment@1 {
         target = <&gpio>;
         __overlay__ {
-            can4_pins: can4_pins {
+            can0_pins: can0_pins {
                 brcm,pins = <25>;
                 brcm,function = <0>; /* input */
             };
@@ -34,11 +27,11 @@
     };
 
     /* the clock/oscillator of the can-controller */
-    fragment@3 {
-        target-path = "/";
+    fragment@2 {
+        target-path = "/clocks";
         __overlay__ {
             /* external oscillator of mcp2515 on SPI4.0 */
-            can4_osc: can4_osc {
+            can0_osc: can0_osc {
                 compatible = "fixed-clock";
                 #clock-cells = <0>;
                 clock-frequency  = <16000000>;
@@ -47,27 +40,28 @@
     };
 
     /* the spi config of the can-controller itself binding everything together */
-    fragment@4 {
+    fragment@3 {
         target = <&spi4>;
         __overlay__ {
             /* needed to avoid dtc warning */
             #address-cells = <1>;
             #size-cells = <0>;
-            can4: mcp2515@0 {
+            can0: mcp2515@0 {
                 reg = <0>;
                 compatible = "microchip,mcp2515";
                 pinctrl-names = "default";
-                pinctrl-0 = <&can4_pins>;
+                pinctrl-0 = <&can0_pins>;
                 spi-max-frequency = <10000000>;
                 interrupt-parent = <&gpio>;
                 interrupts = <25 8>; /* IRQ_TYPE_LEVEL_LOW */
-                clocks = <&can4_osc>;
+                clocks = <&can0_osc>;
             };
         };
     };
     __overrides__ {
-        oscillator = <&can4_osc>,"clock-frequency:0";
-        spimaxfrequency = <&can4>,"spi-max-frequency:0";
-        interrupt = <&can4_pins>,"brcm,pins:0",<&can4>,"interrupts:0";
+        oscillator = <&can0_osc>,"clock-frequency:0";
+        spimaxfrequency = <&can0>,"spi-max-frequency:0";
+        interrupt = <&can0_pins>,"brcm,pins:0",<&can0>,"interrupts:0";
     };
 };
+

@@ -50,7 +50,7 @@ dtoverlay=pps-gpio,gpiopin=24
 
 # for can
 #dtoverlay=spi4-1cs
-dtoverlay=mcp2515-can2,oscillator=8000000,spimaxfrequency=10000000
+dtoverlay=mcp2515-can0-spi4,oscillator=8000000,spimaxfrequency=10000000
 
 # for sd card
 dtoverlay=spi1-1cs,cs0_pin=16,cs0_spidev=disabled

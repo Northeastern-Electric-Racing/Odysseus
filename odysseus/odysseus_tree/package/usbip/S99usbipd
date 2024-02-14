@@ -1,0 +1,25 @@
+ #!/bin/sh
+
+PIDFILE=/var/run/usbipd_br.pid
+EXECUTABLE=/usr/sbin/usbipd
+
+case "$1" in
+  start)
+    echo "Starting usbipd..."
+    # start (S) executable (x) in background (b), (m) make (p) and use pidfile -- (4) use IPv4 mode
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -4
+    ;;
+  stop)
+    echo "Stopping usbipd..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac

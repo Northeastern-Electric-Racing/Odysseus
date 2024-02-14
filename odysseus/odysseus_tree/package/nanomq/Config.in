@@ -77,7 +77,7 @@ config BR2_PACKAGE_NANOMQ_JWT
 
 config BR2_PACKAGE_NANOMQ_SQLITE
     bool "sqlite"
-    select BR2_PACKAGE_SQLITE3
+    select BR2_PACKAGE_SQLITE
     help
         to build nanomq with sqlite support
 

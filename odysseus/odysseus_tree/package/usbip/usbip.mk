@@ -1,7 +1,6 @@
-USBIP_DEPENDENCIES = udev
 USBIP_AUTORECONF = YES
 USBIP_CONF_OPTS = --without-tcp-wrappers
-USBI_DEPENDENCIES = linux
+USBIP_DEPENDENCIES = linux udev
 
 USBIP_SRC_DIR = $(wildcard \
   $(LINUX_DIR)/tools/usb/usbip \
@@ -12,7 +11,8 @@ define USBIP_EXTRACT_CMDS
 endef
 
 define USBIP_INSTALL_INIT_SYSV
-    $(INSTALL) -D -m 0755 $(PKG_DIR)/S99usbipd $(TARGET_DIR)/etc/init.d/S99usbipd
+    $(INSTALL) -D -m 0755 $(USBIP_PKGDIR)/S09usbipd $(TARGET_DIR)/etc/init.d/S09usbipd
 endef
 
-$(eval $(autotools-package)) 
+$(eval $(autotools-package))
+

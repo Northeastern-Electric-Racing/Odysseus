@@ -1,0 +1,2 @@
+config BR2_PACKAGE_RPI_UTILS_EEPTOOLS
+    bool "eeprom flash for HAT"

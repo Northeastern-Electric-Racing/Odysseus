@@ -1,0 +1,18 @@
+menuconfig BR2_PACKAGE_RPI_UTILS
+	bool "misc. rpi utilities"
+	depends on BR2_PACKAGE_RPI_FIRMWARE
+	help
+	  Various raspberry pi utilities.
+	  
+	  Currently only some supported.
+	  
+	  https://github.com/raspberrypi/utils
+
+if BR2_PACKAGE_RPI_UTILS
+
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/rpi-utils/rpi-utils-eeptools/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/rpi-utils/rpi-utils-pinctrl/Config.in"
+
+
+
+endif

@@ -1,0 +1,4 @@
+config BR2_PACKAGE_RPI_UTILS_PINCTRL
+    bool "see pin statuses"
+    help
+        Replaces raspi-gpio

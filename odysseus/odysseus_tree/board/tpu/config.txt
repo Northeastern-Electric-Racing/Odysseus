@@ -37,11 +37,25 @@ dtoverlay=imx219
 # enable 64bits support
 arm_64bit=1
 
-[newracom]
+
 #dtoverlay=disable-bt
 #dtoverlay=disable-wifi
+dtoverlay=spi0-1cs
 dtoverlay=newracom_for_5-16_or_later
 dtparam=spi=on
 
-[pps]
-dtoverlay=pps-gpio,gpiopin=18
+# for gps
+dtoverlay=uart5
+dtoverlay=pps-gpio,gpiopin=24
+
+# for can
+dtoverlay=spi4-1cs
+dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
+dtparam=interrupt=26
+
+# for sd card
+dtoverlay=spi1-1cs,cs0_pin=16,cs0_spidev=disabled
+dtoverlay=mmc_spi-spi1
+
+# for temp sensor
+dtoverlay=i2c-sensor,sht3x

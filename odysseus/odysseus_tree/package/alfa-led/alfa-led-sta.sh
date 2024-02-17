@@ -1,17 +1,15 @@
 #!/bin/sh
 
-# STATION MODE led script for ALFA AHPI7292
+# STATION MODE led script for ALFA AHPI7292 w/ active-backup bonding indication
 ######################
 # amount of time to wait in between loops
-SLEEP_TIME=3
-#interface to check for connectivity, wlan0 for default newracom configuration
-INTERFACE_NAME=wlan0
-# the URL or IP to ping, if ping returns good yellow light is lit, if it doesnt then it is not lit
-YELLOW_LED_CHECK_URL="8.8.8.8"
+SLEEP_TIME=1
+# backup interface in bond
+BACKUP_INTERFACE_NAME=wlan0
+# primary interface in bond
+PRIMARY_INTERFACE_NAME=wlan1
 # path to NRC cli app
 CLI_APP="/usr/bin/cli_app"
-# maximum time to wait for a yellow light ping, minimun 1 second
-MAX_PING_TIME=1
 ######################
 
 # bit flipper for blinking function
@@ -36,25 +34,41 @@ echo "Starting STATION Mode LEDs"
 while true;
 do
     sleep "$SLEEP_TIME"s
-    # find gaetway
-    #gateway=$(ip route show 0.0.0.0/0 dev $INTERFACE_NAME | cut -d\  -f3)
-    # check gateway for ip being given
-    gateway_connect=$(ip a s $INTERFACE_NAME | grep "inet")
-    if [ -n "$gateway_connect" ];
+    # check if backup is active
+    current_active=$(cat /sys/class/net/bond0/bonding/active_slave)
+    
+    output_status=$(cat /proc/net/bonding/bond0)
+    
+    is_conn="0"
+    
+    # blink red if backup is linked, solid if used
+    if [ "$current_active" = "$BACKUP_INTERFACE_NAME" ];
     then 
         $CLI_APP gpio write 3 1 >> /dev/null
-    else
+    elif grep -q "up" <(echo $output_status | grep -A=1 "Slave Interface: $BACKUP_INTERFACE_NAME")
+    then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
-        continue
+        is_conn="1"
     fi
     
-    # check custom url for connectivity, if packet recieved then write to led
-    gateway_connect=$(ping -c1 -I $INTERFACE_NAME -q -w $MAX_PING_TIME $YELLOW_LED_CHECK_URL | grep "1 received")
-    if [ -n "$gateway_connect" ];
+    # blink yellow if primary is linked, solid if used
+    if [ "$current_active" = "$PRIMARY_INTERFACE_NAME" ];
     then 
         $CLI_APP gpio write 2 1 >> /dev/null
-    else
-        $CLI_APP gpio write 2 0 >> /dev/null
+    elif grep -q "up" <(echo $output_status | grep -A=1 "Slave Interface: $PRIMARY_INTERFACE_NAME")
+    then
+        oscillate="$((1-oscillate))"
+        $CLI_APP gpio write 2 "$oscillate" >> /dev/null
+        is_conn="1"
     fi
+    
+    # blink simeltaneously if both unconnected
+    if [ "$is_conn" = "1" ];
+    then
+        oscillate="$((1-oscillate))"
+        $CLI_APP gpio write 3 "$oscillate" >> /dev/null
+    fi
+    
+    is_conn="0"
 done

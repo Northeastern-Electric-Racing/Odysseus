@@ -5,27 +5,20 @@ allow-hotplug eth0
 iface eth0 inet manual
 
 
+auto bond0
+iface bond0 inet manual
+    bond-slaves wlan1 wlan0
+    bond-mode active-backup
+    bond-primary wlan1
+    bond-miimon 100
+
 auto wlan1
 iface wlan1 inet manual
     wpa-conf /etc/wpa_supplicant_base.conf
-    bond-master bond0
-    bond-primary wlan1
-    bond-mode active-backup
 
 auto wlan0
 iface wlan0 inet manual
     wpa-conf /etc/wpa_supplicant_halow.conf
-    bond-master bond0
-    bond-primary wlan1
-    bond-mode active-backup
-    
-auto bond0
-iface bond0 inet manual
-    bond-slaves none
-    bond-primary eth0
-    bond-mode active-backup
-    bond-miimon 100
-
 
 
 auto can0

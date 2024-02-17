@@ -20,7 +20,7 @@ $CLI_APP gpio direction 3 1
 $CLI_APP gpio direction 2 1
 
 # pin 3 = red led (RX)
-# pin 2 = yellow red (TX)
+# pin 2 = yellow led (TX)
 
 # a cleanup script run upon any exit (like ctrl^c), to turn the lights off and not leave them on and unresponsive.  Should run before module is unloaded.
 trap cleanup INT HUP TERM
@@ -34,41 +34,37 @@ echo "Starting STATION Mode LEDs"
 while true;
 do
     sleep "$SLEEP_TIME"s
-    # check if backup is active
-    current_active=$(cat /sys/class/net/bond0/bonding/active_slave)
+
+    output_status=$(cat "/proc/net/bonding/bond0")
     
-    output_status=$(cat /proc/net/bonding/bond0)
-    
-    is_conn="0"
-    
-    # blink red if backup is linked, solid if used
-    if [ "$current_active" = "$BACKUP_INTERFACE_NAME" ];
-    then 
-        $CLI_APP gpio write 3 1 >> /dev/null
-    elif grep -q "up" <(echo $output_status | grep -A=1 "Slave Interface: $BACKUP_INTERFACE_NAME")
-    then
-        oscillate="$((1-oscillate))"
-        $CLI_APP gpio write 3 "$oscillate" >> /dev/null
-        is_conn="1"
-    fi
-    
-    # blink yellow if primary is linked, solid if used
-    if [ "$current_active" = "$PRIMARY_INTERFACE_NAME" ];
-    then 
-        $CLI_APP gpio write 2 1 >> /dev/null
-    elif grep -q "up" <(echo $output_status | grep -A=1 "Slave Interface: $PRIMARY_INTERFACE_NAME")
+
+    # if both interfaces are down, warn by short yellow
+    if grep -q "down" <(echo "$output_status" | grep -F -A 1 "Currently Active Slave");
     then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 2 "$oscillate" >> /dev/null
-        is_conn="1"
+        continue
     fi
     
-    # blink simeltaneously if both unconnected
-    if [ "$is_conn" = "1" ];
+    
+    # blink red if backup is linked, solid red if currently active
+    if grep -q "$BACKUP_INTERFACE_NAME" <(echo "$output_status" | grep -F "Currently Active Slave");
+    then 
+        $CLI_APP gpio write 3 1 >> /dev/null
+    elif grep -q "up" <(echo "$output_status" | grep -F -A 1 "Slave Interface: $BACKUP_INTERFACE_NAME")
     then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
+    else
+        $CLI_APP gpio write 3 0 >> /dev/null
     fi
     
-    is_conn="0"
+    # solid yellow if primary is linked, which implies it must be active
+    if grep -q "up" <(echo "$output_status" | grep -F -A 1 "Slave Interface: $PRIMARY_INTERFACE_NAME")
+    then
+        $CLI_APP gpio write 2 1 >> /dev/null
+    else
+        $CLI_APP gpio write 2 0 >> /dev/null
+    fi
+    
 done

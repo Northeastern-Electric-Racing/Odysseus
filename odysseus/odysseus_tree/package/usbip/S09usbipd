@@ -6,6 +6,8 @@ EXECUTABLE=/usr/sbin/usbipd
 case "$1" in
   start)
     echo "Starting usbipd..."
+    # probing module
+    /sbin/modprobe usbip_host
     # start (S) executable (x) in background (b), (m) make (p) and use pidfile -- (4) use IPv4 mode
     start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -4
     ;;

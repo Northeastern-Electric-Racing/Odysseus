@@ -3,6 +3,6 @@ syntax = "proto3";
 package serverdata.v1;
 
 message ServerData {
-   string value = 1;
+   repeated string value = 1;
    string unit = 2;
 }

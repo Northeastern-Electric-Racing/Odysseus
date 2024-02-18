@@ -1,10 +1,13 @@
 from subprocess import check_output
 FETCH_CMD = "bmon -o format:quitafter=1 -p can0"
+#example = "can0 0 11024 0 40"
 
 def fetch_data():
     try:
-        out = check_output(FETCH_CMD.split(" "), shell=True)
-        return [("TPU/Can/DataRate", [out], "kb/s")]
+        out = check_output(FETCH_CMD.split(" "), shell=False)
+        split = out.split(" ")
+        data = [split[4], split[2]]
+        return [("TPU/Can/DataRate", data, "kb/s")]
     except Exception as e:
         print(f"Failed to fetch data: {e}")
 

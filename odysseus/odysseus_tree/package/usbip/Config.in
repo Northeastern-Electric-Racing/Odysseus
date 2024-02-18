@@ -1,0 +1,10 @@
+config BR2_PACKAGE_USBIP
+	bool "usbip"
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HAS_THREADS # usbutils <- libusb
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_USBUTILS
+	select BR2_PACKAGE_HWDATA # for naming of usb devices (large pkg)
+	help
+	  usbip is a set of tools that allows machines to share their
+  	  usb devices over the network, to be driven by a remote client. 

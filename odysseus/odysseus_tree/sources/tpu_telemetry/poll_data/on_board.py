@@ -6,10 +6,7 @@ import psutil, sys
 # fetch_data() -> List[(str, [str], str)]
 # finish after testing
 def fetch_data():
-    #fetch_cpu_temperature()
-    fetch_cpu_usage()
-    fetch_broker_cpu_usage()
-    fetch_available_memory()
+    return[fetch_cpu_temperature(), fetch_cpu_usage(), fetch_broker_cpu_usage(), fetch_available_memory()]
     
 
 

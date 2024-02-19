@@ -54,7 +54,7 @@ def fetch_available_memory():
     try:
         mem_info = psutil.virtual_memory()
         mem_available = mem_info.available / (1024 * 1024)  
-        return[("TPU/OnBoard/MemAvailable", mem_available, "MB")]
+        return[("TPU/OnBoard/MemAvailable", [mem_available], "MB")]
     except Exception as e:
         print(f"Error fetching available memory: {e}")
         return None

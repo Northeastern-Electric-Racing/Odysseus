@@ -43,6 +43,7 @@ do
     then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 2 "$oscillate" >> /dev/null
+        $CLI_APP gpio write 3 0 >> /dev/null
         continue
     fi
     

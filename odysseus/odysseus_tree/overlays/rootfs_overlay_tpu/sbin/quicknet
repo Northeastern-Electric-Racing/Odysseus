@@ -75,7 +75,9 @@ do_start() {
 
 }
 
-do_stop() {   
+
+do_stop() {
+   
    start-stop-daemon -K -p /var/run/wpa_supplicant.wlan1.pid
    rm /var/run/wpa_supplicant.wlan1.pid
    start-stop-daemon -K -p /var/run/wpa_supplicant.wlan0.pid

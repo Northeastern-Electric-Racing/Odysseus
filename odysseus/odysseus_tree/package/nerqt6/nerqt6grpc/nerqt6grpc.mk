@@ -42,7 +42,6 @@ NERQT6GRPC_DEPENDENCIES = \
 	host-pkgconf \
 	nerqt6base \
 	host-nerqt6grpc \
-	protobuf
 	
 HOST_NERQT6GRPC_DEPENDENCIES = host-nerqt6base host-protobuf
 

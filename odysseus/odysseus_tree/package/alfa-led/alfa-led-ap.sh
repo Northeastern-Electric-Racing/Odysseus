@@ -46,9 +46,8 @@ do
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
     fi
 
-    # check other interace for inet ip
-    gateway_connect=$(ip a s $YELLOW_LED_INTERFACE_NAME | grep "inet")
-    if [ -n "$gateway_connect" ];
+    ip -json address show "$YELLOW_LED_INTERFACE_NAME" | jq -e '.[0].addr_info' >> /dev/null
+    if [ "$?" -ne 0 ];
     then
         $CLI_APP gpio write 2 1 >> /dev/null
     else

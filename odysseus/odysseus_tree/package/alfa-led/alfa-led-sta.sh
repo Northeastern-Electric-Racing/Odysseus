@@ -35,33 +35,32 @@ while true;
 do
     sleep "$SLEEP_TIME"s
 
-    output_status=$(cat "/proc/net/bonding/bond0")
+    status_bond=$(ip -json -details link show dev bond0)
     
 
     # if both interfaces are down, warn by short yellow
-    if grep -q "down" <(echo "$output_status" | grep -F -A 1 "Currently Active Slave");
+    if grep -q "DOWN" <(echo "$status_bond" | jq '.[0].operstate')
     then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 2 "$oscillate" >> /dev/null
         $CLI_APP gpio write 3 0 >> /dev/null
         continue
     fi
-    
-    
+        
     # blink red if backup is linked, solid red if currently active
-    if grep -q "$BACKUP_INTERFACE_NAME" <(echo "$output_status" | grep -F "Currently Active Slave");
+    if grep -q "$BACKUP_INTERFACE_NAME" <(echo "$status_bond" | jq '.[0].linkinfo.info_data.active_slave')
     then 
         $CLI_APP gpio write 3 1 >> /dev/null
-    elif grep -q "up" <(echo "$output_status" | grep -F -A 1 "Slave Interface: $BACKUP_INTERFACE_NAME")
+    elif grep -q "UP" <(ip -json -details link show dev "$BACKUP_INTERFACE_NAME" | jq '.[0].linkinfo.info_slave_data.mii_status')
     then
         oscillate="$((1-oscillate))"
         $CLI_APP gpio write 3 "$oscillate" >> /dev/null
     else
         $CLI_APP gpio write 3 0 >> /dev/null
     fi
-    
+        
     # solid yellow if primary is linked, which implies it must be active
-    if grep -q "up" <(echo "$output_status" | grep -F -A 1 "Slave Interface: $PRIMARY_INTERFACE_NAME")
+    if grep -q "UP" <(ip -json -details link show dev "$PRIMARY_INTERFACE_NAME" | jq '.[0].linkinfo.info_slave_data.mii_status')
     then
         $CLI_APP gpio write 2 1 >> /dev/null
     else

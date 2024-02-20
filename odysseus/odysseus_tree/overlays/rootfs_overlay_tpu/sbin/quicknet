@@ -1,5 +1,32 @@
 #!/bin/sh
+#
+# Start the network....
+#
 
+case "$1" in
+  start)
+        printf "Starting quicknet: "
+        /sbin/quicknet init
+        [ $? = 0 ] && echo "OK" || echo "FAIL"
+        ;;
+  stop)
+        printf "Stopping quicknet: "
+        /sbin/quicknet deinit
+        [ $? = 0 ] && echo "OK" || echo "FAIL"
+        ;;
+  restart|reload)
+        "$0" stop
+        "$0" start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?
+
+# cat /sbin/quicknet
+#!/bin/sh
 do_start() {
    # lo
    ip addr add 127.0.0.1/8 dev lo
@@ -11,6 +38,15 @@ do_start() {
    # can0
    ip link set dev can0 type can bitrate 1000000 listen-only on
    ip link set dev can0 up
+
+   ip link set lo up
+   
+   # eth0
+   ip link set eth0 up
+
+   # can0
+#   ip link set can0 type can bitrate 1000000
+#   ip link set can0 up
 
    # bond0
    modprobe bonding
@@ -39,8 +75,7 @@ do_start() {
 
 }
 
-do_stop() {
-   
+do_stop() {   
    start-stop-daemon -K -p /var/run/wpa_supplicant.wlan1.pid
    rm /var/run/wpa_supplicant.wlan1.pid
    start-stop-daemon -K -p /var/run/wpa_supplicant.wlan0.pid

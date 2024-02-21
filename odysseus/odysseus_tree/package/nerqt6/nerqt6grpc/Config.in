@@ -6,8 +6,6 @@ config BR2_PACKAGE_NERQT6GRPC
 	  Qt is a cross-platform application and UI framework for
 	  developers using C++.
 
-	  The Qt Shader Tools module builds on the SPIR-V Open
-	  Source Ecosystem as described at the Khronos SPIR-V web
-	  site.
+	  Providing protobuf and gRPC support for Qt.
 
 	  https://doc.qt.io/qt-6/qtshadertools-index.html

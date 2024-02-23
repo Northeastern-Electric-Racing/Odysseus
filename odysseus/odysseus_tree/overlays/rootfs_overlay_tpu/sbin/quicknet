@@ -39,15 +39,6 @@ do_start() {
    ip link set dev can0 type can bitrate 1000000 listen-only on
    ip link set dev can0 up
 
-   ip link set lo up
-   
-   # eth0
-   ip link set eth0 up
-
-   # can0
-#   ip link set can0 type can bitrate 1000000
-#   ip link set can0 up
-
    # bond0
    modprobe bonding
 

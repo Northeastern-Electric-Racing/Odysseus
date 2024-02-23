@@ -39,16 +39,14 @@ def fetch_data_RSSI():
 
     try:
         out = check_output(FETCH_RSSI_CMD.split(" "), shell=False)
-        split = out.splitlines()[1]
+        split = out.splitlines()[1].decode("utf-8")
         data = split.split(":")[1].strip()
         return [("TPU/HaLow/RSSI", [data], "dbm")]
     except Exception as e:
         print(f"Error fetching data: {e}")
 
 def fetch_data():
-    fetch_data_ApMCS()
-    fetch_data_StaMCS()
-    fetch_data_RSSI()
+    return [fetch_data_ApMCS(), fetch_data_StaMCS(), fetch_data_RSSI()]
 
 def main():
     print(fetch_data_ApMCS())

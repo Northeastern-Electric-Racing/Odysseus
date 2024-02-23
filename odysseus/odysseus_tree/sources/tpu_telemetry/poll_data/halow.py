@@ -19,7 +19,7 @@ FETCH_RATE_CMD = "cli_app show ap 0"
 
 def fetch_data_ApMCS():
     try:
-        out = check_output(FETCH_RATE_CMD.split(" "), shell=False)
+        out = check_output(FETCH_RATE_CMD.split(" "), shell=False).decode("utf-8")
         data_line = out.splitlines()[2] 
         parsed_data = data_line.split()[5][:-1].strip()
         return [("TPU/HaLow/ApMCS", [parsed_data], "integer 0-10")]
@@ -28,7 +28,7 @@ def fetch_data_ApMCS():
 
 def fetch_data_StaMCS():
     try:
-        out = check_output(FETCH_RATE_CMD.split(" "), shell=False)
+        out = check_output(FETCH_RATE_CMD.split(" "), shell=False).decode("utf-8")
         data_line = out.splitlines()[2] 
         parsed_data = data_line.split()[3][:-1].strip()
         return [("TPU/HaLow/StaMCS", [parsed_data], "integer 0-10")]
@@ -38,7 +38,7 @@ def fetch_data_StaMCS():
 def fetch_data_RSSI():
 
     try:
-        out = check_output(FETCH_RSSI_CMD.split(" "), shell=False)
+        out = check_output(FETCH_RSSI_CMD.split(" "), shell=False).decode("utf-8")
         split = out.splitlines()[1].decode("utf-8")
         data = split.split(":")[1].strip()
         return [("TPU/HaLow/RSSI", [data], "dbm")]

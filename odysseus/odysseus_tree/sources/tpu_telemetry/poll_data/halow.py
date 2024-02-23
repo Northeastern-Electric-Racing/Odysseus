@@ -21,7 +21,7 @@ def fetch_data_ApMCS():
     try:
         out = check_output(FETCH_RATE_CMD.split(" "), shell=False)
         data_line = out.splitlines()[2] 
-        parsed_data = data_line.split()[5][:-1]
+        parsed_data = data_line.split()[5][:-1].strip()
         return [("TPU/HaLow/ApMCS", [parsed_data], "integer 0-10")]
     except Exception as e:
         print(f"Error fetching data: {e}")
@@ -30,7 +30,7 @@ def fetch_data_StaMCS():
     try:
         out = check_output(FETCH_RATE_CMD.split(" "), shell=False)
         data_line = out.splitlines()[2] 
-        parsed_data = data_line.split()[3][:-1]
+        parsed_data = data_line.split()[3][:-1].strip()
         return [("TPU/HaLow/StaMCS", [parsed_data], "integer 0-10")]
     except Exception as e:
         print(f"Error fetching data: {e}")

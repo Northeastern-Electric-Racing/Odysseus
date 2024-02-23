@@ -1,6 +1,4 @@
 
-#!/usr/bin/venv -S python3 -u
-
 import psutil, sys
 
 # fetch_data() -> List[(str, [str], str)]
@@ -25,7 +23,7 @@ def fetch_cpu_temperature():
                 entry.critical,
             )
     
-    return[("TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
+    return[("  TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
 
 # CPU Usage 
 def fetch_cpu_usage():

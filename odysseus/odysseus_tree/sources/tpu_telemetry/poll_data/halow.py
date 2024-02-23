@@ -14,7 +14,7 @@ MPDU_Succ                        : 0
 SNR                              : 0
 ---------------------------------------------------
 OK"""
-FETCH_RSSI_CMD = "cli_app stats simple_rx"
+FETCH_RSSI_CMD = "cli_app show stats simple_rx"
 FETCH_RATE_CMD = "cli_app show ap 0"
 
 def fetch_data_ApMCS():
@@ -39,7 +39,7 @@ def fetch_data_RSSI():
 
     try:
         out = check_output(FETCH_RSSI_CMD.split(" "), shell=False).decode("utf-8")
-        split = out.splitlines()[1].decode("utf-8")
+        split = out.splitlines()[1]
         data = split.split(":")[1].strip()
         return [("TPU/HaLow/RSSI", [data], "dbm")]
     except Exception as e:

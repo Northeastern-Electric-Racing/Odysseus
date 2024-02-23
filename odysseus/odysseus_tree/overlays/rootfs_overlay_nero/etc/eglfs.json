@@ -1,8 +1,8 @@
 {
-    "device": "/dev/dri/card0",
+    "device": "/dev/dri/card1",
     "outputs": [
 {
-   "name": "HDMI1",
+   "name": "HDMI0",
    "mode": "800x480", "primary":true
 }
 ]

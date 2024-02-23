@@ -1,0 +1,11 @@
+# NER: new package (no in tree equivalent)
+config BR2_PACKAGE_NERQT6GRPC
+	bool "nerqt6grpc"
+	select BR2_PACKAGE_HOST_NERQT6BASE
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  Providing protobuf and gRPC support for Qt.
+
+	  https://doc.qt.io/qt-6/qtshadertools-index.html

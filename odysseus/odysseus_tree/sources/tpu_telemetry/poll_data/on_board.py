@@ -32,7 +32,7 @@ def fetch_cpu_usage():
     try:
         cpu_usage = psutil.cpu_percent()
         print (cpu_usage)
-        return[("TPU/OnBoard/CpuUsage", [cpu_usage], "%")]
+        return[("TPU/OnBoard/CpuUsage", [cpu_usage], "percent")]
     except Exception as e:
         print(f"Error fetching CPU usage: {e}")
         return None
@@ -44,7 +44,7 @@ def fetch_broker_cpu_usage():
             pid = int(file.read())
             process = psutil.Process(pid)
             broker_cpu_usage = process.cpu_percent()
-        return[("TPU/OnBoard/BrokerCpuUsage", [broker_cpu_usage], "%")]
+        return[("TPU/OnBoard/BrokerCpuUsage", [broker_cpu_usage], "percent")]
     except Exception as e:
         print(f"Error fetching nanomq broker CPU usage: {e}")
         return None

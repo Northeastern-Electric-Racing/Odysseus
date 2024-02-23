@@ -10,8 +10,6 @@ def fetch_data():
 
 # CPU Temp
 def fetch_cpu_temperature():
-    temps = psutil.sensors_temperatures(fahrenheit=False)
-    
     try:
         temps = psutil.sensors_temperatures(fahrenheit=False)
         for name, entries in temps.items():
@@ -22,7 +20,7 @@ def fetch_cpu_temperature():
                     entry.high,
                     entry.critical,
                 )
-        return[("  TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
+        return[("TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
     except Exception as e:
         print(f"Error fetching system temperature: {e}")
         return None

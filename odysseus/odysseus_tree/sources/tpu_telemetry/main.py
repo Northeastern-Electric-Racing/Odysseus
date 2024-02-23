@@ -1,5 +1,5 @@
 import asyncio
-import signal
+# import signal
 import server_data_pb2
 from poll_data import example
 import time
@@ -21,17 +21,17 @@ def on_disconnect(client, packet, exc=None):
 def publish_data(topic, message_data):
     print(client, topic, message_data)
 
-    # Send the data of test
+    # send the data of test
     client.publish(topic, message_data)
 
 async def initialize():
 
     host = 'broker.emqx.io'
 
-    client.on_connect = on_connect
+    client.on_connect = on_connect # do we need this
     client.on_disconnect = on_disconnect # do we need this
 
-    # Connecting the MQTT broker
+    # connecting the MQTT broker
     await client.connect(host, 1883)
 
 async def run():
@@ -64,8 +64,8 @@ STOP = asyncio.Event()
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
 
-  #  loop.add_signal_handler(signal.SIGINT, ask_exit)
-  #  loop.add_signal_handler(signal.SIGTERM, ask_exit)
+    # loop.add_signal_handler(signal.SIGINT, ask_exit)
+    # loop.add_signal_handler(signal.SIGTERM, ask_exit)
 
     loop.run_until_complete(run())
 

@@ -6,10 +6,6 @@ import time
 import asyncio
 from gmqtt import Client as MQTTClient
 
-# data = server_data_pb2.ServerData()
-# data.value = "50"
-# data.unit = "C"
-
 # initialize connection
 
 client = MQTTClient("tpu-publisher")
@@ -24,6 +20,7 @@ def on_disconnect(client, packet, exc=None):
 
 def publish_data(topic, message_data):
     print(client, topic, message_data)
+
     # Send the data of test
     client.publish(topic, message_data)
 
@@ -38,13 +35,14 @@ async def initialize():
     await client.connect(host, 1883)
 
 async def run():
-    client = await initialize()
+    await initialize()
 
     while True:
         items = example.fetch_data()
-        print("hehe")
+
         for item in items:
             file_data = item
+            topic = file_data[0]
 
             data = server_data_pb2.ServerData()
 
@@ -56,10 +54,10 @@ async def run():
             
             message_data = data.SerializeToString()
 
-            print("hehe")
-            publish_data(client, message_data)
+            publish_data(topic, message_data)
 
-        time.sleep(0.1)
+            await asyncio.sleep(1)
+
 
 STOP = asyncio.Event()
 

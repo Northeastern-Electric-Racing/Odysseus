@@ -29,7 +29,6 @@ def fetch_cpu_temperature():
 def fetch_cpu_usage():
     try:
         cpu_usage = psutil.cpu_percent()
-        print (cpu_usage)
         return[("TPU/OnBoard/CpuUsage", [cpu_usage], "percent")]
     except Exception as e:
         print(f"Error fetching CPU usage: {e}")

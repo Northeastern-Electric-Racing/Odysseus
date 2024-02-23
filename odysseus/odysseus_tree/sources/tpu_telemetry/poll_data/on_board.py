@@ -1,5 +1,5 @@
 
-import psutil, sys
+import psutil
 
 # fetch_data() -> List[(str, [str], str)]
 
@@ -12,18 +12,22 @@ def fetch_data():
 def fetch_cpu_temperature():
     temps = psutil.sensors_temperatures(fahrenheit=False)
     
-    if not temps:
-        sys.exit("can't read any temperature")
-    for name, entries in temps.items():
-        for entry in entries:
-            line = "    %-20s %s °C (high = %s °C, critical = %s °C)" % (
-                entry.label or name,
-                entry.current,
-                entry.high,
-                entry.critical,
-            )
+    try:
+        temps = psutil.sensors_temperatures(fahrenheit=False)
+        for name, entries in temps.items():
+            for entry in entries:
+                line = "    %-20s %s °C (high = %s °C, critical = %s °C)" % (
+                    entry.label or name,
+                    entry.current,
+                    entry.high,
+                    entry.critical,
+                )
+        return[("  TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
+    except Exception as e:
+        print(f"Error fetching system temperature: {e}")
+        return None
     
-    return[("  TPU/OnBoard/CpuTemp", [entry.current], "celsius")]
+    
 
 # CPU Usage 
 def fetch_cpu_usage():
@@ -61,3 +65,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

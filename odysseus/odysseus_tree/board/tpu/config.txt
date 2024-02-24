@@ -49,7 +49,7 @@ dtoverlay=uart5
 dtoverlay=pps-gpio,gpiopin=24
 
 # for can
-dtoverlay=spi4-1cs
+dtoverlay=spi4-1cs,cs0_pin=4,cs0_spidev=off
 dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
 dtparam=interrupt=26
 

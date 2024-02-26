@@ -10,3 +10,7 @@ config BR2_PACKAGE_CALYPSO
         Written in Rust, utlizing socketcand.
         
         https://github.com/Northeastern-Electric-Racing/Calypso
+	
+config BR2_PACKAGE_CALYPSO_BROKER_IP
+	string "broker ip"
+	default "localhost:1883"

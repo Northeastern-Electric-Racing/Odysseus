@@ -1,7 +1,0 @@
-# pi mac addr with en* prefix to differentiate w/ wl
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="d8:3a:dd:*", KERNEL=="en*", NAME="eth0"
-# alfa mac addr
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:c0:ca:*", KERNEL=="wl*", NAME="wlan0"
-# pi mac addr with wl
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="d8:3a:dd:*", KERNEL=="wl*", NAME="wlan1"
-

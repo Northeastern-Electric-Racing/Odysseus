@@ -3,12 +3,13 @@
 PIDFILE=/var/run/calypso.pid
 EXECUTABLE=/usr/bin/calypso
 INTERFACE_NAME=can0
+BROKER_IP=localhost:1883
 
 case "$1" in
   start)
     echo "Starting calypso..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- mqtt localhost:1883 $INTERFACE_NAME skip_can_configure
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- mqtt $BROKER_IP $INTERFACE_NAME skip_can_configure
     ;;
   stop)
     echo "Stopping calypso..."

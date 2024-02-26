@@ -30,8 +30,8 @@ enable_uart=1
 # enable autoprobing of Bluetooth driver without need of hciattach/btattach
 dtoverlay=krnbt=on
 
-dtoverlay=vc4-kms-v3d-pi4
-dtoverlay=imx219
+#dtoverlay=vc4-kms-v3d-pi4
+#dtoverlay=imx219
 #dtoverlay=ov5647
 
 # enable 64bits support
@@ -40,15 +40,6 @@ arm_64bit=1
 
 #dtoverlay=disable-bt
 #dtoverlay=disable-wifi
-dtoverlay=spi0-1cs
-dtoverlay=newracom_for_5-16_or_later
-dtparam=spi=on
 
 # for can
-dtoverlay=spi4-1cs,cs0_pin=4,cs0_spidev=off
-dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
-dtparam=interrupt=26
-
-# for sd card
-dtoverlay=spi1-1cs,cs0_pin=16,cs0_spidev=disabled
-dtoverlay=mmc_spi-spi1
+dtoverlay=mcp2515-can0,oscillator=16000000,spimaxfrequency=10000000

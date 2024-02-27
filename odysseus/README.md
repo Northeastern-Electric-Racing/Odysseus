@@ -33,12 +33,20 @@ git clone https://github.com/Northeastern-Electric-Racing/Siren.git
 git submodule update --init --recursive
 cd ./odysseus
 ```
-At this point, copy the file `SECRETS.env-example` to `SECRETS.env`, if you want to use non-default passwords edit this file.
 
-Once that is done, run:
+For linux (current support includes all build defconfigs):
 ```
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+
 ```
+
+For mac and windows: (current support includes all _debug defconfigs, on x86_64 host normal defconfigs can work (experimental)):
+```
+docker compose run -f ./compose-compat.yml --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+```
+
+
+
 Now you are in the docker container.  To build cd into the defconfig directory (either ap, or tpu), then run the make command alias:
 ```
 cd ./<defconfig>
@@ -70,6 +78,10 @@ The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
 
 **IMPORTANT**: this WILL wipe all shared cache (don't do this unless you need the space):  
 `docker volume rm odysseus_shared_data`
+
+This will wipe all outputs, not the cache so just requires a full rebuild to recover from.  On compose-compat images only:
+`docker volume rm odysseus_outputs`
+
 
 #### Open another tty
 `docker ps`

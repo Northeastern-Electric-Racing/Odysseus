@@ -5,15 +5,12 @@ Custom Linux Build being used to drive the TPU
 - `raspberrypi4_64_tpu_defconfig` for TPU
     - NRC HaLow station
     - NanoMQ MQTT
-    - Calypso CAN decoding (TBD)
+    - Calypso CAN decoding
     - GPS support
     - Docker
+    - Nero display abilities
 - `raspberrypi3_64_ap_defconfig` for base station HaLow access point
     - NRC HaLow access point
-- `raspberrypi4_64_nero_defconfig` for in-car dashboard
-    - 2.4 Ghz integrated access point (TBD)
-    - NanoMQ MQTT
-    - Calypso CAN decoding (TBD)
 
 All defconfigs come with (in addition to busybox and util_linux utilities):
 
@@ -36,7 +33,7 @@ git submodule update --init -recursive
 cd ./odysseus
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
 ```
-Now you are in the docker container.  To build cd into the defconfig directory (either ap, nero, or tpu), then run the make command alias:
+Now you are in the docker container.  To build cd into the defconfig directory (either ap, or tpu), then run the make command alias:
 ```
 cd ./<defconfig>
 make-current

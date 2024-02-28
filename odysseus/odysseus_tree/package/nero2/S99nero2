@@ -8,7 +8,7 @@ case "$1" in
   start)
     echo "Starting nero2..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    QT_QPA_EGLFS_KMS_CONFIG=$KMS_EGLFS_CONF_FILE start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --platform eglfs
+    QT_QPA_EGLFS_NO_LIBINPUT=1  QT_QPA_EVDEV_KEYBOARD_PARAMETERS=grab=1 QT_QPA_EGLFS_KMS_CONFIG=$KMS_EGLFS_CONF_FILE start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --platform eglfs
     ;;
   stop)
     echo "Stopping nero2..."

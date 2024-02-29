@@ -1,7 +1,7 @@
 import asyncio
 # import signal
 import server_data_pb2
-from poll_data import example
+from poll_data import example, can, on_board, halow
 import time
 import asyncio
 from gmqtt import Client as MQTTClient
@@ -26,7 +26,7 @@ def publish_data(topic, message_data):
 
 async def initialize():
 
-    host = 'broker.emqx.io'
+    host = '127.0.0.1'
 
     client.on_connect = on_connect # do we need this
     client.on_disconnect = on_disconnect # do we need this
@@ -38,10 +38,10 @@ async def run():
     await initialize()
 
     while True:
-        items = example.fetch_data()
+        items = can.fetch_data() + halow.fetch_data() + on_board.fetch_data()
 
-        for item in items:
-            file_data = item
+        for file_data in items:
+            print(file_data)
             topic = file_data[0]
 
             data = server_data_pb2.ServerData()
@@ -53,10 +53,10 @@ async def run():
                 data.value.append(val)
             
             message_data = data.SerializeToString()
-
+            
             publish_data(topic, message_data)
 
-            await asyncio.sleep(1)
+        await asyncio.sleep(1)
 
 
 STOP = asyncio.Event()

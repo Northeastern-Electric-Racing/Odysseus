@@ -10,6 +10,7 @@ def fetch_data():
         return [("TPU/Can/DataRate", data, "kb/s")]
     except Exception as e:
         print(f"Failed to fetch data: {e}")
+        return []
 
 
 

@@ -25,6 +25,7 @@ def fetch_data_ApMCS():
         return [("TPU/HaLow/ApMCS", [parsed_data], "integer 0-10")]
     except Exception as e:
         print(f"Error fetching data: {e}")
+        return []
 
 def fetch_data_StaMCS():
     try:
@@ -34,6 +35,7 @@ def fetch_data_StaMCS():
         return [("TPU/HaLow/StaMCS", [parsed_data], "integer 0-10")]
     except Exception as e:
         print(f"Error fetching data: {e}")
+        return []
 
 def fetch_data_RSSI():
 
@@ -44,9 +46,10 @@ def fetch_data_RSSI():
         return [("TPU/HaLow/RSSI", [data], "dbm")]
     except Exception as e:
         print(f"Error fetching data: {e}")
+        return []
 
 def fetch_data():
-    return [fetch_data_ApMCS(), fetch_data_StaMCS(), fetch_data_RSSI()]
+    return fetch_data_ApMCS() + fetch_data_StaMCS() + fetch_data_RSSI()
 
 def main():
     print(fetch_data_ApMCS())

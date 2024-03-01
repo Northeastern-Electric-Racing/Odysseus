@@ -1,0 +1,26 @@
+#!/bin/sh
+
+PIDFILE=/var/run/tpu-telemetry.pid
+EXECUTABLE=/usr/bin/tpu-telemetry
+
+case "$1" in
+  start)
+    echo "Starting tpu telemetry..."
+    # start (S) executable (x) in background (b), make pid file (m) at p
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
+    ;;
+  stop)
+    echo "Stopping tpu telemetry..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac
+

@@ -39,6 +39,9 @@ async def run(host):
         asyncio.threads.to_thread(lambda: set_interval(fn, freq))
         await asyncio.sleep(stagger)
 
+    while True:
+        await asyncio.sleep(0.5)
+
 
 def main():
     loop = asyncio.new_event_loop()

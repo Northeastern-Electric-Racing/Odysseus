@@ -1,7 +1,11 @@
 from subprocess import check_output
-FETCH_CMD = "bmon -o format:quitafter=1 -p can0"
-#example = "can0 0 11024 0 40"
+from telemetry import measurement
 
+FETCH_CMD = "bmon -o format:quitafter=1 -p can0"
+# example = "can0 0 11024 0 40"
+
+
+@measurement(100)
 def fetch_data():
     try:
         out = check_output(FETCH_CMD.split(" "), shell=False).decode("utf-8")
@@ -13,10 +17,9 @@ def fetch_data():
         return []
 
 
-
 def main():
     print(fetch_data())
 
+
 if __name__ == "__main__":
     main()
-    

@@ -52,7 +52,9 @@ Now you are in the docker container.  To build cd into the defconfig directory (
 cd ./<defconfig>
 make-current
 ```
-You can view the `output.log` for more info.  Now, to deploy just flash the image in `images/
+
+**Note: If failure occurs on mac or windows very early in the process, run `make nanomq-source` and try again before reporting the error.**
+You can view the `output.log` for more info.
 
 ### More on docker configuration
 The container has a directory structure as so:

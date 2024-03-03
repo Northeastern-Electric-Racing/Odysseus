@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tpu_telemetry"
+version = "0.1"
+dependencies = [
+  "protobuf",
+  "psutil",
+  "gmqtt",
+]
+
+[project.scripts]
+tpu-telemetry = "telemetry.publish:main"

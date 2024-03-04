@@ -1,5 +1,5 @@
 from subprocess import check_output
-from telemetry import measurement
+from .. import measurement
 
 FETCH_CMD = "bmon -o format:quitafter=1 -p can0"
 # example = "can0 0 11024 0 40"

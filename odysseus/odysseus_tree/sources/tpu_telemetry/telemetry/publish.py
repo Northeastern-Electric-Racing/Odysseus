@@ -1,7 +1,7 @@
 import asyncio
 import signal
-from telemetry import server_data_pb2
 from . import (
+    server_data_pb2,
     routines,
     set_interval,
     poll_data as _,  # your editor lies, this is an important import.
@@ -65,7 +65,7 @@ async def run(host):
 def main():
     loop = asyncio.new_event_loop()
 
-    host = "broker.emqx.io"
+    host = "localhost"
 
     loop.add_signal_handler(signal.SIGINT, ask_exit)
     loop.add_signal_handler(signal.SIGTERM, ask_exit)

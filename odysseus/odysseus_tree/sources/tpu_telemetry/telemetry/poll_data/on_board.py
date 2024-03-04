@@ -1,4 +1,4 @@
-from telemetry import measurement
+from .. import measurement
 import psutil
 
 # fetch_data() -> List[(str, [str], str)]
@@ -14,7 +14,7 @@ def fetch_data():
 
 
 # CPU Temp
-@measurement(100)
+@measurement(2000)
 def fetch_cpu_temperature():
     try:
         temps = psutil.sensors_temperatures(fahrenheit=False)
@@ -58,7 +58,7 @@ def fetch_broker_cpu_usage():
 
 
 # CPU available memory
-@measurement(50)
+@measurement(500)
 def fetch_available_memory():
     try:
         mem_info = psutil.virtual_memory()

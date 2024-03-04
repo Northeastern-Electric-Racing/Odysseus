@@ -1,6 +1,10 @@
 import asyncio
 import signal
-from . import routines, set_interval
+from . import (
+    routines,
+    set_interval,
+    poll_data,  # your editor lies, this is an important import.
+)
 from gmqtt import Client as MQTTClient
 
 # initialize connection
@@ -29,8 +33,6 @@ async def run(host):
     await client.connect(host, 1883)
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
-
-    print(routines)
 
     stagger = 1 / len(routines)
 

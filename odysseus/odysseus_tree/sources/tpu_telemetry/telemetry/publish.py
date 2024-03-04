@@ -4,7 +4,7 @@ from telemetry import server_data_pb2
 from . import (
     routines,
     set_interval,
-    poll_data,  # your editor lies, this is an important import.
+    poll_data as _,  # your editor lies, this is an important import.
 )
 from gmqtt import Client as MQTTClient
 

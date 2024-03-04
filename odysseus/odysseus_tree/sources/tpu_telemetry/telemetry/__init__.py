@@ -15,11 +15,14 @@ def measurement(freq: int):
     return wrapper
 
 
-async def set_interval(fn, interval: int, *args, **kwargs):
+async def set_interval(fn, interval: int, stop: asyncio.Event, *args, **kwargs):
     """
-    Behaves *like* JS' `setInterval`, but intervals cannot be canceled.
+    Behaves *like* JS' `setInterval`:
+    Run the function fn every interval milliseconds, and yield the result.
+    Stop when the stop event is set.
+    Uses the rest of the given args and kwargs for the function itself.
     """
 
-    while True:
-        await fn(*args, **kwargs)
-        await asyncio.sleep(interval * 1000)
+    while not stop.is_set():
+        yield fn(*args, **kwargs)
+        await asyncio.sleep(interval / 1000)

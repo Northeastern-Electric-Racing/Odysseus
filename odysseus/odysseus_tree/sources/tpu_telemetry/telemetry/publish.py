@@ -1,5 +1,6 @@
 import asyncio
 import signal
+from telemetry import server_data_pb2
 from . import (
     routines,
     set_interval,
@@ -29,6 +30,21 @@ def publish_data(topic, message_data):
     client.publish(topic, message_data)
 
 
+async def interval(fn, freq):
+    async for result in set_interval(fn, freq, STOP):
+        for packet in result:
+            print(packet)
+
+            data = server_data_pb2.ServerData()
+            topic, values, data.unit = packet
+
+            for val in values:
+                data.value.append(val)
+
+            message_data = data.SerializeToString()
+            publish_data(topic, message_data)
+
+
 async def run(host):
     await client.connect(host, 1883)
     client.on_connect = on_connect
@@ -38,7 +54,9 @@ async def run(host):
 
     for fn in routines:
         freq = routines[fn]
-        asyncio.threads.to_thread(lambda: set_interval(fn, freq))
+
+        # should not be awaited, this just gets run parallely along with other intervals.
+        asyncio.create_task(interval(fn, freq))
         await asyncio.sleep(stagger)
 
     await STOP.wait()

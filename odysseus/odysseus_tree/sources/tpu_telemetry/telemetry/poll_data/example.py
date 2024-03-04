@@ -1,4 +1,4 @@
-from telemetry import measurement
+from .. import measurement
 
 
 @measurement(500)

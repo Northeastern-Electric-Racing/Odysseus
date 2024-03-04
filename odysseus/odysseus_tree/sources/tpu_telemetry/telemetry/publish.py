@@ -1,6 +1,6 @@
 import asyncio
 import signal
-from telemetry import routines, set_interval
+from . import routines, set_interval
 from gmqtt import Client as MQTTClient
 
 # initialize connection

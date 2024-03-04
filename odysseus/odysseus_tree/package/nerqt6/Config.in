@@ -49,11 +49,11 @@ if BR2_PACKAGE_NERQT6
 # NER: comment out non-ported submodules
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6base/Config.in.host"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6base/Config.in"
-#source "package/qt6/qt6core5compat/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6core5compat/Config.in"
 #source "package/qt6/qt6serialbus/Config.in"
 #source "package/qt6/qt6serialport/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6shadertools/Config.in"
-#source "package/qt6/qt6svg/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6svg/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6declarative/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6mqtt/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6grpc/Config.in"

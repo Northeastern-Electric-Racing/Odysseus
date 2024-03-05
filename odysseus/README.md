@@ -33,6 +33,11 @@ git clone https://github.com/Northeastern-Electric-Racing/Siren.git
 git checkout develop-initial-hw-validation
 git submodule update --init -recursive
 cd ./odysseus
+```
+At this point, copy the file `SECRETS.env-example` to `SECRETS.env`, if you want to use non-default passwords edit this file.
+
+Once that is done, run:
+```
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
 ```
 Now you are in the docker container.  To build cd into the defconfig directory (either ap, or tpu), then run the make command alias:

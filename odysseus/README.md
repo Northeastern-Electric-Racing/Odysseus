@@ -85,7 +85,7 @@ Docker limitations:
 - Space is used up by rebuilds, prune often or omit `--build`
 
 ### Passwords
-In order to change ssh/root passwords for each defconfig, edit `./odysseus/SECRETS.env`. **Do not move, rename, or otherwise commit that file in any way after you have edited, as it contains sensitive info**.  Make sure to restart the docker image after editing the file.
+In order to change ssh/root passwords for each defconfig, copy `./odysseus/SECRETS.env-example` to `./odysseus/SECRETS.env` and edit it as needed. **Do not move, rename, or otherwise commit that file in any way after you have edited, as it contains sensitive info**.  Make sure to restart the docker image after editing the file.
 
 
 

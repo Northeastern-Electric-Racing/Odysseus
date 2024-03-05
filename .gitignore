@@ -8,3 +8,6 @@
 
 .DS_Store
 odysseus/outputs/**
+
+# for passwords
+odysseus/SECRETS.env

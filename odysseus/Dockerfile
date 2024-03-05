@@ -43,6 +43,7 @@ ADD ./docker_out_of_tree.sh /home/odysseus/
 
 RUN echo 'alias make-current="time make -j`nproc` --output-sync=target 2>&1 | tee output.log"' >> ~/.bashrc && \
 echo "/home/odysseus/docker_out_of_tree.sh" >> ~/.bashrc && \
+echo "set -o allexport && source /run/secrets/ody_passwords && set +o allexport " >> ~/.bashrc && \
 echo 'echo \
 " .d88888b.       888\n\                                              
 d88P  Y88b       888\n\                                             

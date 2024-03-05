@@ -37,7 +37,7 @@ RUN apt-get install -y \
 # add all buildroot files there
 WORKDIR /home/odysseus/build
 
-RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2024.02-rc1
+RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2024.02
 
 ADD ./docker_out_of_tree.sh /home/odysseus/
 

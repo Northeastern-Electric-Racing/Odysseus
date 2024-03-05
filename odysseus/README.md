@@ -82,6 +82,10 @@ Docker limitations:
 - Launch time is longer
 - Space is used up by rebuilds, prune often or omit `--build`
 
+### Passwords
+In order to change ssh/root passwords for each defconfig, edit `./odysseus/SECRETS.env`. **Do not move, rename, or otherwise commit that file in any way after you have edited, as it contains sensitive info**.  Make sure to restart the docker image after editing the file.
+
+
 
 Skip down to "Configuring the project" to learn more about developing, and check confluence for most info.  Once in the docker image, all the normal make commands (in an out-of-tree context only) apply.
 

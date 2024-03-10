@@ -41,6 +41,6 @@ RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot 
 
 WORKDIR /home/odysseus/outputs/
 COPY ./docker_scripts /home/odysseus/scripts
-RUN echo "source /home/odysseus/scripts/docker_out_of_tree.sh" >> ~/.bashrc
+RUN echo "source /home/odysseus/scripts/setup_env.sh" >> ~/.bashrc
 
 ENTRYPOINT "/bin/bash"

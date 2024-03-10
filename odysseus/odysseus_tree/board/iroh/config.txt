@@ -4,8 +4,8 @@
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
-start_file=start4.elf
-fixup_file=fixup4.dat
+start_file=start.elf
+fixup_file=fixup.dat
 
 kernel=Image
 
@@ -28,11 +28,8 @@ dtoverlay=miniuart-bt
 enable_uart=1
 
 # enable autoprobing of Bluetooth driver without need of hciattach/btattach
-dtoverlay=krnbt=on
+#dtoverlay=krnbt=on
 
-#dtoverlay=vc4-kms-v3d-pi4
-#dtoverlay=imx219
-#dtoverlay=ov5647
 
 # enable 64bits support
 arm_64bit=1

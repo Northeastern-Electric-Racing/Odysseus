@@ -1,0 +1,39 @@
+#!/bin/sh
+
+do_start() {
+   # lo
+   ip addr add 127.0.0.1/8 dev lo
+   ip link set dev lo up
+   
+   # eth0
+   ip link set dev eth0 up
+ 
+   # add wlan0
+   ip link set dev wlan0 up
+   
+   # create a bridge
+   ip link add name br0 type bridge
+   ip link set dev br0 up
+   # don't add wlan0 to the bridge as hostapd needs to do that
+   ip link set dev eth0 master br0
+
+
+}
+
+do_stop() {
+   
+   ip link set dev wlan0 down
+   ip link set dev eth0 down
+   ip link set dev lo down
+}
+
+
+if [ "$1" = init ];
+then
+   do_start
+elif [ "$1" = deinit ];
+then
+   do_stop
+else
+   echo "Usage: {init|deinit}"
+fi

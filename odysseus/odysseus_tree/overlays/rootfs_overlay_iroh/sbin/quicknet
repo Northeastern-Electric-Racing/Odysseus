@@ -1,0 +1,42 @@
+#!/bin/sh
+
+do_start() {
+   # lo
+   ip addr add 127.0.0.1/8 dev lo
+   ip link set dev lo up
+   
+   # eth0
+   ip link set dev eth0 up
+
+   # can0
+   ip link set dev can0 type can bitrate 1000000 listen-only on
+   ip link set dev can0 up
+ 
+   # add wlan0
+   ip link set dev wlan0 up
+
+   start-stop-daemon -S -x /usr/sbin/wpa_supplicant -b -m -p /var/run/wpa_supplicant.wlan0.pid -- -i wlan0 -c /etc/wpa_supplicant_base.conf -f /var/log/wpa0.log -d
+
+}
+
+do_stop() {
+
+   start-stop-daemon -K -p /var/run/wpa_supplicant.wlan0.pid
+   rm /var/run/wpa_supplicant.wlan0.pid
+
+      
+   ip link set dev wlan0 down
+   ip link set dev eth0 down
+   ip link set dev lo down
+}
+
+
+if [ "$1" = init ];
+then
+   do_start
+elif [ "$1" = deinit ];
+then
+   do_stop
+else
+   echo "Usage: {init|deinit}"
+fi

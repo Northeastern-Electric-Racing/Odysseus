@@ -8,7 +8,9 @@ Custom Linux Build being used to drive the TPU
     - Calypso CAN decoding
     - GPS support
     - Docker
-    - Nero display abilities
+- `raspberrypi3_64_iroh_defconfig` for off-car charging module
+    - Calypso CAN decoding
+    - 2.4/5ghz wireless connectivity to base station
 - `raspberrypi3_64_ap_defconfig` for base station HaLow access point
     - NRC HaLow access point
 

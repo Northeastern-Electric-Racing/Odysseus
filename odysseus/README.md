@@ -28,8 +28,7 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 Download and install to PATH git and docker.
 ```
 git clone https://github.com/Northeastern-Electric-Racing/Siren.git
-git checkout develop-initial-hw-validation
-git submodule update --init -recursive
+git submodule update --init --recursive
 cd ./odysseus
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
 ```

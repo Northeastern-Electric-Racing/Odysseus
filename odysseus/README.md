@@ -30,8 +30,7 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 Download and install to PATH git and docker.
 ```
 git clone https://github.com/Northeastern-Electric-Racing/Siren.git
-git checkout develop-initial-hw-validation
-git submodule update --init -recursive
+git submodule update --init --recursive
 cd ./odysseus
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
 ```
@@ -40,7 +39,7 @@ Now you are in the docker container.  To build cd into the defconfig directory (
 cd ./<defconfig>
 make-current
 ```
-You can view the `output.log` for more info.
+You can view the `output.log` for more info.  Now, to deploy just flash the image in `images/
 
 ### More on docker configuration
 The container has a directory structure as so:
@@ -79,17 +78,22 @@ docker exec <container_id> -d -w /home/odysseus/outputs/<defconfig> make-current
 ```
 Be careful with this.
     
-Docker limitations:
+Notes about docker:
 - Build time may be slower due to docker isolations (not dramatic, about 5-15%)
+- Since odysseus only supports amd64 hosts for non-debug defconfigs, full releases cannot be built on mac
 - Launch time is longer
 - Space is used up by rebuilds, prune often or omit `--build`
 
 
-Skip down to "Configuring the project" to learn more about developing, and check confluence for most info.  Once in the docker image, all the normal make commands (in an out-of-tree context only) apply.
+See below to learn more about developing, and check confluence for most info.  Once in the docker image, all the normal make commands (in an out-of-tree context only) apply.
+
+## Configuring the Project
+1. Run ```make menuconfig``` after initializing
+2. Make any customizations you want in the menu
+3. Save changes after you've made them by running ```make savedefconfig```.  Ensure you are saving changes to the intended defconfig, it is saved to whatever directory you `cd`ed into!
 
 
-
-
+<!--
 ## Build locally
 1. Install `git-lfs` (for nanomq submodules)
 2. Install all buildroot dependencies, including:
@@ -112,17 +116,6 @@ Skip down to "Configuring the project" to learn more about developing, and check
 4. Run ```make BR2_EXTERNAL=../odysseus_tree <config>``` supplanting `<config>` with either `raspberrypi4_64_tpu_defconfig` for TPU deployment or `raspberrypi3_64_ap_defconfig` for the base station access point deployment.
 5. All future config loads can omit BR2_EXTERNAL.
 
-## Configuring the Project
-1. Run ```make menuconfig``` after initializing
-2. Make any customizations you want in the menu
-3. Save changes after you've made them by running ```make savedefconfig```.  Ensure you are saving changes to the intended defconfig, it is the defconfig you originally loaded!
-
-## Building the Project
-1. Run `make <config>` using the config you want to build (see above), note that any `menuconfig` changes are overwritten with this command.
-2. Run ```make -j$(nproc) --output-sync=target``` (Note: this can take a few hours on first build, subsequent builds take less time).  Lower the -jN number to use less cores of your CPU to make your system usable during the build, at the expense of time.
-3. Navigate to ```buildroot/output``` and flash an SD card with ```sdcard.img``` (I prefer Ubuntu's disk writer since its easy and in GUI, but can use ```dd``` or whatever you prefer)
-4. Put SD card into TPU or AP and boot it.  Connection via HDMI to ensure it works, as well as serial pins (baud rate 115200), or ethernet hardwired to your computer with your computer in network sharing mode (note AP has a static eth0 address so it would be difficult to hard wire).
-
 ### Working with multiple defconfigs simultaneously (default on docker)
 Since there are multiple machines this repo deploys to, one can save the build output of multiple defconfigs side-by-side so outputs can be stored easily.  To do this, simply run `make O=my_dir BR2_EXTERNAL=../odysseus_tree <config>` inside the buildroot submodule, where my_dir is a path relative to the buildroot submodule.  Then `cd ./my_dir` and run all make commands from there, and output will be generated into `my_dir`. The `O=` can be omitted as long as your working directory is `my_dir` when running `make`. Make a new directory for each `<config>`, and if you run out of space feel free to `make clean` or delete all the directories (space used about 10 to 22gb).
 
@@ -133,3 +126,4 @@ For example, my system looks like:
     - `./ap`
 - `./buildroot/dl` (downloads, shared between defconfigs)
 - `~/.buildroot-ccache` (shared between defconfigs)
+-->

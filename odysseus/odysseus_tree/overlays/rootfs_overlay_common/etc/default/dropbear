@@ -1,0 +1,2 @@
+DROPBEAR_ARGS="-b /etc/issue"
+ 

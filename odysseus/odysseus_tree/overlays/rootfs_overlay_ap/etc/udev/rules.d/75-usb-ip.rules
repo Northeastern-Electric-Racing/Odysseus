@@ -1,2 +1,2 @@
 # usbipd must be running AND and usbip_host must be manually modprobed
-SYMLINK+="ttyKeyboard",SUBSYSTEMS=="usb",KERNEL=="1-1.1",RUN{program}+="/usr/sbin/usbip bind -b %k"
+SYMLINK+="ttyKeyboard",SUBSYSTEMS=="usb",KERNEL=="1-1.1.2",RUN{program}+="/usr/sbin/usbip bind -b %k"

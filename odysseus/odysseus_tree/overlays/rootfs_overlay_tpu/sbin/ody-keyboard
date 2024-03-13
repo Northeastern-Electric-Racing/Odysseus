@@ -1,4 +1,4 @@
 #!/bin/sh
 
 modprobe vhci_hcd
-usbip attach -r 192.168.100.11 -b 1-1.1
+usbip attach -r 192.168.100.11 -b 1-1.1.2

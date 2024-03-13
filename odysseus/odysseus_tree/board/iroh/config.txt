@@ -40,6 +40,3 @@ arm_64bit=1
 
 # for can
 dtoverlay=mcp2515-can0,oscillator=16000000,spimaxfrequency=10000000
-
-# disable colorful hdmi splash
-disable_splash=1

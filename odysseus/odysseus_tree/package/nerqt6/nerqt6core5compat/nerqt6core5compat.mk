@@ -35,5 +35,11 @@ NERQT6CORE5COMPAT_CONF_OPTS = \
 NERQT6CORE5COMPAT_DEPENDENCIES = \
 	host-pkgconf \
 	nerqt6base
+	
+	
+# *** add declarative as a dep for graphicaleffects if it is being used
+ifeq ($(BR2_PACKAGE_NERQT6DECLARATIVE),y)
+NERQT6CORE5COMPAT_DEPENDENCIES += nerqt6declarative
+endif
 
 $(eval $(cmake-package))

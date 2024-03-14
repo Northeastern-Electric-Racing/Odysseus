@@ -1,9 +1,10 @@
 {
-    "device": "/dev/dri/card1",
-    "outputs": [
-{
-   "name": "HDMI0",
-   "mode": "800x480", "primary":true
-}
-]
+  "device": "/dev/dri/by-path/platform-gpu-card",
+  "outputs": [
+    {
+      "name": "HDMI0",
+      "mode": "800x480",
+      "primary": true
+    }
+  ]
 }

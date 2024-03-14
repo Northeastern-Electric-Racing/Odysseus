@@ -1,6 +1,6 @@
 # must use later version then stable due to build issue with log_err function.
 # Fix upon next nanomq release, as the build system is somewhat complicated and often changes
-NANOMQ_VERSION = 0.21.2
+NANOMQ_VERSION = 0.21.6
 NANOMQ_SITE_METHOD = git
 NANOMQ_SITE = https://github.com/nanomq/nanomq
 NANOMQ_GIT_SUBMODULES = YES
@@ -11,7 +11,7 @@ NANOMQ_CMAKE_BACKEND = ninja
 NANOMQ_SUPPORTS_IN_SOURCE_BUILD = NO
 NANOMQ_INSTALL_STAGING = YES
 
-NANOMQ_CONF_OPTS += -DCMAKE_C_FLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -O0 -g0"
+#NANOMQ_CONF_OPTS += -DCMAKE_C_FLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -O0 -g0"
 define NANOMQ_INSTALL_INIT_SYSV
     $(INSTALL) -D -m 0755 $(BR2_EXTERNAL_ODY_TREE_PATH)/package/nanomq/S75nanomq $(TARGET_DIR)/etc/init.d/masked.S75nanomq
 endef

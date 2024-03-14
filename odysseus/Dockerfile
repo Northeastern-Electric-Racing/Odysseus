@@ -33,6 +33,8 @@ RUN apt-get install -y \
     git-lfs \
     util-linux
 
+# just for calypso require ruamel.yaml
+RUN apt-get install -y python3-pip && pip install "ruamel.yaml<0.18.0"
 
 # add all buildroot files there
 WORKDIR /home/odysseus/build

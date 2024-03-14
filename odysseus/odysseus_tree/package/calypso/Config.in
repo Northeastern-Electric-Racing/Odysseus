@@ -8,6 +8,8 @@ config BR2_PACKAGE_CALYPSO
         
         Written in Rust, utlizing socketcand.
         
+        NOTE: Requires python3-ruamel.yaml to be installed to host!
+        
         https://github.com/Northeastern-Electric-Racing/Calypso
 	
 if BR2_PACKAGE_CALYPSO

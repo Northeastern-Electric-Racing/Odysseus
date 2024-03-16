@@ -41,8 +41,7 @@ jobs:
           
       - name: Encrypt and inject passwords
         shell: bash
-        with:
-            context: ./odysseus
+        working-directory: ./odysseus
         env:
             - ODY_AP_ROOT_PASSWORD: ${{ secrets.ODY_AP_ROOT_PASSWORD }}
             - ODY_TPU_ROOT_PASSWORD: ${{ secrets.ODY_TPU_ROOT_PASSWORD }}

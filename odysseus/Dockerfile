@@ -46,6 +46,7 @@ WORKDIR /home/odysseus/outputs/
 COPY ./docker_scripts /home/odysseus/scripts
 RUN echo "source /home/odysseus/scripts/setup_env.sh" >> ~/.bashrc
 
-COPY ./PASSWORDS.env.gpg /home/odysseus/
+# install password using wildcard so failures arent deadly
+COPY ./SECRETS.env.* /home/odysseus/
 
 ENTRYPOINT "/bin/bash"

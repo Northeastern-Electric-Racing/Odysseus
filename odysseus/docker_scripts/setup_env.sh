@@ -1,9 +1,7 @@
 #!/bin/bash
                                                                                                                                       
 alias make-current="/home/odysseus/scripts/make-current.sh"
-
-# for password exposure to defconfigs
-set -o allexport && source /run/secrets/ody_passwords && set +o allexport
+alias load-secrets="/home/odysseus/scripts/load-secrets.sh"
 
 # for each defconfig make output subdirectory
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/tpu BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi4_64_tpu_defconfig

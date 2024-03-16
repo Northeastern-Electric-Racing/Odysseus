@@ -43,10 +43,10 @@ jobs:
         shell: bash
         working-directory: ./odysseus
         env:
-            - ODY_AP_ROOT_PASSWORD: ${{ secrets.ODY_AP_ROOT_PASSWORD }}
-            - ODY_TPU_ROOT_PASSWORD: ${{ secrets.ODY_TPU_ROOT_PASSWORD }}
-            - ODY_IROH_ROOT_PASSWORD: ${{ secrets.ODY_IROH_ROOT_PASSWORD }}
-            - MASTER_PASSWORD: ${{ secrets.ODY_MASTER_PASSWORD }}
+            ODY_AP_ROOT_PASSWORD: ${{ secrets.ODY_AP_ROOT_PASSWORD }}
+            ODY_TPU_ROOT_PASSWORD: ${{ secrets.ODY_TPU_ROOT_PASSWORD }}
+            ODY_IROH_ROOT_PASSWORD: ${{ secrets.ODY_IROH_ROOT_PASSWORD }}
+            MASTER_PASSWORD: ${{ secrets.ODY_MASTER_PASSWORD }}
         run:  for i in ODY_AP_ROOT_PASSWORD  ODY_TPU_ROOT_PASSWORD ODY_IROH_ROOT_PASSWORD; do echo "$i=${!i}" >> PASSWORDS.env; done && gpg --symmetric --passphrase "$MASTER_PASSWORD" --cipher-algo AES256 PASSWORDS.env
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see "[Usage](https://github.com/docker/build-push-action#usage)" in the README of the `docker/build-push-action` repository.

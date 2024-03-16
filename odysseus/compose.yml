@@ -17,13 +17,8 @@ services:
         environment:
             - BR2_DL_DIR=/home/odysseus/shared_data/dl 
             - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
-        secrets:
-            - ody_passwords
+
 volumes:
     shared_data:
         labels:
             com.northeastern_electric_racing.description: "Shared output between buildroot runs"
-
-secrets:
-    ody_passwords:
-        file: ./SECRETS.env

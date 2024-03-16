@@ -2,9 +2,11 @@ version: "3.8"
 services:
     odysseus:
         build: .
+        image: ghcr.io/northeastern-electric-racing/odysseus:52-root-secrets
         command: /bin/bash
         privileged: true
         tty: true
+        stdin_open: true
         # for fakeroot failure
         ulimits:
           nofile:
@@ -23,4 +25,3 @@ volumes:
         labels:
             com.northeastern_electric_racing.description: "Shared output between buildroot runs"
 
-            

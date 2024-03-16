@@ -90,7 +90,12 @@ Notes about docker:
 - Space is used up by rebuilds, prune often or omit `--build`
 
 ### Passwords
-In order to change ssh/root passwords for each defconfig, copy `./odysseus/SECRETS.env-example` to `./odysseus/SECRETS.env` and edit it as needed. **Do not move, rename, or otherwise commit that file in any way after you have edited, as it contains sensitive info**.  Make sure to restart the docker image after editing the file.
+Root passwords are stored via Github secrets and an encrypted file within a ghcr docker image.  Below are the steps to load and decrypt such passwords for use by buildroot.  Requirements are you know the team's master password and are running x86_64.
+
+1. Authenticate with ghcr.  First make a [classic PAT](https://github.com/settings/tokens/new) with the permission `read:packages`.  Make sure to copy the token, then run `sudo docker login ghcr.io -u <GITHUB_USERNAME> -p <PAT>`
+2. cd into odysseus folder and `docker compose pull`
+3. Run `docker compose run odysseus` to enter the docker image.  At this point the image should be identical to a locally built one, but it is less preferable for development purposes.
+4. Run `load-secrets` and enter the master password.  Consult Odysseus lead if you need this info.  Now your passwords are loaded (can be viewed with `env | grep ODY`), and will be set when you make the sdcard.img.  Note this step must be repeated on each `docker compose run odysseus`, and if the passwords change on Github steps 2 and 3 must be rerun as well.
 
 
 

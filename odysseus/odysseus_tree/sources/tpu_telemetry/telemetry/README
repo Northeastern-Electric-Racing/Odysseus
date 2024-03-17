@@ -1,0 +1,14 @@
+In order to run the virtual environment from Powershell, run the following commands:
+    - python3 -m venv env
+    - activate
+    - pip install -r C:\Users\matth\Siren\odysseus\odysseus_tree\sources\tpu_telemetry\requirements.txt
+
+Before you can use the publishing script, you must use Protobuf* to serialize the data. Move into the publishing directory,
+    - cd C:\Users\matth\Siren\odysseus\odysseus_tree\sources\tpu_telemetry\telemetry  
+
+and run the command
+    - protoc --python_out="." "server_data.proto"
+
+You're now prepared to work with the telemetry script.
+
+* Protobuf is a method of data serialization so that the data can be communicated using GMQTT

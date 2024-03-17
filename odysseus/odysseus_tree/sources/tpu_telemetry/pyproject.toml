@@ -12,4 +12,4 @@ dependencies = [
 ]
 
 [project.scripts]
-tpu-telemetry = "telemetry.publish:main"
+tpu-telemetry = "odysseus.odysseus_tree.sources.tpu_telemetry.telemetry.publish:main"

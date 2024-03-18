@@ -2,7 +2,7 @@ version: "3.8"
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:52-root-secrets
+        image: ghcr.io/northeastern-electric-racing/odysseus:develop-features-for-comp
         command: /bin/bash
         privileged: true
         tty: true

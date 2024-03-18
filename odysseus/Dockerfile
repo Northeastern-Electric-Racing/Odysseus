@@ -41,8 +41,12 @@ WORKDIR /home/odysseus/build
 
 RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2024.02
 
+
 WORKDIR /home/odysseus/outputs/
 COPY ./docker_scripts /home/odysseus/scripts
 RUN echo "source /home/odysseus/scripts/setup_env.sh" >> ~/.bashrc
+
+# install password using wildcard so failures arent deadly
+COPY ./SECRETS.env.* /home/odysseus/
 
 ENTRYPOINT "/bin/bash"

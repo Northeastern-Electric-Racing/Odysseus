@@ -6,7 +6,8 @@ All of the steps should be done in the ssh console of the base station, with IP 
 3. run the below command.  note that the path to the moquitto.conf in this directory **must be absolute**.
 
 `docker run --restart=always -it -p 1883:1883 -p 9001:9001 -v /path/to/mosquitto.conf:/mosquitto/config/mosquitto.conf -v /mosquitto/data -v /mosquitto/log -d eclipse-mosquitto`
-
+Ex.  
+`docker run --restart=always -it -p 1883:1883 -p 9001:9001 -v /opt/Odysseus/extra/mosquitto_base/mosquitto.conf:/mosquitto/config/mosquitto.conf -v /mosquitto/data -v /mosquitto/log -d eclipse-mosquitto`
 
 ### Tips and tricks
 

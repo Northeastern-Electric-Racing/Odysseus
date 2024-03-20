@@ -3,6 +3,7 @@
 import sys
 import re
 import configparser
+import argparse
 
 '''
 Args: (in order first to last)
@@ -12,11 +13,19 @@ Args: (in order first to last)
 
 '''
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument('option', type=int, choices=[0, 1], help="0 returns STA, 1 returns AP")
+parser.add_argument('--ip', '-op', help="path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)")
+parser.add_argument('--mp', '-op', help="path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)")
+
+args = parser.parse_args()
 
 def strSTA():
-    if int(sys.argv[1]) == 0:
+    option = args.option
+    if int(option) == 0:
         return 'STA'
-    elif int(sys.argv[1]) == 1:
+    elif int(option) == 1:
         return 'AP'
 
 
@@ -194,15 +203,12 @@ def load_conf(file_path):
 
 def run_common():
 
-    ini_path = ""
-    # if not passed in, use live buildroot default
-    if len(sys.argv) <= 2:
+    ini_path = args.ip
+    if (ini_path is None) :
         if strSTA() == 'STA':
             ini_path = "/etc/nrc_opts_sta.ini"
         else:
             ini_path = "/etc/nrc_opts_ap.ini"
-    else:
-        ini_path = sys.argv[2]
 
     items = load_conf(ini_path)
 
@@ -212,12 +218,11 @@ def run_common():
     insmod_arg = setModuleParam(items)
 
     file_txt = ""
-    mod_path = ""
+
+    mod_path = args.mp
     # if not passed in, use live buildroot default
-    if len(sys.argv) <= 3:
+    if mod_path is None:
         mod_path = "/etc/modprobe.d/nrc.conf"
-    else:
-        mod_path = sys.argv[3]
 
     with open(mod_path, "w") as mod_file:
         file_txt = "options nrc" + insmod_arg

@@ -15,4 +15,4 @@ and run the command
     - protoc --python_out="." "server_data.proto"
 
 You're now prepared to work with the telemetry script:
-    - python3 -m publish
+    - python3 -m telemetry.publish

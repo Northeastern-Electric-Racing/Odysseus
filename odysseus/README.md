@@ -27,24 +27,34 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 - iperf3, iw, iputils, and other network configuration utilities
 
 ## Quick start
-Download and install to PATH git and docker.
+Download and install to PATH git and docker.  Docker desktop is recommended for macOS and Windows.
 ```
 git clone https://github.com/Northeastern-Electric-Racing/Siren.git
 git submodule update --init --recursive
 cd ./odysseus
 ```
-At this point, copy the file `SECRETS.env-example` to `SECRETS.env`, if you want to use non-default passwords edit this file.
 
-Once that is done, run:
+For linux (current support includes all build defconfigs):
 ```
 docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+
 ```
+
+For mac and windows: (current support includes all _debug defconfigs, on x86_64 host normal defconfigs can work (experimental)):
+```
+docker compose -f "compose-compat.yml" run  --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+```
+
+
+
 Now you are in the docker container.  To build cd into the defconfig directory (either ap, or tpu), then run the make command alias:
 ```
 cd ./<defconfig>
 make-current
 ```
-You can view the `output.log` for more info.  Now, to deploy just flash the image in `images/
+
+**Note: If failure occurs on mac or windows very early in the process, run `make nanomq-source` and try again before reporting the error.**
+You can view the `output.log` for more info.
 
 ### More on docker configuration
 The container has a directory structure as so:
@@ -54,13 +64,16 @@ The container has a directory structure as so:
     - `./odysseus_tree`: The odyssues external tree, bound to the same directory in the git repository on your local machine!
 - `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name   `odysseus_shared_data`.
 - `./outputs/*`:
-    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. This is bound to the `./odysseus/outputs` directory in the repository. *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
+    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. For Linux hosts, this is bound to the `./odysseus/outputs` directory in the repository. For Windows users, this is a docker volume.  *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
 
 ### Extra docker tips
 All paths relative to Siren root.
 
+#### Note for Windows/macOS users
+The outputs are stored in a docker volume on these platforms to ensure rsync compatability.  Therefore fetching the files requires first running the image, then use `docker cp` to get them to the userspace.  Alternatively, docker desktop has a file explorer for docker volumes that may come in handy.
+
 #### Writing the sd card
-The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.
+The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.  One can flash this with tools like the Raspberry Pi OS Imager.
 
 #### Pulling source files for scp, etc.
 The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
@@ -70,6 +83,10 @@ The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
 
 **IMPORTANT**: this WILL wipe all shared cache (don't do this unless you need the space):  
 `docker volume rm odysseus_shared_data`
+
+This will wipe all outputs, not the cache so just requires a full rebuild to recover from.  On compose-compat images only:
+`docker volume rm odysseus_outputs`
+
 
 #### Open another tty
 `docker ps`
@@ -83,9 +100,8 @@ docker exec <container_id> -d -w /home/odysseus/outputs/<defconfig> make-current
 ```
 Be careful with this.
     
-Notes about docker:
-- Build time may be slower due to docker isolations (not dramatic, about 5-15%)
-- Since odysseus only supports amd64 hosts for non-debug defconfigs, full releases cannot be built on mac
+Docker limitations:
+- Build time may be slower due to docker isolations (not dramatic, about 5%)
 - Launch time is longer
 - Space is used up by rebuilds, prune often or omit `--build`
 

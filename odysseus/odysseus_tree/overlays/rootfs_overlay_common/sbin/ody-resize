@@ -10,7 +10,6 @@ echo "ODY RESIZE - Entering"
 # mount boot partition, for live user only!
 do_bootmnt() {
     echo "ODY RESIZE - Mounting Boot"
-    mkdir /boot
     mount "$BOOT_PART" /boot
 
 }

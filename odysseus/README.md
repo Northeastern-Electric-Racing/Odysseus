@@ -106,6 +106,13 @@ See below to learn more about developing, and check confluence for most info.  O
 2. Make any customizations you want in the menu
 3. Save changes after you've made them by running ```make savedefconfig```.  Ensure you are saving changes to the intended defconfig, it is saved to whatever directory you `cd`ed into!
 
+#### Adding defconfigs
+
+Checklist when adding a defconfig:
+[ ] Add a secret for SSH password in settings, and load it into the workflow env in `.github/workflows/build_image.yml`
+[ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.
+[ ] Add a pretty name to `post-build-os-release.sh`
+[ ] Add a load command to `setup_env.sh`
 
 <!--
 ## Build locally

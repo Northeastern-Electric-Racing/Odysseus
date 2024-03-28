@@ -9,8 +9,7 @@ BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV=y
 BR2_TARGET_GENERIC_ROOT_PASSWD="$(ODY_AP_ROOT_PASSWORD)"
 # BR2_TARGET_GENERIC_GETTY is not set
 BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_common $(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_nrc_common $(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_ap"
-BR2_ROOTFS_PRE_BUILD_SCRIPT="$(BR2_EXTERNAL_ODY_TREE_PATH)/pre-make-ap.sh"
-BR2_ROOTFS_POST_BUILD_SCRIPT="$(BR2_EXTERNAL_ODY_TREE_PATH)/post-build-os-release.sh board/raspberrypi3-64/post-build.sh"
+BR2_ROOTFS_POST_BUILD_SCRIPT="$(BR2_EXTERNAL_ODY_TREE_PATH)/post-build-ap.sh $(BR2_EXTERNAL_ODY_TREE_PATH)/post-build-os-release.sh board/raspberrypi3-64/post-build.sh"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi3-64/post-image.sh"
 BR2_ROOTFS_POST_SCRIPT_ARGS="AP"
 BR2_LINUX_KERNEL=y

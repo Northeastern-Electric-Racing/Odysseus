@@ -5,23 +5,14 @@ import re
 import configparser
 import argparse
 
-'''
-Args: (in order first to last)
-#1 -> 0 (STA) or 1 (AP) (required)
-#2 -> path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)
-#3 -> path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)
-
-'''
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument('option', choices=['STA', 'AP'], help="STA or AP")
-parser.add_argument('--ip', help="path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)")
-parser.add_argument('--mp', help="path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)", default="/etc/modprobe.d/nrc.conf")
+parser.add_argument('--ini-path', '-i', help="path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)")
+parser.add_argument('--mod-path', '-m', help="path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)", default="/etc/modprobe.d/nrc.conf")
 
 args = parser.parse_args()
 option = args.option
-
 
 
 def strBDName(bd_name, model):
@@ -78,8 +69,7 @@ def setModuleParam(config):
     # module param for bss_max_idle (keep alive)
     # default: bss_max_idle(0: disabled)
     if int(config['bss_max_idle_enable']) == 1:
-        if option == 'AP' or option == 'RELAY' or option == 'STA':
-            bss_max_idle_arg = " bss_max_idle=" + str(config['bss_max_idle'])
+        bss_max_idle_arg = " bss_max_idle=" + str(config['bss_max_idle'])
 
     # module param for NDP Prboe Request (NDP scan)
     # default: ndp_preq(0: disabled)
@@ -198,7 +188,7 @@ def load_conf(file_path):
 
 def run_common():
 
-    ini_path = args.ip
+    ini_path = args.ini_path
     if (ini_path is None) :
         if option == 'STA':
             ini_path = "/etc/nrc_opts_sta.ini"
@@ -214,7 +204,7 @@ def run_common():
 
     file_txt = ""
 
-    mod_path = args.mp
+    mod_path = args.mod_path
     
     with open(mod_path, "w") as mod_file:
         file_txt = "options nrc" + insmod_arg

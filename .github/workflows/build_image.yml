@@ -45,6 +45,7 @@ jobs:
         shell: bash
         working-directory: ./odysseus
         env:
+            ODY_BASE_WIFI_PASSWORD: ${{ secrets.ODY_BASE_WIFI_PASSWORD }}
             ODY_AP_ROOT_PASSWORD: ${{ secrets.ODY_AP_ROOT_PASSWORD }}
             ODY_TPU_ROOT_PASSWORD: ${{ secrets.ODY_TPU_ROOT_PASSWORD }}
             ODY_IROH_ROOT_PASSWORD: ${{ secrets.ODY_IROH_ROOT_PASSWORD }}

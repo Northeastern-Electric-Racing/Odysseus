@@ -34,3 +34,13 @@ def fetch_data_mode():
     except Exception as e:
         print(f"Failed to fetch data: {e}")
         return []
+
+
+def main():
+    print(fetch_data_location())
+    print(fetch_data_speed())
+    print(fetch_data_mode())
+
+
+if __name__ == "__main__":
+    main()

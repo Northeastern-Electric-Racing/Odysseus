@@ -12,6 +12,8 @@ def fetch_data_location():
             tempLat = session.fix.latitude
             tempLong = session.fix.longitude
             return [("TPU/GPS/Location", [str(tempLat), str(tempLong)], "coordinate")]
+        else:
+            return []
     except Exception as e:
         print(f"Failed to fetch data: {e}")
         return []
@@ -23,6 +25,8 @@ def fetch_data_speed():
         if 0 == session.read() and session.valid:
             tempSpeed = session.fix.speed
             return [("TPU/GPS/GroundSpeed", [str(tempSpeed)], "knot")]
+        else:
+            return []
     except Exception as e:
         print(f"Failed to fetch data: {e}")
         return []
@@ -34,6 +38,8 @@ def fetch_data_mode():
         if 0 == session.read() and session.valid:
             tempMode = session.fix.mode
             return [("TPU/GPS/Mode", [str(tempMode)], "enum")]
+        else:
+            return []
     except Exception as e:
         print(f"Failed to fetch data: {e}")
         return []

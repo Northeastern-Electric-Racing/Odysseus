@@ -194,8 +194,6 @@ def run_common():
             ini_path = "/etc/nrc_opts_sta.ini"
         else:
             ini_path = "/etc/nrc_opts_ap.ini"
-    else:
-        ini_path = sys.argv[2]
 
     items = load_conf(ini_path)
 

@@ -17,6 +17,11 @@ services:
         environment:
             - BR2_DL_DIR=/home/odysseus/shared_data/dl 
             - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
+            - ODY_TPU_ROOT_PASSWORD=password
+            - ODY_IROH_ROOT_PASSWORD=password
+            - ODY_AP_ROOT_PASSWORD=password
+            - ODY_BASE_WIFI_PASSWORD=password
+
 volumes:
     # required for mac as no hard linking:(
     outputs:

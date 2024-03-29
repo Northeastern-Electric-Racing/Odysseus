@@ -23,6 +23,7 @@ services:
             - ODY_TPU_ROOT_PASSWORD=password
             - ODY_IROH_ROOT_PASSWORD=password
             - ODY_AP_ROOT_PASSWORD=password
+            - ODY_BASE_WIFI_PASSWORD=password
 
 volumes:
     shared_data:

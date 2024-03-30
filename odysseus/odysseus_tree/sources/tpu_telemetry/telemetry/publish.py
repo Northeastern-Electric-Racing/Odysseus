@@ -3,6 +3,7 @@ import signal
 from . import (
     server_data_pb2,
     routines,
+    processes,
     set_interval,
     poll_data as _,  # your editor lies, this is an important import.
 )
@@ -23,6 +24,8 @@ def on_disconnect(client, packet, exc=None):
 
 def ask_exit(*args):
     STOP.set()
+    for p in processes:
+        p.terminate()
 
 
 def publish_data(topic, message_data):

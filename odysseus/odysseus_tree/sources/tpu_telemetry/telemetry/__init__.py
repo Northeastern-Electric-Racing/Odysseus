@@ -1,6 +1,8 @@
 import asyncio
+from subprocess import Popen, PIPE
 
 routines = {}
+processes: list[Popen[str]] = []
 
 
 def measurement(freq: int):
@@ -26,3 +28,35 @@ async def set_interval(fn, interval: int, stop: asyncio.Event, *args, **kwargs):
     while not stop.is_set():
         yield fn(*args, **kwargs)
         await asyncio.sleep(interval / 1000)
+
+
+class BufferedCommand:
+    """
+    Buffer a command's output into a list, that can be read
+    on demand.
+    """
+
+    def __init__(self, command: list[str], limit: int = 20) -> None:
+        """
+        Construct a BufferedCommand.
+        """
+
+        self.buffer: list[str] = []
+        self.process = Popen(command, stdout=PIPE, text=True)
+        processes.append(self.process)
+
+        self.limit = limit
+
+        asyncio.create_task(self._streamer)
+
+    def _streamer(self):
+        for line in self.process.stdout:
+            if len(self.buffer) > self.limit:
+                self.buffer.clear()
+
+            self.buffer.append(line)
+
+    def read(self):
+        tmp = self.buffer
+        self.buffer = []
+        return tmp

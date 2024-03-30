@@ -1,5 +1,5 @@
 from subprocess import check_output
-from .. import measurement
+from .. import measurement, BufferedCommand
 
 example_data = """BSSID         BW          TX bit rate        RX bit rate
 =====================================================================
@@ -18,18 +18,19 @@ SNR                              : 0
 OK"""
 FETCH_RSSI_CMD = "cli_app show stats simple_rx"
 FETCH_RATE_CMD = "cli_app show ap 0"
-FETCH_THROUGHPUT_CMD = "bmon -o format:quitafter=1 -p wlan1"
+# FETCH_THROUGHPUT_CMD = "bmon -o format:quitafter=1 -p wlan1"
+THROUGHPUT_CMD = BufferedCommand(["bmon", "-o", "-p", "-wlan1"])
+
 
 @measurement(100)
 def fetch_data_Throughput():
-    try:
-        out = check_output(FETCH_THROUGHPUT_CMD.split(" "), shell=False).decode("utf-8")
-        split = out.split(" ")
-        data = [split[4].strip(), split[2].strip()]
-        return [("TPU/HaLow/DataRate", data, "kb/s")]
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
+    lines = THROUGHPUT_CMD.read()
+    out = []
+    for line in lines:
+        data = [line[4].strip, line[2].strip]
+        out.append(("TPU/HaLow/DataRate", data, "kb/s"))
+    return out
+
 
 @measurement(500)
 def fetch_data_ApMCS():
@@ -68,7 +69,12 @@ def fetch_data_RSSI():
 
 
 def fetch_data():
-    return fetch_data_Throughput() + fetch_data_ApMCS() + fetch_data_StaMCS() + fetch_data_RSSI()
+    return (
+        fetch_data_Throughput()
+        + fetch_data_ApMCS()
+        + fetch_data_StaMCS()
+        + fetch_data_RSSI()
+    )
 
 
 def main():

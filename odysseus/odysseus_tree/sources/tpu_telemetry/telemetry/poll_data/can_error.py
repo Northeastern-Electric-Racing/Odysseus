@@ -1,16 +1,36 @@
+import asyncio
+import can   
+from .. import task
 
-import can     
+class ReadMessage: 
+    def __init__(self, limit: int = 20) -> None:
+        self.buffer: list[str] = []
+        self.bus = can.interface.Bus(channel='can0', bustype='socketcan_native')
+        self.limit = limit
 
-# seperate function so main function only gets called when there's an error
-def receive_message():
-    bus = can.interface.Bus(channel='can0', bustype='socketcan_native')
-    for msg in bus:
-        if msg.is_error_frame:
-            return(msg)
+        task(asyncio.create_task(self._streamer))
+    
+     
+    def _streamer(self):
+        for msg in self.bus:
+            if len(self.buffer) > self.limit:
+                self.buffer.clear()
+            if msg.is_error_frame:
+                self.buffer.append(msg)
+
+    def read(self):
+        tmp = self.buffer
+        self.buffer = []
+        return tmp
+
+reader = ReadMessage()
 
 def fetch_can_error():
-    msg = receive_message
-    return [("TPU/Can/CanError", [str(msg)], "raw can msg")]
+    msgs = reader.read()
+    list = []
+    for msg in msgs:
+        list.append(("TPU/Can/CanError", [str(msg)], "raw can msg"))
+    return list
 
 def main():
     print(fetch_can_error())

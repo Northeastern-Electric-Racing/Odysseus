@@ -17,6 +17,9 @@ do_start() {
 
    # add_master
    ip link add dev bond0 type bond 
+   
+   # statically define mac addr
+   ip link set bond0 address 00:c0:ca:b1:9b:09 
 
    # setup_master
    ip link set dev bond0 type bond mode active-backup miimon 100

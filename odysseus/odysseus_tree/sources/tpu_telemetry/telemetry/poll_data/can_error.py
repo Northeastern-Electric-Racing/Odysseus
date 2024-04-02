@@ -2,6 +2,7 @@ import asyncio
 import can   
 from .. import task
 
+# create reader for message reading from CAN
 class ReadMessage: 
     def __init__(self, limit: int = 20) -> None:
         self.buffer: list[str] = []
@@ -23,9 +24,10 @@ class ReadMessage:
         self.buffer = []
         return tmp
 
-reader = ReadMessage()
-
+# read error message from a list 
 def fetch_can_error():
+    reader = ReadMessage()
+    
     msgs = reader.read()
     list = []
     for msg in msgs:

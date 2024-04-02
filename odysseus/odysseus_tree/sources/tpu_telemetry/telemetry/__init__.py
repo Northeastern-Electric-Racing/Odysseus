@@ -5,7 +5,7 @@ processes = []
 
 def task():
     """
-    Marks a measurement, takes a frequency (in ms) to repeat the measurement.
+    A decorator that registers functions as tasks to be execute
     """
 
     def wrapper(fn):

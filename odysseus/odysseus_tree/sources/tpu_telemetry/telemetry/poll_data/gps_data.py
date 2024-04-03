@@ -20,7 +20,7 @@ def fetch_data_location():
 @measurement(1000)
 def fetch_data_speed():
     try:
-        if 0 == session.read() and session.valid:
+        if 0 == session.read() and session.valid and gps.isfinite(session.fix.speed):
             tempSpeed = session.fix.speed
             return [("TPU/GPS/GroundSpeed", [str(tempSpeed)], "knot")]
     except Exception as e:

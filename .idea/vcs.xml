@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/odysseus/odysseus_tree/sources/Nero-2.0" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/odysseus/odysseus_tree/sources/nrc7292_sw_pkg" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/odysseus/odysseus_tree/sources/nrc7394_sw_pkg" vcs="Git" />
-  </component>
-</project>

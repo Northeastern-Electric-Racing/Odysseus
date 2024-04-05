@@ -2,7 +2,7 @@
 
 ROOT_DISK=/dev/mmcblk0
 ROOT_PART=/dev/mmcblk0p2
-
+ROOT_PARTNUM=2
 BOOT_PART=/dev/mmcblk0p1
 
 echo "ODY RESIZE - Entering"
@@ -42,8 +42,19 @@ do_trigger() {
 part_root() {
     sync
     echo "ODY RESIZE - Partitioning"
-    echo ",+" | sfdisk -N 2 "$ROOT_DISK" --no-reread # expand to max size, no-reread as mmcblk0 is mounted
-    
+    START_SECTOR=$(sfdisk "$ROOT_DISK" -J | jq '.partitiontable.partitions[1].start')
+    fdisk "$ROOT_DISK" <<EOF
+p
+d
+$ROOT_PARTNUM
+n
+p
+$ROOT_PARTNUM
+$START_SECTOR
+
+p
+w
+EOF
     # note that partitioning is done
     touch /boot/stage2
     do_reboot

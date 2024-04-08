@@ -19,13 +19,11 @@ do_start() {
    ip link add dev bond0 type bond 
    
    # statically define mac addr
-#   ip link set bond0 address 00:c0:ca:b1:9b:09 
+   ip link set bond0 address 00:c0:ca:b1:9b:09 
 
    # setup_master
    ip link set dev bond0 type bond mode active-backup miimon 100
    
-   # set mac addr to be active interface
-   ip link set dev bond0 type bond fail_over_mac active
    # enslave_slaves
    ip link set dev wlan0 master bond0
    ip link set dev wlan1 master bond0

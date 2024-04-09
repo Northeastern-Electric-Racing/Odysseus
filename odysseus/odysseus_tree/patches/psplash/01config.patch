@@ -1,0 +1,18 @@
+diff --git a/psplash-config.h b/psplash-config.h
+index eb90ef3..e98bdde 100644
+--- a/psplash-config.h
++++ b/psplash-config.h
+@@ -23,11 +23,11 @@
+ 
+ /* Bool indicated if the progress bar should be disabled */
+ #ifndef PSPLASH_DISABLE_PROGRESS_BAR
+-#define PSPLASH_SHOW_PROGRESS_BAR 1
++#define PSPLASH_SHOW_PROGRESS_BAR 0
+ #endif
+ 
+ /* Position of the image split from top edge, numerator of fraction */
+-#define PSPLASH_IMG_SPLIT_NUMERATOR 5
++#define PSPLASH_IMG_SPLIT_NUMERATOR 6
+ 
+ /* Position of the image split from top edge, denominator of fraction */
+ #define PSPLASH_IMG_SPLIT_DENOMINATOR 6

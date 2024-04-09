@@ -6,9 +6,11 @@ KMS_EGLFS_CONF_FILE=/etc/eglfs.json
 
 case "$1" in
   start)
+    echo "Stopping psplash"
+    /etc/init.d/S*psplash-start stop
     echo "Starting nero2..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    QT_QPA_EGLFS_ALWAYS_SET_MODE=1 QT_QPA_EGLFS_NO_LIBINPUT=1  QT_QPA_EVDEV_KEYBOARD_PARAMETERS=grab=1 QT_QPA_EGLFS_KMS_CONFIG=$KMS_EGLFS_CONF_FILE start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --platform eglfs
+    QT_QPA_EGLFS_ALWAYS_SET_MODE=1 QT_QPA_EGLFS_NO_LIBINPUT=1  QT_QPA_EVDEV_KEYBOARD_PARAMETERS=grab=1 QT_QPA_EGLFS_KMS_CONFIG=$KMS_EGLFS_CONF_FILE start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE">
     ;;
   stop)
     echo "Stopping nero2..."
@@ -24,4 +26,3 @@ case "$1" in
     echo "Usage: {start|stop|restart/reload}"
     exit 1
 esac
-

@@ -1,5 +1,5 @@
 config BR2_PACKAGE_NERQT6CORE5COMPAT
-	bool "qt6core5compat"
+	bool "nerqt6core5compat"
 	select BR2_PACKAGE_NERQT6BASE_XML
 	help
 	  Qt is a cross-platform application and UI framework for

@@ -57,5 +57,6 @@ source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6svg/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6declarative/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6mqtt/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6grpc/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/nerqt6/nerqt6charts/Config.in"
 
 endif

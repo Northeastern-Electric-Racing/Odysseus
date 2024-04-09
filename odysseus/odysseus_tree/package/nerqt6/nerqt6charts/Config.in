@@ -1,0 +1,11 @@
+# NER new package
+config BR2_PACKAGE_NERQT6CHARTS
+	bool "nerqt6charts"
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  The Qt Charts module provides a set of easy-to-use chart components. 
+	  It uses the Qt Graphics View Framework to integrate charts with modern user interfaces.
+
+	  https://doc.qt.io/qt-6/qtcharts-index.html

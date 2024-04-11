@@ -49,14 +49,26 @@ d
 $ROOT_PARTNUM
 n
 p
-$ROOT_PARTNUM
-$START_SECTOR
 
+$START_SECTOR
+-10G
+n
 p
+n
+p
+
+
+-5G
+p
+n
+p
+
+
 w
 EOF
     # note that partitioning is done
     touch /boot/stage2
+    
     do_reboot
 } 
 
@@ -65,6 +77,9 @@ resize_root() {
     sync
     echo "ODY RESIZE - Resizing FS"
     resize2fs "$ROOT_PART"
+    
+    echo "ODY RESIZE - Adding ext4 fs to partition 4"
+    mkfs.ext4 "/dev/mmcblk0p4"
     
     do_restore # boot normally next
     

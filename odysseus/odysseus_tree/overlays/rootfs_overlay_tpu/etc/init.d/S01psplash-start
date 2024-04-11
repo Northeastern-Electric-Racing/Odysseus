@@ -1,0 +1,27 @@
+#!/bin/sh
+
+PIDFILE=/var/run/psplash.pid
+
+start() {
+        printf "Starting psplash"
+        start-stop-daemon -S -m -b -p "$PIDFILE" --exec /usr/bin/psplash        
+}
+
+stop () {
+      printf "Stopping psplash"
+      start-stop-daemon -K -s SIGINT -p "$PIDFILE"
+      rm "$PIDFILE"
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac

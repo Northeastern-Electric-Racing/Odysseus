@@ -1,0 +1,83 @@
+#!/bin/sh
+
+do_prepmount() {
+    echo "ODY DEPLOY - Prep mounting"
+    mount /dev/mmcblk0p4 /mnt
+}
+
+do_temproot() {
+    echo "ODY DEPLOY - Decompressing"
+    zstd /mnt/sdcard.img.zst -d -f --rm -o /mnt/sdcard.img 
+    
+    echo "ODY DEPLOY - Mounting"
+    losetup -Pf /mnt/sdcard.img
+    
+    if [ "$2" = "skip_temproot" ]
+    then
+        echo "ODY DEPLOY - Skipping temp root, using old"
+    else
+        echo "ODY DEPLOY - Flashing temp root"
+        dd if=/dev/loop0p2 of=/dev/mmcblk0p3 bs=16M
+    fi
+    
+    echo "ODY DEPLOY - Flashing boot"
+    dd if=/dev/loop0p1 of=/dev/mmcblk0p1 bs=16M
+    
+    echo "ODY DEPLOY - Fixing boot"
+    mount /dev/mmcblk0p1 /boot
+    sed -i 's| init=/sbin/ody-resize||' /boot/cmdline.txt # turn off resize
+    sed -i 's|root=/dev/mmcblk0p2|root=/dev/mmcblk0p3|' /boot/cmdline.txt # change boot
+    
+    echo "Done, please reboot"
+}
+
+do_permroot() {    
+    do_prepmount
+
+    echo "ODY DEPLOY - Mounting 2nd Stage"
+    losetup -Pf /mnt/sdcard.img
+    
+    echo "ODY DEPLOY - Flashing perm root"
+    dd if=/dev/loop0p2 of=/dev/mmcblk0p2 bs=16M
+    
+    echo "ODY DEPLOY - Fixing 2nd stage boot"
+    mount /dev/mmcblk0p1 /boot
+    sed -i 's|root=/dev/mmcblk0p3|root=/dev/mmcblk0p2|' /boot/cmdline.txt # change boot back
+    sed -i '/1/s/$/ init=\/sbin\/ody-deploy/' /boot/cmdline.txt # add back the init to the end of line one
+    
+    echo "Done, please reboot"
+}
+
+do_resize_root() {
+    sync
+    echo "ODY DEPLOY - Resizing FS"
+    resize2fs /dev/mmcblk0p2
+    
+    sed -i 's| init=/sbin/ody-deploy||' /boot/cmdline.txt # delete the init field
+    
+    sync
+    reboot -f # skip init!
+} 
+
+main() {
+    mount -t proc proc /proc # mount proc as mtab is needed
+    mount -t sysfs sysfs /sys # mount sysfs as sfdisk needs alignment
+    mount -o rw /dev/mmcblk0p1 /boot # mount boot so we can set the stage2 flag
+    mount -o remount,rw / # for some reason umount fails, so online resize instead
+    do_resize_root
+}
+
+# mount sd card partition (live only)
+if [ "$1" = "prep" ];
+then
+    do_prepmount
+# set resize on for next boot (live only)
+elif [ "$1" = "temproot" ];
+then
+    do_temproot
+elif [ "$1" = "permroot" ];
+then
+    do_permroot
+else
+    main
+fi

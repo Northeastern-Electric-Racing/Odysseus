@@ -2,7 +2,7 @@
   "device": "/dev/dri/by-path/platform-gpu-card",
   "outputs": [
     {
-      "name": "HDMI0",
+      "name": "HDMI1",
       "mode": "800x480",
       "primary": true
     }

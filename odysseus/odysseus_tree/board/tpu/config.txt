@@ -62,14 +62,17 @@ dtoverlay=mmc_spi-spi1
 # for temp sensor
 dtoverlay=i2c-sensor,sht3x
 
-# for NER 22A dashboard
+# for NER 22A dashboard (HDM1)
 #Set the Monitor mode to DMT.
-hdmi_group=2
+hdmi_group:1=2
 #Use a custom resolution.
-hdmi_mode=87
+hdmi_mode:1=87
 #Use an 800 x 480 resolution @ 60Hz
-hdmi_cvt= 800 480 60 6 0 0 0
+hdmi_cvt:1= 800 480 60 6 0 0 0
 #Deliver max current through USB
 # # Max_usb_current=1 # is this needed (external power??)
-hdmi_drive=1
-hdmi_force_hotplug=1
+hdmi_drive:1=1
+hdmi_force_hotplug:1=1
+
+# for HDMI 1
+framebuffer_priority=7

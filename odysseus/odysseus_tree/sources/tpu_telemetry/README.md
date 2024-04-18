@@ -25,3 +25,12 @@ You're now prepared to work with the telemetry script:
     
 ## Edit TPU Install
 TPU is installed differently.  In order to edit enter the `/usr/lib/tpu-telemetry/` directory and edit the python sources.  Ensure the system script is off (`/etc/init.d/S*tpu-telemetry stop`) and then run `tpu-telemetry` to test your edits.
+
+
+## Add a measurement
+
+3. See what file in `poll_data` you need to be in.  Try to match a current one.
+1. See if you need a class.  If your datapoint can be sourced from an existing object or command, you should probably just add it to an existing class.  If you have a measurement procured from a different source and/or it needs its own frequency, make a new class.
+2. See what class to inherit.  All inherits MeasureTask, but some data points are read from commands in a per-line mode (see BufferedCommand) and others are single commands run repetitively (see OneshootCommand).
+3. Implement logic. For a custom class make sure you start from an example from other files, such as `example.py` for a plain MeasureTask or `can.py` for a buffered command, or `halow.py` for a oneshot command.
+4. Add the class to the index in publish.py, by creating the task and storing it in TASKS in the run function.

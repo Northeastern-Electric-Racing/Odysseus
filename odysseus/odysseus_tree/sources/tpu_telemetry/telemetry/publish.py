@@ -1,12 +1,11 @@
 import asyncio
 import signal
 
-from telemetry.poll_data import environment, halow, on_board
-import telemetry.poll_data.can as can;
-import telemetry.poll_data.example as example;
+from telemetry.poll_data import gps_data, halow, on_board, can
 from . import (
     BufferedCommand,
     MeasureTask,
+    OneshotCommand,
     server_data_pb2
 )
 from gmqtt import Client as MQTTClient
@@ -27,10 +26,11 @@ def on_disconnect(client, packet, exc=None):
 
 
 def ask_exit(*args):
-    STOP.set()
     for task in TASKS:
-        if task.deinit != None:
+        if isinstance(task, BufferedCommand) or isinstance(task, OneshotCommand):
             task.deinit()
+    STOP.set()
+    
 
 
 def publish_data(topic, message_data):
@@ -44,10 +44,14 @@ async def interval(task: MeasureTask):
             data = server_data_pb2.ServerData()
             topic, values, data.unit = packet
             for val in values:
+                if val == None:
+                    break
                 data.value.append(val)
-
-            message_data = data.SerializeToString()
-            publish_data(topic, message_data)
+            else:
+                message_data = data.SerializeToString()
+                publish_data(topic, message_data)
+            
+            break
 
 
 async def run(host):
@@ -56,7 +60,8 @@ async def run(host):
     client.on_disconnect = on_disconnect
 
 
-    TASKS = [ example.ExampleMT(), # uncomment so example data is sent
+    # ADD TASKS HERE for more measurements
+    TASKS = [ # example.ExampleMT(), # uncomment so example data is sent
              can.CanMT(),
              # environment.EnvironmentMT() # commented out bc sensor is currently broken
              halow.HalowThroughputMT(),
@@ -65,7 +70,8 @@ async def run(host):
              on_board.CpuTempMT(),
              on_board.CpuUsageMT(),
              on_board.BrokerCpuUsageMT(),
-             on_board.MemAvailMT()
+             on_board.MemAvailMT(),
+             gps_data.GpsMT()
              ]
 
     stagger = 1 / len(TASKS)

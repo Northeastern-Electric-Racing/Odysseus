@@ -3,8 +3,6 @@ from .. import BufferedCommand, MeasureTask
 
 # read in 1/10 a second increments
 FETCH_CMD = ["bmon", "-r", "0.09", "-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "can0" ]
-
-
 class CanMT(MeasureTask, BufferedCommand):
     def __init__(self):
          MeasureTask.__init__(self, 100)

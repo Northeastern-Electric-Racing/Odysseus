@@ -2,6 +2,8 @@
 from .. import MeasureTask
 
 
+TEMP_SENSOR_PATH = '/sys/class/hwmon/hwmon2/temp1_input'
+HUMIDITY_SENSOR_PATH = '/sys/class/hwmon/hwmon2/humidity1_input'
 class EnvironmentMT(MeasureTask):
     def __init__(self):
          MeasureTask.__init__(self, 1000)
@@ -16,20 +18,17 @@ class EnvironmentMT(MeasureTask):
                return sensor_data
         except IOError:
             print("Error: Unable to read data from", sensor_path)
-            return None
+            return []
 
     def measurement(self):
         try:
             data = []
 
-            temp_sensor_path = '/sys/class/hwmon/hwmon2/temp1_input'
-            humidity_sensor_path = '/sys/class/hwmon/hwmon2/humidity1_input'
-
-            temperature = self.read_sensor_data(temp_sensor_path)
+            temperature = self.read_sensor_data(TEMP_SENSOR_PATH)
             if temperature is not None:
                 data.append(("TPU/Environment/Temperature", [temperature], "Celsius"))
 
-            humidity = self.read_sensor_data(humidity_sensor_path)
+            humidity = self.read_sensor_data(HUMIDITY_SENSOR_PATH = '/sys/class/hwmon/hwmon2/humidity1_input')
             if humidity is not None:
                 data.append(("TPU/Environment/Humidity", [humidity], "%"))
 

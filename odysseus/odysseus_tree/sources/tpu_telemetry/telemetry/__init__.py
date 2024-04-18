@@ -26,7 +26,7 @@ class MeasureTask(ABC):
 
         while not stop.is_set():
             measure = self.measurement()
-            if measure == None:
+            if measure is None:
                 yield []
             else:
                 yield measure
@@ -48,7 +48,7 @@ class BufferedCommand:
         self.buffer = ItemStore(limit=limit)
 
     def __deinit__(self):
-        self.process.terminate()
+        self.process.kill()
 
     def streamer(process, buffer):
         if process.poll() is None:
@@ -74,6 +74,9 @@ class OneshotCommand:
         self.command = command
 
         self.runFreq = runFreq
+    
+    def __deinit__(self):
+        self.process.kill()
 
     def streamer(command, buffer, runFreq):
         while True: 
@@ -81,7 +84,7 @@ class OneshotCommand:
             if not data:
                 buffer.add(data)
             sleep(runFreq / 1000)
-
+        
     def get_thread(self):
         return threading.Thread(target=OneshotCommand.streamer, args=(self.command, self.buffer, self.runFreq), daemon=True)
         

@@ -42,8 +42,10 @@ class BrokerCpuUsageMT(MeasureTask):
     def measurement(self):
         try:
             with open("/var/run/mosquitto.pid", "r") as file:
-                pid = int(file.read())
+                pid = int(file.readlines()[0])
+                print("Pid is", pid)
                 process = psutil.Process(pid)
+                print(process.cmdline)
                 broker_cpu_usage = process.cpu_percent()
             return [("TPU/OnBoard/BrokerCpuUsage", [str(broker_cpu_usage)], "percent")]
         except Exception as e:

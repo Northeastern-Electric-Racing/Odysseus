@@ -1,13 +1,17 @@
 import asyncio
 import signal
+
+from telemetry.poll_data import environment, halow, on_board
+import telemetry.poll_data.can as can;
+import telemetry.poll_data.example as example;
 from . import (
-    server_data_pb2,
-    routines,
-    processes,
-    set_interval,
-    poll_data as _,  # your editor lies, this is an important import.
+    BufferedCommand,
+    MeasureTask,
+    server_data_pb2
 )
 from gmqtt import Client as MQTTClient
+
+TASKS = []
 
 # initialize connection
 client = MQTTClient("tpu-publisher")
@@ -24,8 +28,9 @@ def on_disconnect(client, packet, exc=None):
 
 def ask_exit(*args):
     STOP.set()
-    for task in processes:
-        task.exit()
+    for task in TASKS:
+        if task.deinit != None:
+            task.deinit()
 
 
 def publish_data(topic, message_data):
@@ -33,14 +38,11 @@ def publish_data(topic, message_data):
     client.publish(topic, message_data)
 
 
-async def interval(fn, freq):
-    async for result in set_interval(fn, freq, STOP):
+async def interval(task: MeasureTask):
+    async for result in task.set_interval(STOP):
         for packet in result:
-            print(packet)
-
             data = server_data_pb2.ServerData()
             topic, values, data.unit = packet
-
             for val in values:
                 data.value.append(val)
 
@@ -53,13 +55,28 @@ async def run(host):
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
 
-    stagger = 1 / len(routines)
 
-    for fn in routines:
-        freq = routines[fn]
+    TASKS = [ example.ExampleMT(), # uncomment so example data is sent
+             can.CanMT(),
+             # environment.EnvironmentMT() # commented out bc sensor is currently broken
+             halow.HalowThroughputMT(),
+             halow.HalowMCSMT(),
+             halow.HalowRSSIMT(),
+             on_board.CpuTempMT(),
+             on_board.CpuUsageMT(),
+             on_board.BrokerCpuUsageMT(),
+             on_board.MemAvailMT()
+             ]
+
+    stagger = 1 / len(TASKS)
+    for task in TASKS:
+
+        # if task is of type BufferedCommand, register it
+        if isinstance(task, BufferedCommand):
+            task.get_thread().start()
 
         # should not be awaited, this just gets run parallely along with other intervals.
-        asyncio.create_task(interval(fn, freq))
+        asyncio.create_task(interval(task))
         await asyncio.sleep(stagger)
 
     await STOP.wait()

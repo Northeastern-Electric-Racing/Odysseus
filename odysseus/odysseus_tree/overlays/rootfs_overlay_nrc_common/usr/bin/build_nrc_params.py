@@ -3,21 +3,16 @@
 import sys
 import re
 import configparser
+import argparse
 
-'''
-Args: (in order first to last)
-#1 -> 0 (STA) or 1 (AP) (required)
-#2 -> path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)
-#3 -> path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)
+parser = argparse.ArgumentParser()
 
-'''
+parser.add_argument('option', choices=['STA', 'AP'], help="STA or AP")
+parser.add_argument('--ini-path', '-i', help="path/to/this/ini/file (optional, otherwise default: /etc/nrc_opts_<ap|sta>.ini)")
+parser.add_argument('--mod-path', '-m', help="path/to/modprobe.d/directive.conf (optional, otherwise default: /etc/modprobe.d/nrc.conf)", default="/etc/modprobe.d/nrc.conf")
 
-
-def strSTA():
-    if int(sys.argv[1]) == 0:
-        return 'STA'
-    elif int(sys.argv[1]) == 1:
-        return 'AP'
+args = parser.parse_args()
+option = args.option
 
 
 def strBDName(bd_name, model):
@@ -29,7 +24,7 @@ def strBDName(bd_name, model):
 
 
 def checkParamValidity(power_save, listen_interval):
-    if strSTA() == 'STA' and int(power_save) > 0 and int(listen_interval) > 65535:
+    if option == 'STA' and int(power_save) > 0 and int(listen_interval) > 65535:
         print("Max listen_interval is 65535!")
         exit()
 
@@ -45,7 +40,7 @@ def setModuleParam(config):
     # Set module parameters based on configuration
 
     # Set parameters for AP (support NDP probing)
-    if strSTA() == 'AP':
+    if option == 'AP':
         ndp_preq = 1
     else:
         ndp_preq = config['ndp_preq']
@@ -57,7 +52,7 @@ def setModuleParam(config):
 
     # module param for power_save
     # default: power_save(0: active mode) sleep_duration(0,0)
-    if strSTA() == 'STA' and int(config['power_save']) > 0:
+    if option == 'STA' and int(config['power_save']) > 0:
         # 7393/7394 STA (host_gpio_out(17) --> target_gpio_in(14))
         if str(config['model']) == "7393" or str(config['model']) == "7394":
             ps_gpio_arg = " power_save_gpio=17,14"
@@ -74,8 +69,7 @@ def setModuleParam(config):
     # module param for bss_max_idle (keep alive)
     # default: bss_max_idle(0: disabled)
     if int(config['bss_max_idle_enable']) == 1:
-        if strSTA() == 'AP' or strSTA() == 'RELAY' or strSTA() == 'STA':
-            bss_max_idle_arg = " bss_max_idle=" + str(config['bss_max_idle'])
+        bss_max_idle_arg = " bss_max_idle=" + str(config['bss_max_idle'])
 
     # module param for NDP Prboe Request (NDP scan)
     # default: ndp_preq(0: disabled)
@@ -171,7 +165,7 @@ def setModuleParam(config):
 
     # module param for supported channel width
     # default : support 1/2/4MHz (1: 1/2/4Mhz)
-    if strSTA() == 'STA' and int(config['support_ch_width']) == 0:
+    if option == 'STA' and int(config['support_ch_width']) == 0:
         support_ch_width_arg = " support_ch_width=0"
 
     module_param += fw_arg + \
@@ -194,15 +188,12 @@ def load_conf(file_path):
 
 def run_common():
 
-    ini_path = ""
-    # if not passed in, use live buildroot default
-    if len(sys.argv) <= 2:
-        if strSTA() == 'STA':
+    ini_path = args.ini_path
+    if (ini_path is None) :
+        if option == 'STA':
             ini_path = "/etc/nrc_opts_sta.ini"
         else:
             ini_path = "/etc/nrc_opts_ap.ini"
-    else:
-        ini_path = sys.argv[2]
 
     items = load_conf(ini_path)
 
@@ -212,13 +203,9 @@ def run_common():
     insmod_arg = setModuleParam(items)
 
     file_txt = ""
-    mod_path = ""
-    # if not passed in, use live buildroot default
-    if len(sys.argv) <= 3:
-        mod_path = "/etc/modprobe.d/nrc.conf"
-    else:
-        mod_path = sys.argv[3]
 
+    mod_path = args.mod_path
+    
     with open(mod_path, "w") as mod_file:
         file_txt = "options nrc" + insmod_arg
         file_txt = file_txt.strip("\n")

@@ -5,7 +5,7 @@ RUN apt-get update && \
     apt-get -y install tzdata
 
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     make \
     binutils \
     build-essential \
@@ -31,18 +31,23 @@ RUN apt-get install -y \
     python3-matplotlib \
     graphviz \
     git-lfs \
-    util-linux
+    util-linux \ 
+    wpasupplicant
 
 # just for calypso require ruamel.yaml
-RUN apt-get install -y python3-pip && pip install "ruamel.yaml<0.18.0"
+RUN apt-get update && apt-get install -y python3-pip && pip install "ruamel.yaml<0.18.0"
 
 # add all buildroot files there
 WORKDIR /home/odysseus/build
 
 RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2024.02
 
+
 WORKDIR /home/odysseus/outputs/
 COPY ./docker_scripts /home/odysseus/scripts
 RUN echo "source /home/odysseus/scripts/setup_env.sh" >> ~/.bashrc
+
+# install password using wildcard so failures arent deadly
+COPY ./SECRETS.env.* /home/odysseus/
 
 ENTRYPOINT "/bin/bash"

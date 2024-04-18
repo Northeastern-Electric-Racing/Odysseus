@@ -1,0 +1,123 @@
+#!/bin/sh
+
+ROOT_DISK=/dev/mmcblk0
+ROOT_PART=/dev/mmcblk0p2
+ROOT_PARTNUM=2
+BOOT_PART=/dev/mmcblk0p1
+
+echo "ODY RESIZE - Entering"
+
+# mount boot partition, for live user only!
+do_bootmnt() {
+    echo "ODY RESIZE - Mounting Boot"
+    mount "$BOOT_PART" /boot
+
+}
+
+# restore inittab init capability
+do_restore() {
+    echo "ODY RESIZE - Restoring"
+    sed -i 's| init=/sbin/ody-resize||' /boot/cmdline.txt # delete the init field
+    sync
+}
+
+# unmount and reboot
+do_reboot() {
+    sync
+    umount /boot
+    umount /
+    sync
+    reboot -f # skip init!
+}
+
+# trigger this script to be init on next boot
+do_trigger() {
+    echo "ODY RESIZE - Triggering"
+    sed -i '/1/s/$/ init=\/sbin\/ody-resize/' /boot/cmdline.txt # add back the init to the end of line one
+    rm /boot/stage2 # remove the stage2 flag so stage1 starts on next boot
+    sync
+}
+
+# resize the 2nd partition to maximum size available, and prep for stage 2
+part_root() {
+    sync
+    echo "ODY RESIZE - Partitioning"
+    START_SECTOR=$(sfdisk "$ROOT_DISK" -J | jq '.partitiontable.partitions[1].start')
+    fdisk "$ROOT_DISK" <<EOF
+p
+d
+$ROOT_PARTNUM
+n
+p
+
+$START_SECTOR
+-10G
+n
+p
+n
+p
+
+
+-5G
+p
+n
+p
+
+
+w
+EOF
+    # note that partitioning is done
+    touch /boot/stage2
+    
+    do_reboot
+} 
+
+# resize the 2nd partition to maximum size available, and restore
+resize_root() {
+    sync
+    echo "ODY RESIZE - Resizing FS"
+    resize2fs "$ROOT_PART"
+    
+    echo "ODY RESIZE - Adding ext4 fs to partition 4"
+    mkfs.ext4 "/dev/mmcblk0p4"
+    
+    do_restore # boot normally next
+    
+    do_reboot
+} 
+
+main() {
+    mount -t proc proc /proc # mount proc as mtab is needed
+    mount -t sysfs sysfs /sys # mount sysfs as sfdisk needs alignment
+    mount -o rw /dev/mmcblk0p1 /boot # mount boot so we can set the stage2 flag
+    if [ -e boot/stage2 ];
+    then
+        mount -o remount,rw / # for some reason umount fails, so online resize instead
+        resize_root
+    else
+        umount / # for some reason umount fails, so online repartition is needed, should investigate more
+        part_root
+    fi
+    
+}
+
+# restore non-resize boot functionality (live only)
+if [ "$1" = "restore" ];
+then
+    do_bootmnt
+    do_restore
+# set resize on for next boot (live only)
+elif [ "$1" = "trigger" ];
+then
+    do_bootmnt
+    do_restore
+    do_trigger
+# mount boot partition (live only)
+elif [ "$1" = "bootmnt" ];
+then
+    do_bootmnt
+# run the main script, cannot be further divided as cmdline.txt
+else
+    main
+fi
+

@@ -27,19 +27,34 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 - iperf3, iw, iputils, and other network configuration utilities
 
 ## Quick start
-Download and install to PATH git and docker.
+Download and install to PATH git and docker.  Docker desktop is recommended for macOS and Windows.
 ```
 git clone https://github.com/Northeastern-Electric-Racing/Siren.git
 git submodule update --init --recursive
 cd ./odysseus
-docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
 ```
+
+For linux (current support includes all build defconfigs):
+```
+docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+
+```
+
+For mac and windows: (current support includes all _debug defconfigs, on x86_64 host normal defconfigs can work (experimental)):
+```
+docker compose -f "compose-compat.yml" run  --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
+```
+
+
+
 Now you are in the docker container.  To build cd into the defconfig directory (either ap, or tpu), then run the make command alias:
 ```
 cd ./<defconfig>
 make-current
 ```
-You can view the `output.log` for more info.  Now, to deploy just flash the image in `images/
+
+**Note: If failure occurs on mac or windows very early in the process, run `make nanomq-source` and try again before reporting the error.**
+You can view the `output.log` for more info.
 
 ### More on docker configuration
 The container has a directory structure as so:
@@ -49,13 +64,16 @@ The container has a directory structure as so:
     - `./odysseus_tree`: The odyssues external tree, bound to the same directory in the git repository on your local machine!
 - `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name   `odysseus_shared_data`.
 - `./outputs/*`:
-    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. This is bound to the `./odysseus/outputs` directory in the repository. *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
+    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. For Linux hosts, this is bound to the `./odysseus/outputs` directory in the repository. For Windows users, this is a docker volume.  *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
 
 ### Extra docker tips
 All paths relative to Siren root.
 
+#### Note for Windows/macOS users
+The outputs are stored in a docker volume on these platforms to ensure rsync compatability.  Therefore fetching the files requires first running the image, then use `docker cp` to get them to the userspace.  Alternatively, docker desktop has a file explorer for docker volumes that may come in handy.
+
 #### Writing the sd card
-The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.
+The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.  One can flash this with tools like the Raspberry Pi OS Imager.
 
 #### Pulling source files for scp, etc.
 The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
@@ -65,6 +83,10 @@ The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
 
 **IMPORTANT**: this WILL wipe all shared cache (don't do this unless you need the space):  
 `docker volume rm odysseus_shared_data`
+
+This will wipe all outputs, not the cache so just requires a full rebuild to recover from.  On compose-compat images only:
+`docker volume rm odysseus_outputs`
+
 
 #### Open another tty
 `docker ps`
@@ -78,11 +100,19 @@ docker exec <container_id> -d -w /home/odysseus/outputs/<defconfig> make-current
 ```
 Be careful with this.
     
-Notes about docker:
-- Build time may be slower due to docker isolations (not dramatic, about 5-15%)
-- Since odysseus only supports amd64 hosts for non-debug defconfigs, full releases cannot be built on mac
+Docker limitations:
+- Build time may be slower due to docker isolations (not dramatic, about 5%)
 - Launch time is longer
 - Space is used up by rebuilds, prune often or omit `--build`
+
+### Passwords
+Root passwords are stored via Github secrets and an encrypted file within a ghcr docker image.  Below are the steps to load and decrypt such passwords for use by buildroot.  Requirements are you know the team's master password and are running x86_64.
+
+1. Authenticate with ghcr.  First make a [classic PAT](https://github.com/settings/tokens/new) with the permission `read:packages`.  Make sure to copy the token, then run `sudo docker login ghcr.io -u <GITHUB_USERNAME> -p <PAT>`
+2. cd into odysseus folder and `docker compose pull`
+3. Run `docker compose run odysseus` to enter the docker image.  At this point the image should be identical to a locally built one, but it is less preferable for development purposes.
+4. Run `load-secrets` and enter the master password.  Consult Odysseus lead if you need this info.  Now your passwords are loaded (can be viewed with `env | grep ODY`), and will be set when you make the sdcard.img.  Note this step must be repeated on each `docker compose run odysseus`, and if the passwords change on Github steps 2 and 3 must be rerun as well.
+
 
 
 See below to learn more about developing, and check confluence for most info.  Once in the docker image, all the normal make commands (in an out-of-tree context only) apply.
@@ -92,6 +122,13 @@ See below to learn more about developing, and check confluence for most info.  O
 2. Make any customizations you want in the menu
 3. Save changes after you've made them by running ```make savedefconfig```.  Ensure you are saving changes to the intended defconfig, it is saved to whatever directory you `cd`ed into!
 
+#### Adding defconfigs
+
+Checklist when adding a defconfig:
+[ ] Add a secret for SSH password in settings, and load it into the workflow env in `.github/workflows/build_image.yml`
+[ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.
+[ ] Add a pretty name to `post-build-os-release.sh`
+[ ] Add a load command to `setup_env.sh`
 
 <!--
 ## Build locally

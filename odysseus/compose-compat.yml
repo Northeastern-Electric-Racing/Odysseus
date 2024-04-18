@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+    odysseus:
+        build: .
+        command: /bin/bash
+        privileged: true
+        tty: true
+        # for fakeroot failure
+        ulimits:
+          nofile:
+            soft: 1024
+            hard: 1048576
+        volumes:
+            - ./odysseus_tree:/home/odysseus/build/odysseus_tree
+            - shared_data:/home/odysseus/shared_data
+            - outputs:/home/odysseus/outputs
+        environment:
+            - BR2_DL_DIR=/home/odysseus/shared_data/dl 
+            - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
+            - ODY_TPU_ROOT_PASSWORD=password
+            - ODY_IROH_ROOT_PASSWORD=password
+            - ODY_AP_ROOT_PASSWORD=password
+            - ODY_BASE_WIFI_PASSWORD=password
+
+volumes:
+    # required for mac as no hard linking:(
+    outputs:
+        labels:
+            com.northeastern_electric_racing.description: "Buildroot outputs, including disk images"
+    shared_data:
+        labels:
+            com.northeastern_electric_racing.description: "Shared output between buildroot runs"

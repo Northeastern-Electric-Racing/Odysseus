@@ -12,30 +12,27 @@ class EnvironmentMT(MeasureTask):
         """
         Read the sensor path and send it
         """
-        try:
-           with open(sensor_path, 'r') as f:
-               sensor_data = int(f.read().strip()) / 1000  
-               return sensor_data
-        except IOError:
-            print("Error: Unable to read data from", sensor_path)
-            return []
+        # try:
+        with open(sensor_path, 'r') as f:
+            sensor_data = int(f.read().strip()) / 1000  
+            return sensor_data
+        # except IOError:
+        #     print("Error: Unable to read data from", sensor_path)
+        #     return []
 
     def measurement(self):
-        try:
-            data = []
+        data = []
 
-            temperature = self.read_sensor_data(TEMP_SENSOR_PATH)
-            if temperature is not None:
-                data.append(("TPU/Environment/Temperature", [temperature], "Celsius"))
+        temperature = self.read_sensor_data(TEMP_SENSOR_PATH)
+        if temperature is not None:
+            data.append(("TPU/Environment/Temperature", [temperature], "Celsius"))
 
-            humidity = self.read_sensor_data(HUMIDITY_SENSOR_PATH = '/sys/class/hwmon/hwmon2/humidity1_input')
-            if humidity is not None:
-                data.append(("TPU/Environment/Humidity", [humidity], "%"))
+        humidity = self.read_sensor_data(HUMIDITY_SENSOR_PATH = '/sys/class/hwmon/hwmon2/humidity1_input')
+        if humidity is not None:
+            data.append(("TPU/Environment/Humidity", [humidity], "%"))
 
-            return data
-        except Exception as e:
-            print(f"Failed to fetch data: {e}")
-            return []
+        return data
+
 
 
 def main():

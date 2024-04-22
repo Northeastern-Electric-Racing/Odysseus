@@ -17,28 +17,24 @@ SNR                              : 0
 OK"""
 
 
-FETCH_THROUGHPUT_CMD = ["bmon","-r", "0.09", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "wlan1"]
+FETCH_THROUGHPUT_CMD = ["bmon", "-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "wlan1"]
 FETCH_RATE_CMD = ["cli_app","show", "ap", "0"]
 FETCH_RSSI_CMD = ["cli_app", "show", "stats", "simple_rx"]
 
 class HalowThroughputMT(MeasureTask, BufferedCommand):
     def __init__(self):
-         MeasureTask.__init__(self, 100)
+         MeasureTask.__init__(self, 1000)
          BufferedCommand.__init__(self, FETCH_THROUGHPUT_CMD)
 
     def measurement(self):
-        try:
-            items = self.read()
-            send_data = []
-            for item in items:
-                item = item.strip('\'').split(" ")
-                data = [item[0].strip(), item[1].strip()]
-                send_data.append(('TPU/HaLow/DataRate', data, 'kb/s'))
+        items = self.read()
+        send_data = []
+        for item in items:
+            item = item.strip('\'').split(" ")
+            data = [item[0].strip(), item[1].strip()]
+            send_data.append(('TPU/HaLow/DataRate', data, 'kb/s'))
             
-            return send_data
-        except Exception as e:
-            print(f"Failed to fetch data: {e}")
-            return []
+        return send_data
 
 
 class HalowMCSMT(MeasureTask, OneshotCommand):
@@ -47,17 +43,17 @@ class HalowMCSMT(MeasureTask, OneshotCommand):
          OneshotCommand.__init__(self, FETCH_RATE_CMD, 450)
 
     def measurement(self):
-        try:
-            out = self.read()
-            for line in out:
-                data_line = line.splitlines()[2]
-                parsed_data_ap = data_line.split()[5][:-1].strip()
-                parsed_data_sta = data_line.split()[3][:-1].strip()
-                return [("TPU/HaLow/ApMCS", [parsed_data_ap], "int"), 
-                      ("TPU/HaLow/StaMCS", [parsed_data_sta], "int")]
-        except Exception as e:
-            print(f"Error fetching data: {e}")
-            return []
+        out = self.read()
+        send_data = []
+        for line in out:
+            data_line = line.splitlines()[2]
+            parsed_data_ap = data_line.split()[5][:-1].strip()
+            parsed_data_sta = data_line.split()[3][:-1].strip()
+            send_data.append(("TPU/HaLow/ApMCS", [parsed_data_ap], "int"))
+            send_data.append(("TPU/HaLow/StaMCS", [parsed_data_sta], "int"))
+
+        return send_data
+
 
 class HalowRSSIMT(MeasureTask, OneshotCommand):
     def __init__(self):
@@ -65,15 +61,14 @@ class HalowRSSIMT(MeasureTask, OneshotCommand):
          OneshotCommand.__init__(self, FETCH_RSSI_CMD, 450)
 
     def measurement(self):
-        try:
-            out = self.read()
-            for line in out:
-                split = out.splitlines()[1]
-                data = split.split(":")[1].strip()
-                return [("TPU/HaLow/RSSI", [data], "int")]
-        except Exception as e:
-            print(f"Error fetching data: {e}")
-            return []
+        out = self.read()
+        send_data = []
+        for line in out:
+            split = line.splitlines()[1]
+            data = split.split(":")[1].strip()
+            send_data.append(("TPU/HaLow/RSSI", [data], "int"))
+        return send_data
+
 
 
 

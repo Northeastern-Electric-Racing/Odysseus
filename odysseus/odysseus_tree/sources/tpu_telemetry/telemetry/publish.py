@@ -1,11 +1,11 @@
 import asyncio
+import math
 import signal
 
 from telemetry.poll_data import gps_data, halow, on_board, can
 from . import (
-    BufferedCommand,
+    MTCommand,
     MeasureTask,
-    OneshotCommand,
     server_data_pb2
 )
 from gmqtt import Client as MQTTClient
@@ -27,7 +27,7 @@ def on_disconnect(client, packet, exc=None):
 
 def ask_exit(*args):
     for task in TASKS:
-        if isinstance(task, BufferedCommand) or isinstance(task, OneshotCommand):
+        if isinstance(task, MTCommand):
             task.deinit()
     STOP.set()
     
@@ -40,19 +40,18 @@ def publish_data(topic, message_data):
 
 async def interval(task: MeasureTask):
     async for result in task.set_interval(STOP):
+        # process each tuple
         for packet in result:
             data = server_data_pb2.ServerData()
             topic, values, data.unit = packet
+
+            # process the data values
             for val in values:
-                if val == None:
-                    break
                 data.value.append(val)
             else:
                 message_data = data.SerializeToString()
                 publish_data(topic, message_data)
             
-            break
-
 
 async def run(host):
     await client.connect(host, 1883)
@@ -77,8 +76,8 @@ async def run(host):
     stagger = 1 / len(TASKS)
     for task in TASKS:
 
-        # if task is of type BufferedCommand, register it
-        if isinstance(task, BufferedCommand):
+        # if task is of type BufferedCommand, register its thread
+        if isinstance(task, MTCommand):
             task.get_thread().start()
 
         # should not be awaited, this just gets run parallely along with other intervals.
@@ -86,7 +85,6 @@ async def run(host):
         await asyncio.sleep(stagger)
 
     await STOP.wait()
-
 
 def main():
     loop = asyncio.new_event_loop()

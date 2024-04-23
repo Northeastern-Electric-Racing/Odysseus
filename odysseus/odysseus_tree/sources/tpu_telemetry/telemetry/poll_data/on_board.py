@@ -1,22 +1,11 @@
-from .. import measurement
+from .. import MeasureTask
 import psutil
 
-# fetch_data() -> List[(str, [str], str)]
+class CpuTempMT(MeasureTask):
+    def __init__(self):
+         MeasureTask.__init__(self, 2000)
 
-
-def fetch_data():
-    return (
-        fetch_cpu_temperature()
-        + fetch_cpu_usage()
-        + fetch_broker_cpu_usage()
-        + fetch_available_memory()
-    )
-
-
-# CPU Temp
-@measurement(2000)
-def fetch_cpu_temperature():
-    try:
+    def measurement(self):
         temps = psutil.sensors_temperatures(fahrenheit=False)
         for name, entries in temps.items():
             for entry in entries:
@@ -27,50 +16,54 @@ def fetch_cpu_temperature():
                     entry.critical,
                 )
         return [("TPU/OnBoard/CpuTemp", [str(entry.current)], "celsius")]
-    except Exception as e:
-        print(f"Error fetching system temperature: {e}")
-        return []
+    
+    
+class CpuUsageMT(MeasureTask):
+    def __init__(self):
+         MeasureTask.__init__(self, 50)
 
-
-# CPU Usage
-@measurement(50)
-def fetch_cpu_usage():
-    try:
+    def measurement(self):
         cpu_usage = psutil.cpu_percent()
         return [("TPU/OnBoard/CpuUsage", [str(cpu_usage)], "percent")]
-    except Exception as e:
-        print(f"Error fetching CPU usage: {e}")
-        return []
 
 
-# CPU usage of nanomq process
-@measurement(100)
-def fetch_broker_cpu_usage():
-    try:
-        with open("/var/run/mosquitto.pid", "r") as file:
-            pid = int(file.read())
-            process = psutil.Process(pid)
-            broker_cpu_usage = process.cpu_percent()
+
+class BrokerCpuUsageMT(MeasureTask):
+    def __init__(self):
+         MeasureTask.__init__(self, 100)
+         with open("/var/run/mosquitto.pid", "r") as file:
+            pid = int(file.readlines()[0])
+            print("Pid is", pid)
+            self.process = psutil.Process(pid)
+
+
+    def measurement(self):
+        broker_cpu_usage = self.process.cpu_percent()
         return [("TPU/OnBoard/BrokerCpuUsage", [str(broker_cpu_usage)], "percent")]
-    except Exception as e:
-        print(f"Error fetching broker CPU usage: {e}")
-        return []
 
 
-# CPU available memory
-@measurement(500)
-def fetch_available_memory():
-    try:
+class MemAvailMT(MeasureTask):
+    def __init__(self):
+         MeasureTask.__init__(self, 500)
+
+    def measurement(self):
         mem_info = psutil.virtual_memory()
         mem_available = mem_info.available / (1024 * 1024)
         return [("TPU/OnBoard/MemAvailable", [str(mem_available)], "MB")]
-    except Exception as e:
-        print(f"Error fetching available memory: {e}")
-        return []
 
 
 def main():
-    print(fetch_data())
+    ex1 = CpuTempMT()
+    print(ex1.measurement())
+
+    ex2 = CpuUsageMT()
+    print(ex2.measurement())
+
+    ex3 = BrokerCpuUsageMT()
+    print(ex3.measurement())
+
+    ex4 = MemAvailMT()
+    print(ex4.measurement())
 
 
 if __name__ == "__main__":

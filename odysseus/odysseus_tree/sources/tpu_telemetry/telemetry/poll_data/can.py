@@ -1,24 +1,28 @@
-from subprocess import check_output
-from .. import measurement
-
-FETCH_CMD = "bmon -o format:quitafter=1 -p can0"
-# example = "can0 0 11024 0 40"
+from .. import BufferedCommand, MeasureTask
 
 
-@measurement(100)
-def fetch_data():
-    try:
-        out = check_output(FETCH_CMD.split(" "), shell=False).decode("utf-8")
-        split = out.split(" ")
-        data = [split[4].strip(), split[2].strip()]
-        return [("TPU/Can/DataRate", data, "kb/s")]
-    except Exception as e:
-        print(f"Failed to fetch data: {e}")
-        return []
+# read in 1/10 a second increments
+FETCH_CMD = ["bmon","-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "can0" ]
+class CanMT(MeasureTask, BufferedCommand):
+    def __init__(self):
+         MeasureTask.__init__(self, 1000)
+         BufferedCommand.__init__(self, FETCH_CMD)
+
+    def measurement(self):
+        items = self.read()
+        send_data = []
+        for item in items:
+            item = item.strip('\'').split(" ")
+            data = [item[0].strip(), item[1].strip()]
+            send_data.append(('TPU/Can/DataRate', data, 'kb/s'))
+        
+        return send_data
+        
 
 
 def main():
-    print(fetch_data())
+    ex = CanMT()
+    print(ex.measurement())
 
 
 if __name__ == "__main__":

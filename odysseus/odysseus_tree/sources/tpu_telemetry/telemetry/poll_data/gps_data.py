@@ -1,54 +1,31 @@
-from subprocess import check_output
-from .. import measurement
+from .. import MeasureTask
 import gps
 
-session = gps.gps(mode=gps.WATCH_ENABLE)
+
+class GpsMT(MeasureTask):
+    def __init__(self):
+         MeasureTask.__init__(self, 1000)
+         self.session = gps.gps(mode=gps.WATCH_ENABLE)
 
 
-@measurement(1000)
-def fetch_data_location():
-    try:
-        if 0 == session.read() and session.valid and gps.isfinite(session.fix.latitude) and gps.isfinite(session.fix.longitude):
-            tempLat = session.fix.latitude
-            tempLong = session.fix.longitude
-            return [("TPU/GPS/Location", [str(tempLat), str(tempLong)], "coordinate")]
-        else:
-            return []
-    except Exception as e:
-        print(f"Failed to fetch data: {e}")
-        return []
+    def measurement(self):
+        send_data = []
+        if 0 == self.session.read() and self.session.valid:
+            tempMode = self.session.fix.mode
+            send_data.append(("TPU/GPS/Mode", [str(tempMode)], "enum"))
+            
+            if gps.isfinite(self.session.fix.speed):
+                send_data.append(("TPU/GPS/GroundSpeed", [str(self.session.fix.speed)], "knot"))
 
+            if gps.isfinite(self.session.fix.latitude) and gps.isfinite(self.session.fix.longitude) and self.session.fix.latitude != 0 and self.session.fix.longitude != 0:
+                send_data.append(("TPU/GPS/Location", [str(self.session.fix.latitude), str(self.session.fix.longitude)], "coordinate"))
 
-@measurement(1000)
-def fetch_data_speed():
-    try:
-        if 0 == session.read() and session.valid and gps.isfinite(session.fix.speed):
-            tempSpeed = session.fix.speed
-            return [("TPU/GPS/GroundSpeed", [str(tempSpeed)], "knot")]
-        else:
-            return []
-    except Exception as e:
-        print(f"Failed to fetch data: {e}")
-        return []
-
-
-@measurement(1000)
-def fetch_data_mode():
-    try:
-        if 0 == session.read() and session.valid:
-            tempMode = session.fix.mode
-            return [("TPU/GPS/Mode", [str(tempMode)], "enum")]
-        else:
-            return []
-    except Exception as e:
-        print(f"Failed to fetch data: {e}")
-        return []
+        return send_data
 
 
 def main():
-    print(fetch_data_location())
-    print(fetch_data_speed())
-    print(fetch_data_mode())
+    ex = GpsMT()
+    print(ex.measurement())
 
 
 if __name__ == "__main__":

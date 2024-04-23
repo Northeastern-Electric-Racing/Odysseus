@@ -1,5 +1,4 @@
-from subprocess import check_output
-from .. import measurement
+from .. import BufferedCommand, MeasureTask, OneshotCommand
 
 example_data = """BSSID         BW          TX bit rate        RX bit rate
 =====================================================================
@@ -16,66 +15,72 @@ MPDU_Succ                        : 0
 SNR                              : 0
 ---------------------------------------------------
 OK"""
-FETCH_RSSI_CMD = "cli_app show stats simple_rx"
-FETCH_RATE_CMD = "cli_app show ap 0"
-FETCH_THROUGHPUT_CMD = "bmon -o format:quitafter=1 -p wlan1"
-
-@measurement(100)
-def fetch_data_Throughput():
-    try:
-        out = check_output(FETCH_THROUGHPUT_CMD.split(" "), shell=False).decode("utf-8")
-        split = out.split(" ")
-        data = [split[4].strip(), split[2].strip()]
-        return [("TPU/HaLow/DataRate", data, "kb/s")]
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
-
-@measurement(500)
-def fetch_data_ApMCS():
-    try:
-        out = check_output(FETCH_RATE_CMD.split(" "), shell=False).decode("utf-8")
-        data_line = out.splitlines()[2]
-        parsed_data = data_line.split()[5][:-1].strip()
-        return [("TPU/HaLow/ApMCS", [parsed_data], "integer 0-10")]
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
 
 
-@measurement(500)
-def fetch_data_StaMCS():
-    try:
-        out = check_output(FETCH_RATE_CMD.split(" "), shell=False).decode("utf-8")
-        data_line = out.splitlines()[2]
-        parsed_data = data_line.split()[3][:-1].strip()
-        return [("TPU/HaLow/StaMCS", [parsed_data], "integer 0-10")]
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
+FETCH_THROUGHPUT_CMD = ["bmon", "-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "wlan1"]
+FETCH_RATE_CMD = ["cli_app","show", "ap", "0"]
+FETCH_RSSI_CMD = ["cli_app", "show", "stats", "simple_rx"]
+
+class HalowThroughputMT(MeasureTask, BufferedCommand):
+    def __init__(self):
+         MeasureTask.__init__(self, 1000)
+         BufferedCommand.__init__(self, FETCH_THROUGHPUT_CMD)
+
+    def measurement(self):
+        items = self.read()
+        send_data = []
+        for item in items:
+            item = item.strip('\'').split(" ")
+            data = [item[0].strip(), item[1].strip()]
+            send_data.append(('TPU/HaLow/DataRate', data, 'kb/s'))
+            
+        return send_data
 
 
-@measurement(500)
-def fetch_data_RSSI():
-    try:
-        out = check_output(FETCH_RSSI_CMD.split(" "), shell=False).decode("utf-8")
-        split = out.splitlines()[1]
-        data = split.split(":")[1].strip()
-        return [("TPU/HaLow/RSSI", [data], "dbm")]
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
+class HalowMCSMT(MeasureTask, OneshotCommand):
+    def __init__(self):
+         MeasureTask.__init__(self, 500)
+         OneshotCommand.__init__(self, FETCH_RATE_CMD, 450)
+
+    def measurement(self):
+        out = self.read()
+        send_data = []
+        for line in out:
+            data_line = line.splitlines()[2]
+            parsed_data_ap = data_line.split()[5][:-1].strip()
+            parsed_data_sta = data_line.split()[3][:-1].strip()
+            send_data.append(("TPU/HaLow/ApMCS", [parsed_data_ap], "int"))
+            send_data.append(("TPU/HaLow/StaMCS", [parsed_data_sta], "int"))
+
+        return send_data
 
 
-def fetch_data():
-    return fetch_data_Throughput() + fetch_data_ApMCS() + fetch_data_StaMCS() + fetch_data_RSSI()
+class HalowRSSIMT(MeasureTask, OneshotCommand):
+    def __init__(self):
+         MeasureTask.__init__(self, 500)
+         OneshotCommand.__init__(self, FETCH_RSSI_CMD, 450)
+
+    def measurement(self):
+        out = self.read()
+        send_data = []
+        for line in out:
+            split = line.splitlines()[1]
+            data = split.split(":")[1].strip()
+            send_data.append(("TPU/HaLow/RSSI", [data], "int"))
+        return send_data
+
+
 
 
 def main():
-    print(fetch_data_Throughput())
-    print(fetch_data_ApMCS())
-    print(fetch_data_StaMCS())
-    print(fetch_data_RSSI())
+    ex1 = HalowThroughputMT()
+    print(ex1.measurement())
+
+    ex2 = HalowMCSMT()
+    print(ex2.measurement())
+
+    ex3 = HalowRSSIMT()
+    print(ex3.measurement())
 
 
 if __name__ == "__main__":

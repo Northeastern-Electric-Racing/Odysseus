@@ -7,6 +7,7 @@ services:
         privileged: true
         tty: true
         stdin_open: true
+        network_mode: host
         # for fakeroot failure
         ulimits:
           nofile:
@@ -18,6 +19,7 @@ services:
             - ./outputs:/home/odysseus/outputs
             - ../.git:/home/odysseus/build/githistory/.git:ro # read only as this is an unsafe operation
         environment:
+            - FORCE_UNSAFE_CONFIGURE=1  # for tar configure as root user
             - BR2_DL_DIR=/home/odysseus/shared_data/dl 
             - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
             - ODY_TPU_ROOT_PASSWORD=password

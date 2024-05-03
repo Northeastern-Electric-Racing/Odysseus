@@ -7,10 +7,11 @@
 
 .DS_Store
 odysseus/outputs/**
+outputs/**
 
 # for passwords
-odysseus/SECRETS.env
-odysseus/SECRETS.env-example
+SECRETS.env
+SECRETS.env-example
 # redundant safeguard for all env files named SECRETS.env in case it is renamed wrong
 **/*SECRETS.env*
 /.idea

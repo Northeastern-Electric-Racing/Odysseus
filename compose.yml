@@ -2,7 +2,7 @@ version: "3.8"
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:develop-features-for-comp
+        image: ghcr.io/northeastern-electric-racing/odysseus:main
         command: /bin/bash
         privileged: true
         tty: true

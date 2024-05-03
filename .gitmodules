@@ -1,10 +1,8 @@
-[submodule "odysseus/odysseus_tree/sources/nrc7292_sw_pkg"]
-	path = odysseus/odysseus_tree/sources/nrc7292_sw_pkg
+[submodule "odysseus_tree/sources/nrc7292_sw_pkg"]
+	path = odysseus_tree/sources/nrc7292_sw_pkg
 	url = https://github.com/newracom/nrc7292_sw_pkg
         branch = v1.5
-[submodule "odysseus/odysseus_tree/sources/nrc7394_sw_pkg"]
-	path = odysseus/odysseus_tree/sources/nrc7394_sw_pkg
+[submodule "odysseus_tree/sources/nrc7394_sw_pkg"]
+	path = odysseus_tree/sources/nrc7394_sw_pkg
 	url = https://github.com/newracom/nrc7394_sw_pkg
-[submodule "odysseus/odysseus_tree/sources/Nero-2.0"]
-	path = odysseus/odysseus_tree/sources/Nero-2.0
-	url = https://github.com/Northeastern-Electric-Racing/Nero-2.0
+	branch = master

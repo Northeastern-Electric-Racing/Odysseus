@@ -1,5 +1,30 @@
-# Odysseus
-Custom Linux Build being used to drive the TPU
+# [Odysseus](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/107184222/Odysseus)
+Our custom buildroot-based OS.  It enables the collection, translation, and transportation of data from the car to a base station which hosts data visualization and analytics systems as part of the [Odyssey 22A project](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/105283597/Wireless+22A+Software+Design).
+
+
+Odysseus code holds the structure and configuration to enable the Wireless and Siren projects, which are summarized below:
+
+## [Wireless](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/71631135/Wireless+22A)
+Our HaLow Wifi implementation and usage for low throughput high range TCP/IP data transmission.  HaLow (802.11ah) is a new 900 mhz unlicensed band wifi protocol which boasts an ultra-long range and low power usage.  This repository contains the buildroot enablement for the protocol with Newracom chips.
+
+## [Siren](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/107151426/Siren)
+Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses a MQTT server to send telemetry data from the car. Siren is a custom [Mosquitto](https://mosquitto.org) server.  Configuration code for mosquitto on the car lives in the rootfs overlays of buildroot, and for the base station it lies in the `extra` folder.
+
+### About MQTT
+For information about MQTT, check out [this confluence page](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/173113345/Delving+into+MQTT).
+
+### Running with Docker
+Custom image coming soon. For now, you can run with the instructions in the `extra/mosquitto_base` folder, and to achieve in-car configuration use the image but substitute the configurations with those found in the buildroot rootfs overlay for the TPU.
+
+### Local Setup
+Docker is easiest, commands are in `extra/mosquitto_base`.  If you would like to install locally, visit the mosquitto website to learn more.
+
+### Testing Siren
+To test that Siren is working properly, run the `subscriber.py` and `publisher.py` scripts in the `extra/siren_example` folder in the same environment that Siren is hosted in. After a few seconds, the terminal running the `subscriber.py` script should begin receiving messages, which means that Siren is working properly.
+
+
+## Building Odysseus
+
 
 ### Current configurations (see below for how to build)
 - `raspberrypi4_64_tpu_defconfig` for TPU
@@ -128,38 +153,3 @@ Checklist when adding a defconfig:
 [ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.
 [ ] Add a pretty name to `post-build-os-release.sh`
 [ ] Add a load command to `setup_env.sh`
-
-<!--
-## Build locally
-1. Install `git-lfs` (for nanomq submodules)
-2. Install all buildroot dependencies, including:
-    - [All mandatory packages](https://buildroot.org/downloads/manual/manual.html#requirement) (most preinstalled on a normal linux system)
-    - python3
-    - libxcrypt or glibc with libcrypt enabled (libcrypt-dev in ubuntu/focal or debian bullseye).  If you encounter the error below in the `Finalizing target directory` phase, you may need to install a legacy version of libxcrypt that supports sha-256.  If the package fails at `crypt.h not found`, you need to install at least one of the above packages.
-    ```
-    /usr/bin/sed -i -e s,^root:[^:]*:,root:"`/home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/host/bin/mkpasswd -m "sha-256" "password"`":, /home/jack/Projects/NER/buildroot/Siren/odysseus/buildroot/output/target/etc/shadow
-    crypt failed
-    ```
-    - ncurses5 (or 6) (for menuconfig)
-    - Git, rsync
-    - graphviz, python-matplotlib, and dotx for graph creation (optional)
-
-    
-### Initializing the Project
-1. Run ```git submodule update --init``` to clone the buildroot repo locally
-2. Optional: Edit `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig` and `./Siren/odysseus/odysseus_tree/configs/raspberrypi4_64_tpu_defconfig`; in both files change `BR2_CCACHE_DIR=` to a directory prepared to hold around ~5G of data.
-3. ```cd``` into the ```Siren/odysseus/buildroot``` directory
-4. Run ```make BR2_EXTERNAL=../odysseus_tree <config>``` supplanting `<config>` with either `raspberrypi4_64_tpu_defconfig` for TPU deployment or `raspberrypi3_64_ap_defconfig` for the base station access point deployment.
-5. All future config loads can omit BR2_EXTERNAL.
-
-### Working with multiple defconfigs simultaneously (default on docker)
-Since there are multiple machines this repo deploys to, one can save the build output of multiple defconfigs side-by-side so outputs can be stored easily.  To do this, simply run `make O=my_dir BR2_EXTERNAL=../odysseus_tree <config>` inside the buildroot submodule, where my_dir is a path relative to the buildroot submodule.  Then `cd ./my_dir` and run all make commands from there, and output will be generated into `my_dir`. The `O=` can be omitted as long as your working directory is `my_dir` when running `make`. Make a new directory for each `<config>`, and if you run out of space feel free to `make clean` or delete all the directories (space used about 10 to 22gb).
-
-For example, my system looks like:
-- `./buildroot` (each subdir has its own `Makefile`)
-    - `./tpu`
-    - `./nero`
-    - `./ap`
-- `./buildroot/dl` (downloads, shared between defconfigs)
-- `~/.buildroot-ccache` (shared between defconfigs)
--->

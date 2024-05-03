@@ -6,3 +6,6 @@
 	path = odysseus_tree/sources/nrc7394_sw_pkg
 	url = https://github.com/newracom/nrc7394_sw_pkg
 	branch = master
+[submodule "odysseus_tree/sources/Nero-2.0"]
+	path = odysseus_tree/sources/Nero-2.0
+	url = https://github.com/Northeastern-Electric-Racing/Nero-2.0

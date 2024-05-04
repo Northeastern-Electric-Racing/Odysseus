@@ -55,13 +55,13 @@ All defconfigs come with (in addition to busybox and util_linux utilities):
 Download and install to PATH git and docker.  Docker desktop is recommended for macOS and Windows.
 ```
 git clone https://github.com/Northeastern-Electric-Racing/Oydsseus.git
+cd ./Odysseus
 git submodule update --init --recursive
 ```
 
 For linux (current support includes all build defconfigs):
 ```
-docker compose run --rm --build odysseus # Future launches can omit `--build` for time savings and space savings, but it should be used if the Dockerfile or docker_out_of_tree.sh files change.  
-
+docker compose run --rm odysseus
 ```
 
 For mac and windows: (current support includes all _debug defconfigs, on x86_64 host normal defconfigs can work (experimental)):
@@ -97,10 +97,10 @@ All paths relative to Siren root.
 The outputs are stored in a docker volume on these platforms to ensure rsync compatability.  Therefore fetching the files requires first running the image, then use `docker cp` to get them to the userspace.  Alternatively, docker desktop has a file explorer for docker volumes that may come in handy.
 
 #### Writing the sd card
-The image is present in `./odysseus/outputs/<defconfig name>/images/sdcard.img`.  One can flash this with tools like the Raspberry Pi OS Imager.
+The image is present in `./outputs/<defconfig name>/images/sdcard.img`.  One can flash this with tools like the Raspberry Pi OS Imager.
 
 #### Pulling source files for scp, etc.
-The target binaries are located in `./odysseus/outputs/<defconfig name>/target`.
+The target binaries are located in `./outputs/<defconfig name>/target`.
 
 #### Cleaning system
 `docker image prune --all` (this will not touch volumes)
@@ -123,19 +123,9 @@ One can still build, but in the background.  This can be done by using docker-co
 docker exec <container_id> -d -w /home/odysseus/outputs/<defconfig> make-current`
 ```
 Be careful with this.
-    
-Docker limitations:
-- Build time may be slower due to docker isolations (not dramatic, about 5%)
-- Launch time is longer
-- Space is used up by rebuilds, prune often or omit `--build`
 
 ### Passwords
-Root passwords are stored via Github secrets and an encrypted file within a ghcr docker image.  Below are the steps to load and decrypt such passwords for use by buildroot.  Requirements are you know the team's master password and are running x86_64.
-
-1. Authenticate with ghcr.  First make a [classic PAT](https://github.com/settings/tokens/new) with the permission `read:packages`.  Make sure to copy the token, then run `sudo docker login ghcr.io -u <GITHUB_USERNAME> -p <PAT>`
-2. cd into odysseus folder and `docker compose pull`
-3. Run `docker compose run odysseus` to enter the docker image.  At this point the image should be identical to a locally built one, but it is less preferable for development purposes.
-4. Run `load-secrets` and enter the master password.  Consult Odysseus lead if you need this info.  Now your passwords are loaded (can be viewed with `env | grep ODY`), and will be set when you make the sdcard.img.  Note this step must be repeated on each `docker compose run odysseus`, and if the passwords change on Github steps 2 and 3 must be rerun as well.
+Root passwords are stored via Github secrets and an encrypted file within a ghcr docker image. To load them, run `load-secrets` in the docker compose image (pre-built) and enter the master password.  Consult Odysseus lead if you need this info.  Now your passwords are loaded (can be viewed with `env | grep ODY`), and will be set when you make the sdcard.img.  Note this step must be repeated on each `docker compose run --rm odysseus`, and if the passwords change on Github steps 2 and 3 must be rerun as well.
 
 
 
@@ -148,8 +138,8 @@ See below to learn more about developing, and check confluence for most info.  O
 
 #### Adding defconfigs
 
-Checklist when adding a defconfig:
-[ ] Add a secret for SSH password in settings, and load it into the workflow env in `.github/workflows/build_image.yml`
-[ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.
-[ ] Add a pretty name to `post-build-os-release.sh`
+Checklist when adding a defconfig:  
+[ ] Add a secret for SSH password in settings, and load it into the workflow env in `.github/workflows/build_image.yml`  
+[ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.  
+[ ] Add a pretty name to `post-build-os-release.sh`  
 [ ] Add a load command to `setup_env.sh`

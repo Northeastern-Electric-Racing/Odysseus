@@ -150,15 +150,6 @@ def setModuleParam(config):
     # default: bd.dat
     bd_name_arg = " bd_name=" + strBDName(config['bd_name'], config['model'])
 
-    # module param for rate control mode
-    # default:  rc_mode=1(Individual for each STA)
-    rc_mode_arg = " ap_rc_mode=" + \
-        str(config['ap_rc_mode']) + " sta_rc_mode=" + \
-        str(config['sta_rc_mode'])
-    # default:  rc_default_mcs=2(mcs2)
-    rc_default_mcs_arg = " ap_rc_default_mcs=" + str(config['ap_rc_default_mcs']) + \
-        " sta_rc_default_mcs=" + str(config['sta_rc_default_mcs'])
-
     # module parameter setting while loading NRC driver
     # Default value is used if arg is not defined
     module_param = ""
@@ -174,7 +165,7 @@ def setModuleParam(config):
         cqm_arg + listen_int_arg + drv_dbg_arg + \
         sbi_arg + discard_deauth_arg + dbg_fc_arg + legacy_ack_arg + \
         be_arg + rs_arg + beacon_bypass_arg + ps_gpio_arg + bd_name_arg + support_ch_width_arg + \
-        rc_mode_arg + rc_default_mcs_arg + ps_pretend_arg \
+        ps_pretend_arg \
 
     return module_param
 

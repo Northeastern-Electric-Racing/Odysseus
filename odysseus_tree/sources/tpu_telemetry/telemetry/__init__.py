@@ -32,6 +32,7 @@ class MeasureTask(ABC):
                 measure = self.measurement()
             except Exception as e:
                 print("Exception in ", type(self))
+                print("Exception is: ", e)
                 failure=True
                 
                 

@@ -32,10 +32,8 @@ RUN apt-get update && apt-get install -y \
     graphviz \
     git-lfs \
     util-linux \ 
-    wpasupplicant
-
-# just for calypso require ruamel.yaml
-RUN apt-get update && apt-get install -y python3-pip && pip install --break-system-packages "ruamel.yaml<0.18.0"
+    wpasupplicant \
+    python3-ruamel.yaml   
 
 # add all buildroot files there
 WORKDIR /home/odysseus/build

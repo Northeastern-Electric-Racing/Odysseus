@@ -1,8 +1,8 @@
 from .. import BufferedCommand, MeasureTask
 
 
-# read in 1/10 a second increments
-FETCH_CMD = ["bmon","-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "can0" ]
+# read using can-utils canbusload, ensure to change bitrate accordingly
+FETCH_CMD = ["canbusload","can0@500000"]
 class CanMT(MeasureTask, BufferedCommand):
     def __init__(self):
          MeasureTask.__init__(self, 1000)
@@ -10,11 +10,16 @@ class CanMT(MeasureTask, BufferedCommand):
 
     def measurement(self):
         items = self.read()
+        # filter out only newlines as list members
+        items = filter(lambda x: x != '\n', items)
         send_data = []
         for item in items:
-            item = item.strip('\'').split(" ")
-            data = [item[0].strip(), item[1].strip()]
-            send_data.append(('TPU/Can/DataRate', data, 'kb/s'))
+            item = item.strip('\'').strip().split(" ")
+            # get rid of empty strings in list
+            item = list(filter(None, item))
+            # convert percentage to decimal
+            send_data.append(('TPU/Can/BusUtil', [str(float(item[5].strip().strip("%")) / 100)], '%'))
+            send_data.append(('TPU/Can/BitsUsed', [item[2].strip()], 'bits'))
         
         return send_data
         

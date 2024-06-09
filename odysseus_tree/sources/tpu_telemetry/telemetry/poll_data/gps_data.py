@@ -4,7 +4,7 @@ import gps
 
 class GpsMT(MeasureTask):
     def __init__(self):
-         MeasureTask.__init__(self, 1000)
+         MeasureTask.__init__(self, 100)
          self.session = gps.gps(mode=gps.WATCH_ENABLE)
 
 

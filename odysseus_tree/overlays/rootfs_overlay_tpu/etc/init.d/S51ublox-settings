@@ -4,6 +4,9 @@ start() {
         printf "Setting ublox settings"
         # turn on PPS w/o fix
         ubxtool -P 18 -v 2 -p CFG-TP5,0,2,0,1000000,1000000,100000,100000,0,0x77 --device /dev/ttyAMA5 >> /dev/null &
+        # turn on 10 hz refresh rate
+        ubxtool -P 18 -v 2 -p CFG-RATE,100 --device /dev/ttyAMA5
+
 }
 
 case "$1" in

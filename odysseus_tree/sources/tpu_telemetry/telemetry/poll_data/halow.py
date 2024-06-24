@@ -17,7 +17,7 @@ SNR                              : 0
 OK"""
 
 
-FETCH_THROUGHPUT_CMD = ["bmon", "-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "wlan1"]
+FETCH_THROUGHPUT_CMD = ["bmon", "-o", "format:fmt='$(attr:txrate:bytes) $(attr:rxrate:bytes)\n'", "-p", "bond0"]
 FETCH_RATE_CMD = ["cli_app","show", "ap", "0"]
 FETCH_RSSI_CMD = ["cli_app", "show", "stats", "simple_rx"]
 

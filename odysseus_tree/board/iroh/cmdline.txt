@@ -1,1 +1,2 @@
-root=/dev/mmcblk0p2 rootwait console=tty1 console=serial0,115200 init=/sbin/ody-resize
+root=/dev/mmcblk0p2 rootwait console=tty1 console=serial0,115200 init=/sbin/ody-resize cgroup_enable=cpuset cgroup_enable=memory
+

@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "gitsubmodule"
+    directory: "odysseus_tree/sources"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

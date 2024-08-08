@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y \
 # add all buildroot files there
 WORKDIR /home/odysseus/build
 
-RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2024.05
+RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout beb54d8126e7b0fd2e1090061aa96e6487c4b697
 
 
 WORKDIR /home/odysseus/outputs/

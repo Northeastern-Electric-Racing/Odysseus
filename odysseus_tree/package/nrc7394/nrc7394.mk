@@ -1,10 +1,11 @@
 NRC7394_PROVIDER_PROVIDES = nrc-module
 # match upstream sw_pkg version
-NRC7394_VERSION = 1.2
-NRC7394_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/sources/nrc7394_sw_pkg/package/src/nrc
-NRC7394_SITE_METHOD = local
+NRC7394_VERSION = v1.2
+NRC7394_SITE = https://github.com/newracom/nrc7292_sw_pkg
+NRC7394_SITE_METHOD = git
 NRC7394_LICENSE = LGPLv2.1/GPLv2
 
+NRC7292_MODULE_SUBDIRS = "package/src/nrc"
 # set the makefile KDIR to buildroot kernel, as otherwise it will use host headers
 NRC7394_MODULE_MAKE_OPTS = KDIR=$(LINUX_DIR)
 

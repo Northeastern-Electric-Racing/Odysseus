@@ -1,0 +1,16 @@
+#!/bin/sh
+
+case "$1" in
+  start)
+    echo "Patching route in background..."
+    sleep 8 && ip route add default via 192.168.100.1 dev br0 &
+    ;;
+  stop)
+    echo "Nothing..."
+    ;;
+  restart|reload)
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac

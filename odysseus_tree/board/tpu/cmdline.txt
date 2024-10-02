@@ -1,2 +1,2 @@
-root=/dev/mmcblk0p2 rootwait console=tty1 logo.nologo init=/sbin/ody-resize cgroup_enable=cpuset cgroup_enable=memory
+root=/dev/mmcblk0p2 rootwait console=tty1 logo.nologo cgroup_enable=cpuset cgroup_enable=memory init=/sbin/ody-resize
 

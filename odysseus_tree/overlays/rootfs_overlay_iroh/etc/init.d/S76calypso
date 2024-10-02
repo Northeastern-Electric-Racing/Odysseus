@@ -3,12 +3,10 @@
 PIDFILE=/var/run/calypso.pid
 EXECUTABLE=/usr/bin/calypso
 INTERFACE_NAME=can0
-BROKER_IP="192.168.100.1:1883"
+BROKER_IP="192.168.100.11:1883"
 
 case "$1" in
   start)
-    echo "Sleeping, waiting to start"
-    sleep 20s
     echo "Starting calypso..."
     # start (S) executable (x) in background (b), make pid file (m) at p
     start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -u $BROKER_IP -c $INTERFACE_NAME

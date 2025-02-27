@@ -79,7 +79,7 @@ resize_root() {
     resize2fs "$ROOT_PART"
     
     echo "ODY RESIZE - Adding ext4 fs to partition 4"
-    mkfs.ext4 "/dev/mmcblk0p4"
+    mkfs.ext4 -F -F "/dev/mmcblk0p4"
     
     do_restore # boot normally next
     

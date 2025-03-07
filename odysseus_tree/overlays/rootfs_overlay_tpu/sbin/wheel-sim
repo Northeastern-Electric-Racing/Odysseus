@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Enter Button Indexes!"
+
+echo -e "1:\tLeft"
+echo -e "2:\tRight"
+echo -e "3:\tEscape"
+echo -e "4:\tUp"
+echo -e "5:\tDown"
+echo -e "6:\tEnter"
+
+while true;
+do
+    read -n1 c
+    d=$((c - 1))
+    cansend can0 "680#0$d"
+done

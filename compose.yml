@@ -5,7 +5,6 @@ services:
         command: /bin/bash
         tty: true
         stdin_open: true
-        network_mode: host
         # for fakeroot failure
         ulimits:
           nofile:

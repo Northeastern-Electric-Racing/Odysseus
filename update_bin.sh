@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 # 1: The name of the package to update

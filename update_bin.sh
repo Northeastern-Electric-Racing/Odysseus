@@ -32,7 +32,7 @@ elif [ "$1" == "odysseus-daemon" ]; then
    echo "Updating odysseus-daemon"
    sed -i "1 s/.*/ODYSSEUS_DAEMON_VERSION = $3/" ./odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk
    update_pkg_br "odysseus-daemon"
-   refresh_local "$2" "S99odysseus-daemon" "./outputs/tpu/per-package/calypso/target/usr/bin/odysseus-daemon" "/usr/bin/odysseus-daemon"
+   refresh_local "$2" "S99odysseus-daemon" "./outputs/tpu/per-package/odysseus-daemon/target/usr/bin/odysseus-daemon" "/usr/bin/odysseus-daemon"
 elif [ "$1" == "nero" ]; then
    echo "Updating NERO"
    update_pkg_br "nero2"

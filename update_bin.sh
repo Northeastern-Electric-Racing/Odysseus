@@ -3,7 +3,7 @@
 
 # 1: The name of the package to update
 # 2: The root password of the TPU
-# 3: The commit sha (only if calypso)
+# 3: The commit sha (only if calypso or odysseus-daemon)
 
 # 1: The name of the package in buildroot
 update_pkg_br() {
@@ -28,6 +28,13 @@ if [ "$1" == "calypso" ]; then
    sed -i "1 s/.*/CALYPSO_VERSION = $3/" ./odysseus_tree/package/calypso/calypso.mk
    update_pkg_br "calypso"
    refresh_local "$2" "S76calypso" "./outputs/tpu/per-package/calypso/target/usr/bin/calypso" "/usr/bin/calypso"
+elif [ "$1" == "odysseus-daemon" ]; then
+   echo "Updating odysseus-daemon"
+   sed -i "1 s/.*/ODYSSEUS_DAEMON_VERSION = $3/" ./odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk
+   update_pkg_br "odysseus-daemon"
+   refresh_local "$2" "S99odysseus-daemon" "./outputs/tpu/per-package/odysseus-daemon/target/usr/bin/odysseus-daemon" "/usr/bin/odysseus-daemon"
+   # also add the cli uploader binary, which doesnt run all the time
+   sshpass -p "$2" scp "./outputs/tpu/per-package/odysseus-daemon/target/usr/bin/odysseus-uploader" "root@192.168.100.12:/usr/bin/odysseus-uploader"
 elif [ "$1" == "nero" ]; then
    echo "Updating NERO"
    update_pkg_br "nero2"

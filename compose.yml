@@ -6,6 +6,7 @@ services:
         tty: true
         stdin_open: true
         # for fakeroot failure
+#        network_mode: host
         ulimits:
           nofile:
             soft: 1024

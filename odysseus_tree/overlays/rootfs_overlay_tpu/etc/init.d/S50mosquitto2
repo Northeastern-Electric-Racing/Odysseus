@@ -2,14 +2,14 @@
 
 start() {
 	printf "Starting mosquitto: "
-	start-stop-daemon -S -q -m -b -p /var/run/mosquitto.pid \
+	start-stop-daemon -S -q -m -b -p /var/run/mosquitto.priority.pid \
 		--exec /usr/sbin/mosquitto \
-		-- -c /etc/mosquitto/mosquitto.conf
+		-- -c /etc/mosquitto/mosquitto.priority.conf
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 }
 stop() {
 	printf "Stopping mosquitto: "
-	start-stop-daemon -K -q -p /var/run/mosquitto.pid
+	start-stop-daemon -K -q -p /var/run/mosquitto.priority.pid
 	[ $? = 0 ] && echo "OK" || echo "FAIL"
 }
 restart() {

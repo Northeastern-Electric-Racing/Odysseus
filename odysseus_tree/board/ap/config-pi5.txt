@@ -13,8 +13,10 @@ kernel=Image
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
 
+dtparam=rtc_bbat_vchg=3000000
+
 [newracom]
-dtoverlay=disable-bt
-dtoverlay=disable-wifi
-dtoverlay=newracom_for_5-16_or_later
+dtoverlay=disable-bt-pi5
+dtoverlay=disable-wifi-pi5
+dtoverlay=newracom_for_5-16_or_later-pi5
 dtparam=spi=on

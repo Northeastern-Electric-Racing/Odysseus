@@ -13,6 +13,7 @@ do_start() {
    
    # create a bridge
    ip link add name br0 type bridge
+   ip link set dev br0 address 2C:CF:67:60:83:7A
    ip link set dev br0 up
    # don't add wlan0 to the bridge as hostapd needs to do that
    ip link set dev eth0 master br0

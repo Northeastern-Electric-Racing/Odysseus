@@ -1,7 +1,7 @@
 NRC7292_PROVIDER_PROVIDES = nrc-module
 # match upstream sw_pkg version
-NRC7292_VERSION = v1.5
-NRC7292_SITE = https://github.com/newracom/nrc7292_sw_pkg
+NRC7292_VERSION = 1ac663c2f62a2c88ced004d961885019ab2e304b
+NRC7292_SITE = https://github.com/Northeastern-Electric-Racing/nrc7292_sw_pkg
 NRC7292_SITE_METHOD = git
 NRC7292_LICENSE = LGPLv2.1/GPLv2
 

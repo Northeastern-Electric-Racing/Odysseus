@@ -4,9 +4,6 @@
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
-start_file=start.elf
-fixup_file=fixup.dat
-
 kernel=Image
 
 # To use an external initramfs file
@@ -16,26 +13,10 @@ kernel=Image
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
 
-# How much memory in MB to assign to the GPU on Pi models having
-# 256, 512 or 1024 MB total memory
-gpu_mem_256=100
-gpu_mem_512=100
-gpu_mem_1024=100
-
-# fixes rpi (3B, 3B+, 3A+, 4B and Zero W) ttyAMA0 serial console
-dtoverlay=miniuart-bt
-
-enable_uart=1
-
-# enable autoprobing of Bluetooth driver without need of hciattach/btattach
-#dtparam=krnbt=on
-
-
-# enable 64bits support
-arm_64bit=1 
+dtparam=rtc_bbat_vchg=3000000
 
 [newracom]
-dtoverlay=disable-bt
-dtoverlay=disable-wifi
-dtoverlay=newracom_for_5-16_or_later
+dtoverlay=disable-bt-pi5
+dtoverlay=disable-wifi-pi5
+dtoverlay=newracom_for_5-16_or_later-pi5
 dtparam=spi=on

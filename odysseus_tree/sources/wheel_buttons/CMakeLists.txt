@@ -6,6 +6,9 @@ set(CMAKE_AUTOMOC ON)
 
 set(PROJECT_SOURCES
     src/main.cpp
+
+    src/util/logging.h
+    src/util/logging.cpp
 )
 
 add_executable(wheel_buttons src/main.cpp)

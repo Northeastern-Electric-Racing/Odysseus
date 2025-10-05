@@ -11,4 +11,8 @@ set(PROJECT_SOURCES
     src/util/logging.cpp
 )
 
-add_executable(wheel_buttons src/main.cpp)
+add_executable(wheel_buttons ${PROJECT_SOURCES})
+
+target_include_directories(wheel_buttons PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)

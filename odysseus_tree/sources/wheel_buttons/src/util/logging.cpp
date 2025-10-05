@@ -4,9 +4,9 @@
 #include "util/logging.h"
 
 void log_info(const char* message) {
-    printf(message);
+    std::printf("[INFO] %s", message);
 }
 
 void log_error(const char* message) {
-    printf(message);
+    std::fprintf(stderr, "[ERROR] %s", message);
 }

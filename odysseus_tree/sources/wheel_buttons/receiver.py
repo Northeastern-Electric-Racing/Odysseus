@@ -2,6 +2,8 @@ import socket
 import os
 import logging
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 SOCKET_PATH = "/tmp/wheel_buttons_socket"
 BUFFER_SIZE = 256
 

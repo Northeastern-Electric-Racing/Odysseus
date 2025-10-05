@@ -11,7 +11,13 @@
 #define SOCKET_PATH "/tmp/wheel_buttons_socket"
 #define BUFFER_SIZE 256
 
-// socket sender
+/**
+ * @brief Client application that connects to a Unix domain socket server,
+ * sends button press messages, and waits for server acknowledgments.For 
+ * now it just sends stdin strings to the python application.
+ * 
+ * @note `receiver.py` must be running before running this client.
+ */
 int main(void) {
     
     int client_fd;

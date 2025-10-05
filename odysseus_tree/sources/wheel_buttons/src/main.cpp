@@ -1,13 +1,28 @@
-#include <unistd.h>
 #include <iostream>
 #include <cstring>
 #include <string>
 
+#include <unistd.h>
+#include <signal.h>
+
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include <ncurses.h>
+
 #include "util/logging.h"
 #include "connection/unix_socket_client.h"
+
+void handle_signal(int sig) {
+    std::string msg = "Received signal ";
+    msg += strsignal(sig);
+    msg += "\n";
+    log_info(msg.c_str());
+    if (sig==SIGINT) {
+        log_info("Exiting...\n");
+        exit(sig);
+    }
+}
 
 /**
  * @brief Client application that connects to a Unix domain socket server,
@@ -17,7 +32,11 @@
  * @note `receiver.py` must be running before running this client.
  */
 int main(void) {
-    
+
+    // setup signal handlers
+    signal(SIGINT, handle_signal);
+
+    // constr socket
     UnixSocketClient client(SOCKET_PATH);
     client.connect();
 

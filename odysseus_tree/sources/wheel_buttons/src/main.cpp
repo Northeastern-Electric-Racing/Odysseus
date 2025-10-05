@@ -7,8 +7,6 @@
 const char* SOCKET_PATH = "/tmp/wheel_buttons_socket";
 
 int main(void) {
-
-    log_info("here we go\n");
     
     return 0;
 }

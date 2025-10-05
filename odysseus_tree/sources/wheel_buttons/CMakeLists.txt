@@ -2,12 +2,15 @@ cmake_minimum_required(VERSION 3.21.1)
 
 project(wheel_buttons LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 set(PROJECT_SOURCES
     src/main.cpp
 
-    src/util/logging.h
     src/util/logging.cpp
 )
 

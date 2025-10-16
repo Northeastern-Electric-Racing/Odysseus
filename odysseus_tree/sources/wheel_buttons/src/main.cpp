@@ -8,8 +8,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include <ncurses.h>
-
 #include "util/logging.h"
 #include "connection/unix_socket_client.h"
 

@@ -1,0 +1,5 @@
+config BR2_PACKAGE_WHEEL_BUTTONS
+    bool "wheel-buttons"
+	help
+        Unix socket interface for device buttons to Nero dashboard communication.
+

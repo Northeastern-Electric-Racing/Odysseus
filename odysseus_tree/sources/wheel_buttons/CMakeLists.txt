@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.21.1)
 
 project(wheel_buttons LANGUAGES CXX)
 
+find_library(PIGPIO_LIBRARY pigpio)
+if(NOT PIGPIO_LIBRARY) # this will failed 
+    message(FATAL_ERROR "pigpio library not found. Please ensure it is installed and in a searchable path.")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

@@ -3,4 +3,6 @@ WHEEL_BUTTONS_SITE = $(BR2_EXTERNAL_ODY_TREE_PATH)/sources/wheel_buttons
 WHEEL_BUTTONS_SITE_METHOD = local
 WHEEL_BUTTONS_CMAKE_BACKEND = ninja
 
+WHEEL_BUTTONS_DEPENDENCIES = pigpio
+
 $(eval $(cmake-package))

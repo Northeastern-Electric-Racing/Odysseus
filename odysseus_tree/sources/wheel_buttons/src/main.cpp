@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <csignal>
+#include <cstdint>
 
 #include <unistd.h>
-#include <signal.h>
+#include <pigpio.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -11,15 +13,23 @@
 #include "util/logging.h"
 #include "connection/unix_socket_client.h"
 
-void handle_signal(int sig) {
-    std::string msg = "Received signal ";
-    msg += strsignal(sig);
-    msg += "\n";
-    log_info(msg.c_str());
-    if (sig==SIGINT) {
-        log_info("Exiting...\n");
-        exit(sig);
+/**
+ * buttons:
+ * 
+ * 
+ */
+
+void button1_callback(int gpio, int level, uint32_t tick) {
+    if (level==0) { // button down, fallign edge
+        // TODO just log for now, send over socket to 
+        printf("button 1 pressed");
+    } else if (level==1) { // button up, rising edge
+        printf("button 1 released");
     }
+}
+
+void handle_signal(int signum) {
+    printf("signal received %d", signum);
 }
 
 /**
@@ -30,6 +40,15 @@ void handle_signal(int sig) {
  * @note `receiver.py` must be running before running this client.
  */
 int main(void) {
+
+    if (gpioInitialise() < 0) {
+        printf("pigpio init failed");
+        return -1;
+    }
+
+    gpioSetMode(BUTTON1_PIN, PI_INPUT);
+    gpioSetPullUpDown(BUTTON_PIN, PI_PUD_UP);
+    gpioSetAlertFunc(BUTTON_PIN, button_1_callback);
 
     // setup signal handlers
     signal(SIGINT, handle_signal);
@@ -54,6 +73,7 @@ int main(void) {
     }
 
     client.disconnect();
+    gpioTerminate();
     log_info("Socket closed. Exiting.\n");
     
     return 0;

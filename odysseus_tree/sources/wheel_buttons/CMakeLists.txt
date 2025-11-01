@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
 
 add_executable(wheel_buttons ${PROJECT_SOURCES})
 
+target_link_libraries(wheel_buttons PRIVATE ${PIGPIO_LIBRARY})
+
 target_include_directories(wheel_buttons PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

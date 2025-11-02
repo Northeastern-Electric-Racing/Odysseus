@@ -13,17 +13,11 @@
 #include "connection/unix_socket_client.h"
 #include "connection/config.h"
 
-/**
- * buttons:
- *      - just button1 for now
- * 
- */
-
  // function declarations
 void handle_signal(int signum);
 void button_signal_handler(int gpio, int level, uint32_t tick);
 
-void button1_callback(int level, uint32_t tick);
+void button_0_callback(int level, uint32_t tick);
 
 // globals
 UnixSocketClient unix_socket_client(SOCKET_PATH);
@@ -42,9 +36,9 @@ int main(void) {
         return -1;
     }
 
-    gpioSetMode(BUTTON1_PIN, PI_INPUT);
-    gpioSetPullUpDown(BUTTON1_PIN, PI_PUD_UP);
-    gpioSetAlertFunc(BUTTON1_PIN, button_signal_handler);
+    gpioSetMode(BUTTON_0_PIN, PI_INPUT);
+    gpioSetPullUpDown(BUTTON_0_PIN, PI_PUD_UP);
+    gpioSetAlertFunc(BUTTON_0_PIN, button_signal_handler);
 
     // setup signal handlers
     signal(SIGINT, handle_signal);
@@ -84,17 +78,18 @@ void handle_signal(int signum) {
 void button_signal_handler(int gpio, int level, uint32_t tick) {
     printf("GPIO %d changed to level %d at tick %u\n", gpio, level, tick);
 
-    if (gpio == BUTTON1_PIN) {
-        button1_callback(level, tick);
+    if (gpio == BUTTON_1_PIN) {
+        button_0_callback(level, tick);
     }
 }
 
-void button1_callback(int level, uint32_t tick) {
+// may collect this to one callback later
+void button_0_callback(int level, uint32_t tick) {
     if (level==0) { // button down, falling edge
-        printf("button 1 down");
-        unix_socket_client.send("button1_down");
+        printf("button 0 down");
+        unix_socket_client.send("button_0_down");
     } else if (level==1) { // button up, rising edge
-        printf("button 1 up");
-        unix_socket_client.send("button1_up");
+        printf("button enter up");
+        unix_socket_client.send("button_0_up");
     }
 }

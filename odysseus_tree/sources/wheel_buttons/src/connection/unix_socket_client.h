@@ -9,7 +9,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include "util/logging.h"
 #include "connection/config.h"
 
 /**

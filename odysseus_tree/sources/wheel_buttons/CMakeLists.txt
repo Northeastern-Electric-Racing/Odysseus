@@ -15,9 +15,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 set(PROJECT_SOURCES
     src/main.cpp
-
-    src/util/logging.h
-    src/util/logging.cpp
     
     src/connection/unix_socket_client.h
     src/connection/unix_socket_client.cpp

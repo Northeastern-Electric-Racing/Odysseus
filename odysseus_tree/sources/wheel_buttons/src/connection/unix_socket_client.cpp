@@ -1,7 +1,7 @@
 #include "unix_socket_client.h"
 
 UnixSocketClient::UnixSocketClient(const std::string& socket_path) : connected(false) {
-    log_info("Creating socket...\n");
+    printf("Creating socket...\n");
     client_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (client_fd == -1) {
         throw std::runtime_error("Failed to create socket");
@@ -18,11 +18,11 @@ UnixSocketClient::~UnixSocketClient() {
 
 void UnixSocketClient::connect() {
     if (connected) {
-        log_info("Already connected to server.\n");
+        printf("Already connected to server.\n");
         return;
     }
 
-    log_info("Connecting to server...\n");
+    printf("Connecting to server...\n");
     if (::connect(client_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
         ::close(client_fd);
         client_fd = -1;
@@ -30,7 +30,7 @@ void UnixSocketClient::connect() {
     }
 
     connected = true;
-    log_info("Connected to server.\n");
+    printf("Connected to server.\n");
 }
 
 void UnixSocketClient::disconnect() {
@@ -39,7 +39,7 @@ void UnixSocketClient::disconnect() {
         client_fd = -1;
     }
     connected = false;
-    log_info("Disconnected from server.\n");
+    printf("Disconnected from server.\n");
 }
 
 void UnixSocketClient::send(const std::string& message) {
@@ -47,13 +47,13 @@ void UnixSocketClient::send(const std::string& message) {
         throw std::runtime_error("Not connected to server");
     }
 
-    log_info(("Sending message: \"" + message + "\"...\n").c_str());
+    printf(("Sending message: \"" + message + "\"...\n").c_str());
     ssize_t bytes_sent = ::send(client_fd, message.c_str(), message.length(), 0);
     if (bytes_sent < 0) {
         connected = false;
         throw std::runtime_error("Failed to send message: " + std::string(std::strerror(errno)));
     }
-    log_info("Message sent.\n");
+    printf("Message sent.\n");
 }
 
 std::string UnixSocketClient::receive() {
@@ -68,7 +68,7 @@ std::string UnixSocketClient::receive() {
         throw std::runtime_error("Failed to receive message: " + std::string(std::strerror(errno)));
     } else if (bytes_read == 0) {
         connected = false;
-        log_info("Server closed the connection.\n");
+        printf("Server closed the connection.\n");
         return "";
     }
 

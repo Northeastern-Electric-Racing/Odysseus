@@ -10,34 +10,30 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include "util/logging.h"
 #include "connection/unix_socket_client.h"
+#include "connection/config.h"
 
 /**
  * buttons:
- * 
+ *      - just button1 for now
  * 
  */
 
-void button1_callback(int gpio, int level, uint32_t tick) {
-    if (level==0) { // button down, fallign edge
-        // TODO just log for now, send over socket to 
-        printf("button 1 pressed");
-    } else if (level==1) { // button up, rising edge
-        printf("button 1 released");
-    }
-}
+ // function declarations
+void handle_signal(int signum);
+void button_signal_handler(int gpio, int level, uint32_t tick);
 
-void handle_signal(int signum) {
-    printf("signal received %d", signum);
-}
+void button1_callback(int level, uint32_t tick);
+
+// globals
+UnixSocketClient unix_socket_client(SOCKET_PATH);
 
 /**
  * @brief Client application that connects to a Unix domain socket server,
  * sends button press messages, and waits for server acknowledgments.For 
  * now it just sends stdin strings to the python application.
  * 
- * @note `receiver.py` must be running before running this client.
+ * @note `receiver.py` must be running before running this client. For testing.
  */
 int main(void) {
 
@@ -47,15 +43,14 @@ int main(void) {
     }
 
     gpioSetMode(BUTTON1_PIN, PI_INPUT);
-    gpioSetPullUpDown(BUTTON_PIN, PI_PUD_UP);
-    gpioSetAlertFunc(BUTTON_PIN, button_1_callback);
+    gpioSetPullUpDown(BUTTON1_PIN, PI_PUD_UP);
+    gpioSetAlertFunc(BUTTON1_PIN, button_signal_handler);
 
     // setup signal handlers
     signal(SIGINT, handle_signal);
 
-    // constr socket
-    UnixSocketClient client(SOCKET_PATH);
-    client.connect();
+    // connect socket client
+    unix_socket_client.connect();
 
     // send messages
     std::string button;
@@ -67,14 +62,39 @@ int main(void) {
             break;
         }
 
-        client.send(button);
-        std::string response = client.receive();
-        log_info(("Received response: \"" + response + "\"\n").c_str());
+        unix_socket_client.send(button);
+        std::string response = unix_socket_client.receive();
+        printf(("Received response: \"" + response + "\"\n").c_str());
     }
 
-    client.disconnect();
+    unix_socket_client.disconnect();
     gpioTerminate();
-    log_info("Socket closed. Exiting.\n");
+    printf("Socket closed. Exiting.\n");
     
     return 0;
+}
+
+// implementations
+
+void handle_signal(int signum) {
+    printf("signal received %d", signum);
+    exit(signum);
+}
+
+void button_signal_handler(int gpio, int level, uint32_t tick) {
+    printf("GPIO %d changed to level %d at tick %u\n", gpio, level, tick);
+
+    if (gpio == BUTTON1_PIN) {
+        button1_callback(level, tick);
+    }
+}
+
+void button1_callback(int level, uint32_t tick) {
+    if (level==0) { // button down, falling edge
+        printf("button 1 down");
+        unix_socket_client.send("button1_down");
+    } else if (level==1) { // button up, rising edge
+        printf("button 1 up");
+        unix_socket_client.send("button1_up");
+    }
 }

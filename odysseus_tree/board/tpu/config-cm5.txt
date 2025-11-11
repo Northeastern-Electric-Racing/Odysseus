@@ -1,0 +1,58 @@
+# Please note that this is only a sample, we recommend you to change it to fit
+# your needs.
+# You should override this file using BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE.
+# See http://buildroot.org/manual.html#rootfs-custom
+# and http://elinux.org/RPiconfig for a description of config.txt syntax
+
+kernel=Image
+
+# To use an external initramfs file
+#initramfs rootfs.cpio.gz
+
+# Disable overscan assuming the display supports displaying the full resolution
+# If the text shown on the screen disappears off the edge, comment this out
+disable_overscan=1
+
+disable_splash=1
+
+# enable autoprobing of Bluetooth driver without need of hciattach/btattach
+dtoverlay=krnbt=on
+
+#dtoverlay=disable-bt
+#dtoverlay=disable-wifi
+dtoverlay=spi0-1cs
+dtoverlay=newracom_for_5-16_or_later
+dtparam=spi=on
+
+# for gps
+dtoverlay=uart5
+dtoverlay=pps-gpio,gpiopin=24
+
+# for can
+dtoverlay=spi4-1cs,cs0_pin=4,cs0_spidev=off
+dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
+dtparam=interrupt=26
+
+# for sd card
+dtoverlay=spi1-1cs,cs0_pin=16,cs0_spidev=disabled
+dtoverlay=mmc_spi-spi1
+
+# for temp sensor
+dtoverlay=i2c-sensor,sht3x
+
+# for NER 22A dashboard (HDM1)
+#Set the Monitor mode to DMT.
+hdmi_group:1=2
+#Use a custom resolution.
+hdmi_mode:1=87
+#Use an 800 x 480 resolution @ 60Hz
+hdmi_cvt:1= 800 480 60 6 0 0 0
+#Deliver max current through USB
+# # Max_usb_current=1 # is this needed (external power??)
+hdmi_drive:1=1
+hdmi_force_hotplug:1=1
+
+# for HDMI 1
+#framebuffer_priority=7
+
+dtparam=audio=on

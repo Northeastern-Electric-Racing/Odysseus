@@ -1,7 +1,7 @@
 services:
     odysseus:
-        build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:develop-stability-and-improvements
+        # build: .
+        image: ghcr.io/northeastern-electric-racing/odysseus:cm5
         command: /bin/bash
         tty: true
         stdin_open: true
@@ -28,6 +28,3 @@ volumes:
     shared_data:
         labels:
             com.northeastern_electric_racing.description: "Shared output between buildroot runs"
-
-
-            

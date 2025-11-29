@@ -39,7 +39,11 @@ then
 elif [[ "$2" == "IROH" ]]; 
 then
     variant="Built for Iroh Charging Scraper"
-    variant="iroh"
+    variantid="iroh"
+elif [[ "$2" == "WHEEL" ]];
+then
+    variant="Built for Steering Wheel"
+    variantid="wheel"
 else
     variant="UK"
     variantid="uk"

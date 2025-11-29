@@ -1,0 +1,1 @@
+This exists because in buildroot all versions of kernel patches are "custom".  Hence, the versioned GLOBAL_PATCH_DIR does not work.  Therefore, this folder exists to seperate different versions of the linux kernel that need patches. Then BR2_LINUX_KERNEL_PATCH is used.

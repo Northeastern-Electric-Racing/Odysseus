@@ -5,6 +5,7 @@ import subprocess
 import threading
 from time import sleep
 
+
 class MeasureTask(ABC):
     def __init__(self, freq):
         self.interval = freq
@@ -27,28 +28,30 @@ class MeasureTask(ABC):
         while not stop.is_set():
             await asyncio.sleep(self.interval / 1000)
 
-            failure=False
+            failure = False
             try:
                 measure = self.measurement()
             except Exception as e:
                 print("Exception in ", type(self))
                 print("Exception is: ", e)
-                failure=True
-                
-                
+                failure = True
 
             if measure is None:
                 print("Failure in ", type(self))
-                failure=True
+                failure = True
 
-            
             for packet in measure:
                 for dat in packet[1]:
                     if dat is None or dat == "nan":
-                        print("Unreal number in", type(self), " maybe with topic ", measure[0][0])
-                        failure=True
+                        print(
+                            "Unreal number in",
+                            type(self),
+                            " maybe with topic ",
+                            measure[0][0],
+                        )
+                        failure = True
 
-            if (failure):
+            if failure:
                 yield []
             else:
                 yield measure
@@ -102,51 +105,66 @@ class BufferedCommand(MTCommand):
         if process.poll() is None:
             for line in process.stdout:
                 buffer.add(line)
-    
+
     def get_thread(self):
-        return threading.Thread(target=BufferedCommand.streamer, args=(self.process, self.buffer,), daemon=True)
+        return threading.Thread(
+            target=BufferedCommand.streamer,
+            args=(
+                self.process,
+                self.buffer,
+            ),
+            daemon=True,
+        )
 
     def read(self) -> list:
         return self.buffer.getAll()
 
-    
+
 class OneshotCommand(MTCommand):
     """
     Rerun oneshot commands on a frequency in a thread.
     Use for any commands which have the potential to hang.
     """
-    def __init__(self, command: list[str], runFreq: int, limit: int = 20, ) -> None:
+
+    def __init__(
+        self,
+        command: list[str],
+        runFreq: int,
+        limit: int = 20,
+    ) -> None:
 
         self.buffer: ItemStore = ItemStore(limit=limit)
 
         self.command = command
 
         self.runFreq = runFreq
-    
+
     def __deinit__(self):
         self.process.kill()
 
     def streamer(command, buffer, runFreq):
-        while True: 
+        while True:
             data = subprocess.run(args=command, text=True, capture_output=True).stdout
             if data:
                 buffer.add(data)
             sleep(runFreq / 1000)
-        
+
     def get_thread(self):
-        return threading.Thread(target=OneshotCommand.streamer, args=(self.command, self.buffer, self.runFreq), daemon=True)
-        
+        return threading.Thread(
+            target=OneshotCommand.streamer,
+            args=(self.command, self.buffer, self.runFreq),
+            daemon=True,
+        )
+
     def read(self) -> list:
         return self.buffer.getAll()
 
 
-
-
-
-class ItemStore():
+class ItemStore:
     """
     Thread safe store, when limit hits list will clear
     """
+
     def __init__(self, limit: int):
         self.lock = threading.Lock()
         self.items = []

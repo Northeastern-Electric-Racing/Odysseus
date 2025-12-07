@@ -10,19 +10,19 @@ do_start() {
    ip link set dev can0 up
 
    # add wlan0
-   ip link set dev wlan0 up
+   ip link set dev wlan1 up
 
-   start-stop-daemon -S -x /usr/sbin/wpa_supplicant -b -m -p /var/run/wpa_supplicant.wlan0.pid -- -i wlan0 -c /etc/wpa_supplicant_halow.conf -f /var/log/wpa0.log -d
+   start-stop-daemon -S -x /usr/sbin/wpa_supplicant -b -m -p /var/run/wpa_supplicant.wlan1.pid -- -i wlan1 -c /etc/wpa_supplicant_base.conf -f /var/log/wpa1.log -d
 
 }
 
 do_stop() {
 
-   start-stop-daemon -K -p /var/run/wpa_supplicant.wlan0.pid
-   rm /var/run/wpa_supplicant.wlan0.pid
+   start-stop-daemon -K -p /var/run/wpa_supplicant.wlan1.pid
+   rm /var/run/wpa_supplicant.wlan1.pid
 
 
-   ip link set dev wlan0 down
+   ip link set dev wlan1 down
    ip link set dev lo down
 }
 

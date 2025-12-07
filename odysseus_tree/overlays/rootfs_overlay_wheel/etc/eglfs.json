@@ -1,5 +1,5 @@
 {
-  "device": "/dev/dri/by-path/platform-gpu-card",
+  "device": "/dev/dri/by-path/platform-axi:gpu-card",
   "outputs": [
     {
       "name": "HDMI1",

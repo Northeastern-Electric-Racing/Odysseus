@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y \
 # add all buildroot files there
 WORKDIR /home/odysseus/build
 
-RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 4cca0f30f2b263acf97c6d0abd8d31e2417542e2 && curl https://patchwork.ozlabs.org/bundle/Jack1221/qt6-6.9/mbox/ | git apply
+RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2025.08.2 && curl https://patchwork.ozlabs.org/series/460278/mbox/ | git apply
 
 
 WORKDIR /home/odysseus/outputs/

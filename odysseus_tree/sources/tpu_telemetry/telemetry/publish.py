@@ -4,18 +4,14 @@ import signal
 import time
 
 
-from telemetry.poll_data import gps_data, halow, on_board, can
-from . import (
-    MTCommand,
-    MeasureTask,
-    server_data_pb2
-)
+from telemetry.poll_data import halow
+from . import MTCommand, MeasureTask, server_data_pb2
 from gmqtt import Client as MQTTClient
 
 TASKS = []
 
 # initialize connection
-client = MQTTClient("tpu-publisher")
+client = MQTTClient("base-station-publisher")
 STOP = asyncio.Event()
 
 
@@ -32,7 +28,6 @@ def ask_exit(*args):
         if isinstance(task, MTCommand):
             task.deinit()
     STOP.set()
-    
 
 
 def publish_data(topic, message_data):
@@ -54,27 +49,18 @@ async def interval(task: MeasureTask):
             else:
                 message_data = data.SerializeToString()
                 publish_data(topic, message_data)
-            
+
 
 async def run(host):
     await client.connect(host, 1883)
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
 
-
     # ADD TASKS HERE for more measurements
-    TASKS = [ # example.ExampleMT(), # uncomment so example data is sent
-             can.CanMT(),
-             # environment.EnvironmentMT() # commented out bc sensor is currently broken
-             halow.HalowThroughputMT(),
-             halow.HalowMCSMT(),
-             halow.HalowRSSIMT(),
-             on_board.CpuTempMT(),
-             on_board.CpuUsageMT(),
-             on_board.BrokerCpuUsageMT(),
-             on_board.MemAvailMT(),
-             gps_data.GpsMT()
-             ]
+    TASKS = [  # example.ExampleMT(), # uncomment so example data is sent
+        # environment.EnvironmentMT() # commented out bc sensor is currently broken
+        halow.HalowRSSIMT(),
+    ]
 
     stagger = 1 / len(TASKS)
     for task in TASKS:
@@ -88,6 +74,7 @@ async def run(host):
         await asyncio.sleep(stagger)
 
     await STOP.wait()
+
 
 def main():
     loop = asyncio.new_event_loop()

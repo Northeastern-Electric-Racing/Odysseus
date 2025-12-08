@@ -42,3 +42,7 @@ dtoverlay=i2c-sensor,sht3x
 dtoverlay=mcp3428,addr=0x68
 
 dtparam=audio=on
+
+# For camera
+camera_auto_detect=0
+dtoverlay=imx296-overlay,cam0

@@ -16,6 +16,7 @@ push_param() {
     cat <<< "$1=$2" >> "$FILE"
 }
 
+mkdir -p "$BR2_EXTERNAL_ODY_TREE_PATH"/../githistory/ || exit
 # change dirs for fetching git info
 cd "$BR2_EXTERNAL_ODY_TREE_PATH"/../githistory/ || exit
 # hacky way to allow portable git file to work

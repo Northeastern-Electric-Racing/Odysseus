@@ -1,0 +1,4 @@
+config BR2_PACKAGE_MORSE_CLI
+	bool "morse-cli"
+	help
+		This is the driver for the MM6108 Wifi HaLow SoC

@@ -28,6 +28,7 @@ if [ "$1" == "calypso" ]; then
    sed -i "1 s/.*/CALYPSO_VERSION = $3/" ./odysseus_tree/package/calypso/calypso.mk
    update_pkg_br "calypso"
    refresh_local "$2" "S76calypso" "./outputs/tpu/per-package/calypso/target/usr/bin/calypso" "/usr/bin/calypso"
+   sshpass -p "$2" scp "./outputs/tpu/per-package/calypso/target/usr/bin/nerimd" "root@192.168.100.12:/usr/bin/nerimd"
 elif [ "$1" == "odysseus-daemon" ]; then
    echo "Updating odysseus-daemon"
    sed -i "1 s/.*/ODYSSEUS_DAEMON_VERSION = $3/" ./odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk

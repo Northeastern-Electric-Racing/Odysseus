@@ -32,6 +32,7 @@ do_stop() {
       
    ip link set dev wlan0 down
    ip link set dev can0 down
+   ip link set dev eth1 down
    ip link set dev eth0 down
    ip link set dev lo down
 }

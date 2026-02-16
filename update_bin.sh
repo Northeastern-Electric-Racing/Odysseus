@@ -44,6 +44,7 @@ if [ "$2" == "calypso" ]; then
    sed -i "1 s/.*/CALYPSO_VERSION = $4/" ./odysseus_tree/package/calypso/calypso.mk
    update_pkg_br "calypso"
    refresh_local "$3" "S76calypso" "./outputs/$def_path/per-package/calypso/target/usr/bin/calypso" "/usr/bin/calypso"
+   sshpass -p "$2" scp "./outputs/$def_path/per-package/calypso/target/usr/bin/nerimd" "root@192.168.100.12:/usr/bin/nerimd"
 elif [ "$2" == "odysseus-daemon" ]; then
    echo "Updating odysseus-daemon"
    sed -i "1 s/.*/ODYSSEUS_DAEMON_VERSION = $4/" ./odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk
@@ -58,4 +59,3 @@ elif [ "$2" == "nero" ]; then
 else
    echo "Not a valid project to update"
 fi
-

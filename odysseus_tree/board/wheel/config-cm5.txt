@@ -20,21 +20,28 @@ dtoverlay=vc4-kms-v3d
 dtoverlay=krnbt=on
 
 # for can
-dtoverlay=spi4-1cs,cs0_pin=4,cs0_spidev=off
-dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
+dtoverlay=mcp2515-can0,oscillator=16000000,spimaxfrequency=10000000
 dtparam=interrupt=25
 
-# for NER 22A dashboard (HDM1)
+# I2C
+dtparam=i2c=on
+#temp sense
+dtoverlay=i2c-sensor,i2c-bus=i2c1,sht3x
+#led
+dtoverlay=lp5018a
+
+
+# for NER 22A dashboard (HDM0)
 #Set the Monitor mode to DMT.
-hdmi_group:1=2
+#hdmi_group:0=2
 #Use a custom resolution.
-hdmi_mode:1=87
+hdmi_mode:0=87
 #Use an 800 x 480 resolution @ 60Hz
-hdmi_cvt:1= 800 480 60 6 0 0 0
+#hdmi_cvt:0= 800 480 60 6 0 0 0
 #Deliver max current through USB
 # # Max_usb_current=1 # is this needed (external power??)
-hdmi_drive:1=1
-hdmi_force_hotplug:1=1
+#hdmi_drive:0=1
+#hdmi_force_hotplug:0=1
 
 # for HDMI 1
 #framebuffer_priority=7

@@ -1,0 +1,43 @@
+/dts-v1/;
+/plugin/;
+
+
+/ {
+    compatible = "brcm,bcm2712";
+
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+        lp50xx: led-controller  {
+                compatible = "ti,lp5018";
+                reg = <0x28>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+                enable-gpios = <&gpio4 24>;
+
+                multi-led@1 {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    reg = <0x1>;
+                    color = <8>;
+                    function = "indicator";
+
+                    led@0 {
+                        reg = <0x0>;
+                        color = <0>;
+                    };
+
+                    led@1 {
+                        reg = <0x1>;
+                        color = <1>;
+                    };
+
+                    led@2 {
+                        reg = <0x2>;
+                        color = <2>;
+                    };
+                };
+            };
+        };
+    };
+};

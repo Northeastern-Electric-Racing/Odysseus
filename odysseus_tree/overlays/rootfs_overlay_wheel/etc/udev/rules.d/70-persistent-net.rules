@@ -2,6 +2,6 @@
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="d8:3a:dd:*", KERNEL=="en*", NAME="eth0"
 # alfa mac addr
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:c0:ca:*", KERNEL=="wl*", NAME="wlan0"
-# pi mac addr with wl
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="88:a2:9e:*", KERNEL=="wl*", NAME="wlan1"
+# pi mac addr with wl (pi5 mac)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="2c:cf:67:*", KERNEL=="wl*", NAME="wlan1"
 

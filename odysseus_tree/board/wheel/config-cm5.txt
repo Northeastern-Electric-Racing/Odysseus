@@ -26,7 +26,7 @@ dtparam=interrupt=25
 # I2C
 dtparam=i2c=on
 #temp sense
-dtoverlay=i2c-sensor,i2c-bus=i2c1,sht3x
+dtoverlay=i2c-sensor,sht3x
 #led
 dtoverlay=lp5018a
 

@@ -8,35 +8,379 @@
     fragment@0 {
         target = <&i2c1>;
         __overlay__ {
-        lp50xx: led-controller  {
-                compatible = "ti,lp5018";
+            // this is all because of the lp5018 vssop fuckery.  See table 7-1
+            lp50_xx_l: led-controller_l  {
+                compatible = "ti,lp5024";
                 reg = <0x28>;
                 #address-cells = <1>;
                 #size-cells = <0>;
-                enable-gpios = <&gpio4 24>;
 
-                multi-led@1 {
+                /* RGB LED 0 (OUT0,1,2) */
+                /* --- LED 0 (GRB triplet 0: OUT0-OUT2) --- */
+                /* LED 0 - Specifically addressed to Output 0 */
+
+
+                rgb_l0: multi-led@0 {
+                    reg = <0>;
+                    label = "l0:1";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
                     #address-cells = <1>;
                     #size-cells = <0>;
-                    reg = <0x1>;
-                    color = <8>;
-                    function = "indicator";
 
                     led@0 {
-                        reg = <0x0>;
-                        color = <0>;
+                        reg = <0>;
+                        color = <2>; /* green */
                     };
 
                     led@1 {
-                        reg = <0x1>;
-                        color = <1>;
+                        reg = <1>;
+                        color = <1>; /* red */
+                    };
+                };
+
+                rgb_l1: multi-led@1 {
+                    reg = <1>;
+                    label = "l2:4";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <3>; /* blue */
                     };
 
+                    led@1 {
+                        reg = <1>;
+                        color = <2>;
+                    };
                     led@2 {
-                        reg = <0x2>;
+                        reg = <2>;
+                        color = <1>;
+                    };
+                };
+
+                rgb_l2: multi-led@2 {
+                    reg = <2>;
+                    label = "l5:6";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                    led@2 {
+                        reg = <2>;
                         color = <2>;
                     };
                 };
+
+                rgb_l3: multi-led@3 {
+                    reg = <3>;
+                    label = "l7:8";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                };
+                rgb_l4: multi-led@4 {
+                    reg = <4>;
+                    label = "l9:11";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <1>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <3>;
+                    };
+                };
+                rgb_l5: multi-led@5 {
+                    reg = <5>;
+                    label = "l12:13";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>;
+                    };
+                };
+                rgb_l6: multi-led@6 {
+                    reg = <6>;
+                    label = "l14:15";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>;
+                    };
+                };
+                rgb_l7: multi-led@7 {
+                    reg = <7>;
+                    label = "l16:17";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                };
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&i2c1>;
+        __overlay__ {
+            // this is all because of the lp5018 vssop fuckery.  See table 7-1
+            lp50_xx_m: led-controller {
+                compatible = "ti,lp5024";
+                reg = <0x29>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                /* RGB LED 0 (OUT0,1,2) */
+                /* --- LED 0 (GRB triplet 0: OUT0-OUT2) --- */
+                /* LED 0 - Specifically addressed to Output 0 */
+
+
+                rgb_m0: multi-led@0 {
+                    reg = <0>;
+                    label = "m0:1";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; /* green */
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <1>; /* red */
+                    };
+                };
+
+                rgb_m1: multi-led@1 {
+                    reg = <1>;
+                    label = "m2:4";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <3>; /* blue */
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <2>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>;
+                    };
+                };
+
+                rgb_m2: multi-led@2 {
+                    reg = <2>;
+                    label = "m5:6";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>;
+                    };
+                };
+
+                rgb_m3: multi-led@3 {
+                    reg = <3>;
+                    label = "m7:8";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                };
+                rgb_m4: multi-led@4 {
+                    reg = <4>;
+                    label = "m9:11";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <1>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <3>;
+                    };
+                };
+                rgb_m5: multi-led@5 {
+                    reg = <5>;
+                    label = "m12:13";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>;
+                    };
+                };
+                rgb_m6: multi-led@6 {
+                    reg = <6>;
+                    label = "m14:15";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>;
+                    };
+                };
+                rgb_m7: multi-led@7 {
+                    reg = <7>;
+                    label = "m16:17";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>;
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>;
+                    };
+                };
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&gpio>;
+        __overlay__ {
+            lp5018_enable: lp5018_enable {
+                gpio-hog;
+                gpios = <24 0>;
+                output-high;
+                line-name = "lp5018-enable";
             };
         };
     };

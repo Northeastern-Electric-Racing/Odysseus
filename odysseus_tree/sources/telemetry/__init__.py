@@ -70,7 +70,7 @@ class MTCommand(ABC):
         pass
 
     @abstractmethod
-    def get_thread(self):
+    def get_thread(self) -> threading.Thread:
         """
         Get the thread to be regitered for background command read
         """

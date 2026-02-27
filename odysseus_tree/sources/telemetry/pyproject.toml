@@ -3,8 +3,10 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tpu_telemetry"
+name = "telemetry"
 version = "0.1"
 dependencies = [
-  "telemetry"
+  "protobuf",
+  "psutil",
+  "gmqtt",
 ]

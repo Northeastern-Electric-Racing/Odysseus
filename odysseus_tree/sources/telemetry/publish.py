@@ -1,14 +1,11 @@
 import asyncio
-import math
 import signal
 import time
 
 
-from telemetry.poll_data import halow
 from . import MTCommand, MeasureTask, server_data_pb2
 from gmqtt import Client as MQTTClient
 
-TASKS = []
 
 # initialize connection
 client = MQTTClient("base-station-publisher")
@@ -23,10 +20,10 @@ def on_disconnect(client, packet, exc=None):
     print("Disconnected")
 
 
-def ask_exit(*args):
-    for task in TASKS:
+def ask_exit(*args, tasks: list):
+    for task in tasks:
         if isinstance(task, MTCommand):
-            task.deinit()
+            task.__deinit__()
     STOP.set()
 
 
@@ -51,19 +48,13 @@ async def interval(task: MeasureTask):
                 publish_data(topic, message_data)
 
 
-async def run(host):
+async def run(host, tasks: list):
     await client.connect(host, 1883)
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
 
-    # ADD TASKS HERE for more measurements
-    TASKS = [  # example.ExampleMT(), # uncomment so example data is sent
-        # environment.EnvironmentMT() # commented out bc sensor is currently broken
-        halow.HalowRSSIMT(),
-    ]
-
-    stagger = 1 / len(TASKS)
-    for task in TASKS:
+    stagger = 1 / len(tasks)
+    for task in tasks:
 
         # if task is of type BufferedCommand, register its thread
         if isinstance(task, MTCommand):
@@ -76,16 +67,12 @@ async def run(host):
     await STOP.wait()
 
 
-def main():
+def start_task(tasks: list):
     loop = asyncio.new_event_loop()
 
     host = "localhost"
 
-    loop.add_signal_handler(signal.SIGINT, ask_exit)
-    loop.add_signal_handler(signal.SIGTERM, ask_exit)
+    loop.add_signal_handler(signal.SIGINT, lambda *args: ask_exit(args, tasks))
+    loop.add_signal_handler(signal.SIGTERM, lambda *args: ask_exit(args, tasks))
 
-    loop.run_until_complete(run(host))
-
-
-if __name__ == "__main__":
-    main()
+    loop.run_until_complete(run(host, tasks))

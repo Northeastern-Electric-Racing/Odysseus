@@ -7,8 +7,8 @@ define TPU_TELEMETRY_INSTALL_INIT_SYSV
 endef
 
 define TPU_TELEMETRY_INSTALL_TARGET_CMDS
-    $(INSTALL) -d $(TARGET_DIR)/usr/lib/tpu-telemetry/telemetry
-    cp -r $(@D)/telemetry/* $(TARGET_DIR)/usr/lib/tpu-telemetry/telemetry
+    $(INSTALL) -d $(TARGET_DIR)/usr/lib/tpu-telemetry/
+    cp -r $(@D)/* $(TARGET_DIR)/usr/lib/tpu-telemetry/
     $(INSTALL) -D -m 0755 $(TPU_TELEMETRY_PKGDIR)/tpu-telemetry.sh $(TARGET_DIR)/usr/bin/tpu-telemetry
 endef
 

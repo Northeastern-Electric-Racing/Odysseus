@@ -15,9 +15,7 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                /* RGB LED 0 (OUT0,1,2) */
-                /* --- LED 0 (GRB triplet 0: OUT0-OUT2) --- */
-                /* LED 0 - Specifically addressed to Output 0 */
+                /* Assign all the LEDs, skip some.  0=unused */
 
 
                 rgb_l0: multi-led@0 {
@@ -32,12 +30,16 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>; /* green */
+                        color = <2>; // green 0
                     };
 
                     led@1 {
                         reg = <1>;
-                        color = <1>; /* red */
+                        color = <1>; // red 0
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; /* unused */
                     };
                 };
 
@@ -53,16 +55,16 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <3>; /* blue */
+                        color = <3>; // blue 0
                     };
 
                     led@1 {
                         reg = <1>;
-                        color = <2>;
+                        color = <2>; // green 1
                     };
                     led@2 {
                         reg = <2>;
-                        color = <1>;
+                        color = <1>; // red 1
                     };
                 };
 
@@ -76,13 +78,17 @@
                     #address-cells = <1>;
                     #size-cells = <0>;
 
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue 1
                     };
                     led@2 {
                         reg = <2>;
-                        color = <2>;
+                        color = <2>; // green 2
                     };
                 };
 
@@ -98,11 +104,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <1>;
+                        color = <1>; // red 2
                     };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue 2
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; // unused
                     };
                 };
                 rgb_l4: multi-led@4 {
@@ -117,15 +127,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>;
+                        color = <2>; // green 3
                     };
                     led@1 {
                         reg = <1>;
-                        color = <1>;
+                        color = <1>; // red 3
                     };
                     led@2 {
                         reg = <2>;
-                        color = <3>;
+                        color = <3>; // blue 3
                     };
                 };
                 rgb_l5: multi-led@5 {
@@ -140,11 +150,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>;
+                        color = <3>; // blue 4
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <0>; // unused
                     };
                     led@2 {
                         reg = <2>;
-                        color = <1>;
+                        color = <1>; // red 4
                     };
                 };
                 rgb_l6: multi-led@6 {
@@ -157,13 +171,17 @@
                     #address-cells = <1>;
                     #size-cells = <0>;
 
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <2>; // green 4
                     };
                     led@2 {
                         reg = <2>;
-                        color = <2>;
+                        color = <3>; // blue 5
                     };
                 };
                 rgb_l7: multi-led@7 {
@@ -178,11 +196,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <1>;
+                        color = <1>; // red 5
                     };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <2>; // green 5
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>;
                     };
                 };
             };
@@ -199,11 +221,6 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                /* RGB LED 0 (OUT0,1,2) */
-                /* --- LED 0 (GRB triplet 0: OUT0-OUT2) --- */
-                /* LED 0 - Specifically addressed to Output 0 */
-
-
                 rgb_m0: multi-led@0 {
                     reg = <0>;
                     label = "m0:1";
@@ -216,12 +233,16 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>; /* green */
+                        color = <2>; // green 6
                     };
 
                     led@1 {
                         reg = <1>;
-                        color = <1>; /* red */
+                        color = <1>; // red 6
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; /* unused */
                     };
                 };
 
@@ -237,16 +258,16 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <3>; /* blue */
+                        color = <3>; // blue 6
                     };
 
                     led@1 {
                         reg = <1>;
-                        color = <2>;
+                        color = <2>; // green 7
                     };
                     led@2 {
                         reg = <2>;
-                        color = <1>;
+                        color = <1>; // red 7
                     };
                 };
 
@@ -260,13 +281,17 @@
                     #address-cells = <1>;
                     #size-cells = <0>;
 
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue 7
                     };
                     led@2 {
                         reg = <2>;
-                        color = <2>;
+                        color = <2>; // green 8
                     };
                 };
 
@@ -282,11 +307,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <1>;
+                        color = <1>; // red 8
                     };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue 8
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; // unused
                     };
                 };
                 rgb_m4: multi-led@4 {
@@ -301,15 +330,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>;
+                        color = <2>; // green X
                     };
                     led@1 {
                         reg = <1>;
-                        color = <1>;
+                        color = <1>; // red X
                     };
                     led@2 {
                         reg = <2>;
-                        color = <3>;
+                        color = <3>; // blue 3X
                     };
                 };
                 rgb_m5: multi-led@5 {
@@ -324,11 +353,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <2>;
+                        color = <2>; // green X
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <0>; // unused
                     };
                     led@2 {
                         reg = <2>;
-                        color = <1>;
+                        color = <1>; // red X
                     };
                 };
                 rgb_m6: multi-led@6 {
@@ -341,13 +374,17 @@
                     #address-cells = <1>;
                     #size-cells = <0>;
 
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue X
                     };
                     led@2 {
                         reg = <2>;
-                        color = <2>;
+                        color = <2>; // green X
                     };
                 };
                 rgb_m7: multi-led@7 {
@@ -362,11 +399,15 @@
 
                     led@0 {
                         reg = <0>;
-                        color = <1>;
+                        color = <1>; // red X
                     };
                     led@1 {
                         reg = <1>;
-                        color = <3>;
+                        color = <3>; // blue X
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>;
                     };
                 };
             };

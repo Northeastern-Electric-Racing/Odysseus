@@ -1,7 +1,7 @@
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:develop-stability-and-improvements
+        image: ghcr.io/northeastern-electric-racing/odysseus:cm5
         command: /bin/bash
         tty: true
         stdin_open: true
@@ -23,11 +23,8 @@ services:
             - ODY_IROH_ROOT_PASSWORD=password
             - ODY_AP_ROOT_PASSWORD=password
             - ODY_BASE_WIFI_PASSWORD=password
-
+            - ODY_WHEEL_ROOT_PASSWORD=password
 volumes:
     shared_data:
         labels:
             com.northeastern_electric_racing.description: "Shared output between buildroot runs"
-
-
-            

@@ -1,0 +1,16 @@
+menuconfig BR2_PACKAGE_MORSE
+	bool "morse"
+	help
+	  This option enables the Morse HaLow SDK. Sub-options allow to
+	  select which modules should be built.
+
+	  https://morsemicro.com
+
+
+if BR2_PACKAGE_MORSE
+
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/morse/mm6108-driver/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/morse/mm6108-firmware/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/morse/morse-cli/Config.in"
+
+endif

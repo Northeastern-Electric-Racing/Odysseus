@@ -5,6 +5,7 @@ config BR2_PACKAGE_TPU_TELEMETRY
     select BR2_PACKAGE_PYTHON_PROTOBUF
     select BR2_PACKAGE_PYTHON_CAN
     depends on BR2_PACKAGE_GPSD_PYTHON
+    depends on BR2_PACKAGE_TELEMETRY
     help
         Fast script scrape and send 
         TPU data to a MQTT broker locally.

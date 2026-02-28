@@ -17,3 +17,4 @@ SECRETS.env-example
 # redundant safeguard for all env files named SECRETS.env in case it is renamed wrong
 **/*SECRETS.env*
 /.idea
+.img

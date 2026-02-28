@@ -8,6 +8,10 @@ do_start() {
    # eth0
    ip link set dev eth0 up
 
+   # eth1
+   ip link set dev eth1 up
+   ethtool --set-plca-cfg eth1 enable on node-id 2 node-cnt 8 to-tmr 0x20
+
    # can0
    ip link set dev can0 type can bitrate 500000 listen-only off restart-ms 50
    ip link set dev can0 up
@@ -54,6 +58,7 @@ do_stop() {
    ip link set dev wlan0 down
    ip link set dev wlan1 down
    ip link set dev bond0 down
+   ip link set dev eth1 down
    ip link set dev eth0 down
    ip link set dev lo down
 }

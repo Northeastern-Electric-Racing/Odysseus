@@ -1,0 +1,4 @@
+config BR2_PACKAGE_MICROCHIP_T1S
+	bool "microchip-t1s"
+	help
+		This is the kernel module for all Microchip T1S products

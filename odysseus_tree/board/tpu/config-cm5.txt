@@ -1,0 +1,46 @@
+# Please note that this is only a sample, we recommend you to change it to fit
+# your needs.
+# You should override this file using BR2_PACKAGE_RPI_FIRMWARE_CONFIG_FILE.
+# See http://buildroot.org/manual.html#rootfs-custom
+# and http://elinux.org/RPiconfig for a description of config.txt syntax
+
+kernel=Image
+
+# To use an external initramfs file
+#initramfs rootfs.cpio.gz
+
+# Disable overscan assuming the display supports displaying the full resolution
+# If the text shown on the screen disappears off the edge, comment this out
+disable_overscan=1
+
+# enable autoprobing of Bluetooth driver without need of hciattach/btattach
+dtoverlay=krnbt=on
+
+#dtoverlay=disable-bt-pi5
+#dtoverlay=disable-wifi-pi5
+dtparam=spi=on
+
+# for gps
+dtoverlay=uart5
+dtoverlay=pps-gpio,gpiopin=24
+
+# for can
+dtoverlay=spi4-1cs,cs0_pin=4,cs0_spidev=off
+dtoverlay=mcp2515-can0-spi4,oscillator=16000000,spimaxfrequency=10000000
+dtparam=interrupt=26
+
+# for sd card
+dtoverlay=spi1-1cs,cs0_pin=16,cs0_spidev=disabled
+dtoverlay=mmc_spi-spi1
+
+# for temp sensor 
+dtoverlay=i2c-sensor,sht3x
+
+# for adc (dont need i2c-sensor for this)
+dtoverlay=mcp3428,addr=0x68
+
+dtparam=audio=on
+
+# For camera
+camera_auto_detect=0
+dtoverlay=imx296-overlay,cam0

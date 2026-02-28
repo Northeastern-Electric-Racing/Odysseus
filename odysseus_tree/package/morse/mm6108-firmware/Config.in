@@ -1,0 +1,4 @@
+config BR2_PACKAGE_MM6108_FIRMWARE
+	bool "mm6108-firmware"
+	help
+		This is the firmware for the MM6108 Wifi HaLow SoC

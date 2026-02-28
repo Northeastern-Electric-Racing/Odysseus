@@ -1,0 +1,10 @@
+config BR2_PACKAGE_TELEMETRY
+    bool "telemetry base package"
+    select BR2_PACKAGE_PYTHON_GMQTT
+    select BR2_PACKAGE_PYTHON_PSUTIL
+    select BR2_PACKAGE_PYTHON_PROTOBUF
+    select BR2_PACKAGE_PYTHON_CAN
+    depends on BR2_PACKAGE_GPSD_PYTHON
+    help
+        Fast script scrape and send 
+        data to a MQTT broker locally.

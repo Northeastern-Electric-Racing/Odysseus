@@ -1,0 +1,428 @@
+/dts-v1/;
+/plugin/;
+
+
+/ {
+    compatible = "brcm,bcm2712";
+
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+            // this is all because of the lp5018 vssop fuckery.  See table 7-1
+            lp50_xx_l: led-controller_l  {
+                compatible = "ti,lp5024";
+                reg = <0x28>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                /* Assign all the LEDs, skip some.  0=unused */
+
+
+                rgb_l0: multi-led@0 {
+                    reg = <0>;
+                    label = "l0:1";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; // green 0
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <1>; // red 0
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; /* unused */
+                    };
+                };
+
+                rgb_l1: multi-led@1 {
+                    reg = <1>;
+                    label = "l2:4";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <3>; // blue 0
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <2>; // green 1
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>; // red 1
+                    };
+                };
+
+                rgb_l2: multi-led@2 {
+                    reg = <2>;
+                    label = "l5:6";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue 1
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>; // green 2
+                    };
+                };
+
+                rgb_l3: multi-led@3 {
+                    reg = <3>;
+                    label = "l7:8";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>; // red 2
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue 2
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; // unused
+                    };
+                };
+                rgb_l4: multi-led@4 {
+                    reg = <4>;
+                    label = "l9:11";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; // green 3
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <1>; // red 3
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <3>; // blue 3
+                    };
+                };
+                rgb_l5: multi-led@5 {
+                    reg = <5>;
+                    label = "l12:13";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <3>; // blue 4
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <0>; // unused
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>; // red 4
+                    };
+                };
+                rgb_l6: multi-led@6 {
+                    reg = <6>;
+                    label = "l14:15";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <2>; // green 4
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <3>; // blue 5
+                    };
+                };
+                rgb_l7: multi-led@7 {
+                    reg = <7>;
+                    label = "l16:17";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>; // red 5
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <2>; // green 5
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>;
+                    };
+                };
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&i2c1>;
+        __overlay__ {
+            // this is all because of the lp5018 vssop fuckery.  See table 7-1
+            lp50_xx_m: led-controller {
+                compatible = "ti,lp5024";
+                reg = <0x29>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                rgb_m0: multi-led@0 {
+                    reg = <0>;
+                    label = "m0:1";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; // green 6
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <1>; // red 6
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; /* unused */
+                    };
+                };
+
+                rgb_m1: multi-led@1 {
+                    reg = <1>;
+                    label = "m2:4";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <3>; // blue 6
+                    };
+
+                    led@1 {
+                        reg = <1>;
+                        color = <2>; // green 7
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>; // red 7
+                    };
+                };
+
+                rgb_m2: multi-led@2 {
+                    reg = <2>;
+                    label = "m5:6";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue 7
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>; // green 8
+                    };
+                };
+
+                rgb_m3: multi-led@3 {
+                    reg = <3>;
+                    label = "m7:8";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>; // red 8
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue 8
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>; // unused
+                    };
+                };
+                rgb_m4: multi-led@4 {
+                    reg = <4>;
+                    label = "m9:11";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; // green X
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <1>; // red X
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <3>; // blue 3X
+                    };
+                };
+                rgb_m5: multi-led@5 {
+                    reg = <5>;
+                    label = "m12:13";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <2>; // green X
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <0>; // unused
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <1>; // red X
+                    };
+                };
+                rgb_m6: multi-led@6 {
+                    reg = <6>;
+                    label = "m14:15";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <0>; // unused
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue X
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <2>; // green X
+                    };
+                };
+                rgb_m7: multi-led@7 {
+                    reg = <7>;
+                    label = "m16:17";
+                    color = <8>; /* RGB */
+                    default-state = "on";
+                    default-brightness = <128>;
+
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+
+                    led@0 {
+                        reg = <0>;
+                        color = <1>; // red X
+                    };
+                    led@1 {
+                        reg = <1>;
+                        color = <3>; // blue X
+                    };
+                    led@2 {
+                        reg = <2>;
+                        color = <0>;
+                    };
+                };
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&gpio>;
+        __overlay__ {
+            lp5018_enable: lp5018_enable {
+                gpio-hog;
+                gpios = <24 0>;
+                output-high;
+                line-name = "lp5018-enable";
+            };
+        };
+    };
+};

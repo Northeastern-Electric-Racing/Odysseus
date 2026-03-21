@@ -94,12 +94,10 @@ static void broadcast_button_event(UnixSocketServer *server,
              pressed ? "PRESSED" : "RELEASED");
 
     int n = uss_broadcast(server, msg);
-    if (n > 0) {
-        printf("[UNIX] %-14s %-8s  -> %d client(s)\n",
-               btn->name,
-               pressed ? "PRESSED" : "RELEASED",
-               n);
-    }
+    printf("[UNIX] %-14s %-8s  -> %d client(s)\n",
+           btn->name,
+           pressed ? "PRESSED" : "RELEASED",
+           n);
 }
 
 /* ── Main ─────────────────────────────────────────────────────── */
@@ -162,16 +160,16 @@ int main(void)
 
     /* ── Interrupt-driven event loop ──────────────────────────── */
     for (;;) {
+        /* Accept any pending clients before blocking on GPIO */
+        if (unix_ok)
+            uss_accept_clients(&unix_server);
+
         ret = gpiod_line_request_wait_edge_events(gpio_request, -1);
         if (ret < 0) {
             if (errno == EINTR) continue;
             perror("gpiod_line_request_wait_edge_events");
             break;
         }
-
-        /* Pick up any new Unix socket clients while we're awake */
-        if (unix_ok)
-            uss_accept_clients(&unix_server);
 
         int nevents = gpiod_line_request_read_edge_events(gpio_request,
                                                           event_buffer,

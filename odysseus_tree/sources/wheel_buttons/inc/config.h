@@ -1,12 +1,12 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef NER_CONFIG_H
+#define NER_CONFIG_H
 
 /* ── GPIO ──────────────────────────────────────────────────────── */
 #define CHIP_PATH           "/dev/gpiochip0"   /*  /dev/gpiochip0 on Pi 4    /dev/gpiochip4 on Pi 5 */
 #define DEBOUNCE_US         10000              /* 10 ms debounce */
 
 /* ── CAN ───────────────────────────────────────────────────────── */
-#define CAN_INTERFACE       "vcan0"
+#define CAN_INTERFACE       "can0"
 #define CAN_BASE_ID         0x100
 
 /* ── Unix Socket ───────────────────────────────────────────────── */

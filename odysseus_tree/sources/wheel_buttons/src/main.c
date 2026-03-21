@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
 #include <unistd.h>
 
 #define EVENT_BUF_SIZE  NUM_BUTTONS  /* worst-case: one event per line */
@@ -51,7 +52,7 @@ static struct gpiod_line_request *request_button_lines(unsigned int *offsets,
 
     gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_INPUT);
     gpiod_line_settings_set_edge_detection(settings, GPIOD_LINE_EDGE_BOTH);
-    gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP);
+    gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_DOWN);
     gpiod_line_settings_set_debounce_period_us(settings, DEBOUNCE_US);
 
     line_cfg = gpiod_line_config_new();
@@ -82,7 +83,7 @@ static int is_pressed(struct gpiod_edge_event *event)
 
 /* ── Unix socket message formatting ───────────────────────────── */
 
-static int send_unix_button_event(UnixSocketClient *client,
+static int send_unix_button_event(UnixSocketServer *client,
                                   const ButtonMapping *btn,
                                   int pressed)
 {
@@ -91,7 +92,7 @@ static int send_unix_button_event(UnixSocketClient *client,
              btn->name,
              pressed ? "PRESSED" : "RELEASED");
 
-    return usc_send(client, msg);
+    return uss_send(client, msg);
 }
 
 /* ── Main ─────────────────────────────────────────────────────── */
@@ -100,9 +101,9 @@ int main(void)
 {
     struct gpiod_edge_event_buffer *event_buffer = NULL;
     struct gpiod_line_request *gpio_request      = NULL;
-    UnixSocketClient unix_client;
+    UnixSocketServer unix_client;
     int can_socket  = -1;
-    int unix_ok     = 0;
+    int unix_ok     = 1;
     int ret;
 
     unsigned int gpio_pins[NUM_BUTTONS];
@@ -125,14 +126,10 @@ int main(void)
     printf("CAN socket ready.\n");
 
     /* ── Init Unix socket (non-fatal if server isn't running) ── */
-    if (usc_init(&unix_client, UNIX_SOCK_PATH) == 0) {
-        if (usc_connect(&unix_client) == 0) {
-            unix_ok = 1;
-            printf("UNIX socket connected.\n");
-        } else {
-            fprintf(stderr, "UNIX socket: server not available, "
+    if (uss_init(&unix_client, UNIX_SOCK_PATH) != 0) {
+        fprintf(stderr, "UNIX socket: server not available, "
                     "CAN-only mode.\n");
-        }
+        unix_ok = 0;
     }
 
     /* ── Request GPIO lines ───────────────────────────────────── */
@@ -197,15 +194,11 @@ int main(void)
             }
 
             /* Send Unix socket message */
-            if (unix_ok) {
-                if (send_unix_button_event(&unix_client, btn, pressed) < 0) {
-                    fprintf(stderr, "[UNIX] send failed, disabling.\n");
-                    unix_ok = 0;
-                } else {
-                    printf("[UNIX] %-14s %s\n",
+            if (send_unix_button_event(&unix_client, btn, pressed) < 0) {
+            } else {
+                printf("[UNIX] %-14s %s\n",
                            btn->name,
                            pressed ? "PRESSED " : "RELEASED");
-                }
             }
         }
     }
@@ -215,7 +208,7 @@ int main(void)
 cleanup:
     if (event_buffer)    gpiod_edge_event_buffer_free(event_buffer);
     if (gpio_request)    gpiod_line_request_release(gpio_request);
-    if (unix_ok)         usc_disconnect(&unix_client);
+    if (unix_ok)         uss_disconnect(&unix_client);
     if (can_socket >= 0) close(can_socket);
 
     return ret;

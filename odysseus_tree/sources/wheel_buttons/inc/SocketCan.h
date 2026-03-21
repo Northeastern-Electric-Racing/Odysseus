@@ -1,7 +1,9 @@
-#ifndef SOCKETCAN_H
-#define SOCKETCAN_H
+#ifndef NER_SOCKETCAN_H
+#define NER_SOCKETCAN_H
 
 #include "config.h"
+#include <stddef.h>
+#include <stdint.h>
 #include <linux/can.h>
 
 /**

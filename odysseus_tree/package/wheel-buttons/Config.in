@@ -1,5 +1,5 @@
 config BR2_PACKAGE_WHEEL_BUTTONS
     bool "wheel-buttons"
+    select BR2_PACKAGE_LIBGPIOD2
 	help
         Unix socket interface for device buttons to Nero dashboard communication.
-

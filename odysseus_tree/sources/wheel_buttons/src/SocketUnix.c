@@ -100,8 +100,8 @@ void uss_accept_clients(UnixSocketServer *server)
 
 int uss_broadcast(UnixSocketServer *server, const char *message)
 {
-    if (server->num_clients == 0)
-        return 0;
+    /* Scoop up any clients that connected since the last call */
+    uss_accept_clients(server);
 
     size_t len = strlen(message);
     int sent   = 0;

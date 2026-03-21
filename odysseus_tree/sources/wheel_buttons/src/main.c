@@ -160,10 +160,6 @@ int main(void)
 
     /* ── Interrupt-driven event loop ──────────────────────────── */
     for (;;) {
-        /* Accept any pending clients before blocking on GPIO */
-        if (unix_ok)
-            uss_accept_clients(&unix_server);
-
         ret = gpiod_line_request_wait_edge_events(gpio_request, -1);
         if (ret < 0) {
             if (errno == EINTR) continue;

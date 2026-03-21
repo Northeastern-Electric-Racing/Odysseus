@@ -1,0 +1,16 @@
+diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+index acd0833b7bd4..e31527bda399 100644
+--- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
++++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+@@ -702,11 +702,6 @@ static int dw_axi_dma_set_hw_desc(struct axi_dma_chan *chan,
+ 
+ 	mem_width = __ffs(data_width | mem_addr | len);
+ 
+-	if (!IS_ALIGNED(mem_addr, 4)) {
+-		dev_err(chan->chip->dev, "invalid buffer alignment\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* Use a reasonable upper limit otherwise residue reporting granularity grows large */
+ 	mem_burst_msize = axi_dma_encode_msize(16);
+ 

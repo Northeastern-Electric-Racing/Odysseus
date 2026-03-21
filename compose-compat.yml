@@ -1,6 +1,7 @@
 services:
     odysseus:
         build: .
+        image: ghcr.io/northeastern-electric-racing/odysseus:cm5
         command: /bin/bash
         privileged: true
         tty: true

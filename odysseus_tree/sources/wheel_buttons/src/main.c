@@ -1,6 +1,7 @@
 /**
- * @brief Main loop — monitors all steering wheel GPIO buttons,
- *        sends CAN frames and Unix socket messages on each press.
+ * @brief Main loop — monitors all steering wheel GPIO buttons using
+ *        edge-event interrupts, sends CAN frames and broadcasts
+ *        Unix socket messages to any connected clients.
  *
  * Build:
  *   gcc -o wheel_buttons main.c SocketCan.c SocketUnix.c -lgpiod
@@ -10,8 +11,11 @@
  *   sudo ip link add dev vcan0 type vcan
  *   sudo ip link set up vcan0
  *
- * Monitor:
+ * Monitor CAN:
  *   candump vcan0
+ *
+ * Monitor Unix socket:
+ *   socat - UNIX-CONNECT:/tmp/wheel_buttons_socket
  */
 
 #include "config.h"
@@ -20,14 +24,12 @@
 
 #include <errno.h>
 #include <gpiod.h>
-#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
 #include <unistd.h>
 
-#define EVENT_BUF_SIZE  NUM_BUTTONS  /* worst-case: one event per line */
+#define EVENT_BUF_SIZE  NUM_BUTTONS
 
 /* ── GPIO helpers ──────────────────────────────────────────────── */
 
@@ -52,7 +54,7 @@ static struct gpiod_line_request *request_button_lines(unsigned int *offsets,
 
     gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_INPUT);
     gpiod_line_settings_set_edge_detection(settings, GPIOD_LINE_EDGE_BOTH);
-    gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_DOWN);
+    gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP);
     gpiod_line_settings_set_debounce_period_us(settings, DEBOUNCE_US);
 
     line_cfg = gpiod_line_config_new();
@@ -77,22 +79,27 @@ out:
 
 static int is_pressed(struct gpiod_edge_event *event)
 {
-    /* Active-low: falling edge = pressed */
     return gpiod_edge_event_get_event_type(event) == GPIOD_EDGE_EVENT_FALLING_EDGE;
 }
 
-/* ── Unix socket message formatting ───────────────────────────── */
+/* ── Format + broadcast a button event over Unix socket ────────── */
 
-static int send_unix_button_event(UnixSocketServer *client,
-                                  const ButtonMapping *btn,
-                                  int pressed)
+static void broadcast_button_event(UnixSocketServer *server,
+                                   const ButtonMapping *btn,
+                                   int pressed)
 {
     char msg[128];
     snprintf(msg, sizeof(msg), "BTN:%s:%s\n",
              btn->name,
              pressed ? "PRESSED" : "RELEASED");
 
-    return uss_send(client, msg);
+    int n = uss_broadcast(server, msg);
+    if (n > 0) {
+        printf("[UNIX] %-14s %-8s  -> %d client(s)\n",
+               btn->name,
+               pressed ? "PRESSED" : "RELEASED",
+               n);
+    }
 }
 
 /* ── Main ─────────────────────────────────────────────────────── */
@@ -101,9 +108,9 @@ int main(void)
 {
     struct gpiod_edge_event_buffer *event_buffer = NULL;
     struct gpiod_line_request *gpio_request      = NULL;
-    UnixSocketServer unix_client;
-    int can_socket  = -1;
-    int unix_ok     = 1;
+    UnixSocketServer unix_server;
+    int can_socket = -1;
+    int unix_ok    = 0;
     int ret;
 
     unsigned int gpio_pins[NUM_BUTTONS];
@@ -125,11 +132,11 @@ int main(void)
     }
     printf("CAN socket ready.\n");
 
-    /* ── Init Unix socket (non-fatal if server isn't running) ── */
-    if (uss_init(&unix_client, UNIX_SOCK_PATH) != 0) {
-        fprintf(stderr, "UNIX socket: server not available, "
-                    "CAN-only mode.\n");
-        unix_ok = 0;
+    /* ── Init Unix socket server ──────────────────────────────── */
+    if (uss_init(&unix_server, UNIX_SOCK_PATH) == 0) {
+        unix_ok = 1;
+    } else {
+        fprintf(stderr, "UNIX socket server failed to start, CAN-only mode.\n");
     }
 
     /* ── Request GPIO lines ───────────────────────────────────── */
@@ -148,21 +155,23 @@ int main(void)
         goto cleanup;
     }
 
-    /* ── Event loop ───────────────────────────────────────────── */
-    struct pollfd pfd = {
-        .fd     = gpiod_line_request_get_fd(gpio_request),
-        .events = POLLIN,
-    };
+    printf("\nMonitoring %d buttons (interrupt-driven) — Ctrl+C to exit\n",
+           NUM_BUTTONS);
+    printf("Clients can connect with: socat - UNIX-CONNECT:%s\n\n",
+           UNIX_SOCK_PATH);
 
-    printf("\nMonitoring %d buttons — Ctrl+C to exit\n\n", NUM_BUTTONS);
-
+    /* ── Interrupt-driven event loop ──────────────────────────── */
     for (;;) {
-        ret = poll(&pfd, 1, -1);
+        ret = gpiod_line_request_wait_edge_events(gpio_request, -1);
         if (ret < 0) {
             if (errno == EINTR) continue;
-            perror("poll");
+            perror("gpiod_line_request_wait_edge_events");
             break;
         }
+
+        /* Pick up any new Unix socket clients while we're awake */
+        if (unix_ok)
+            uss_accept_clients(&unix_server);
 
         int nevents = gpiod_line_request_read_edge_events(gpio_request,
                                                           event_buffer,
@@ -193,13 +202,9 @@ int main(void)
                        btn->gpio, pressed);
             }
 
-            /* Send Unix socket message */
-            if (send_unix_button_event(&unix_client, btn, pressed) < 0) {
-            } else {
-                printf("[UNIX] %-14s %s\n",
-                           btn->name,
-                           pressed ? "PRESSED " : "RELEASED");
-            }
+            /* Broadcast to Unix socket clients */
+            if (unix_ok)
+                broadcast_button_event(&unix_server, btn, pressed);
         }
     }
 
@@ -208,7 +213,7 @@ int main(void)
 cleanup:
     if (event_buffer)    gpiod_edge_event_buffer_free(event_buffer);
     if (gpio_request)    gpiod_line_request_release(gpio_request);
-    if (unix_ok)         uss_disconnect(&unix_client);
+    if (unix_ok)         uss_shutdown(&unix_server);
     if (can_socket >= 0) close(can_socket);
 
     return ret;

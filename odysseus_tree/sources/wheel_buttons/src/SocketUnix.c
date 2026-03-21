@@ -1,6 +1,7 @@
 /**
  * @brief Unix socket server — binds, listens, accepts clients,
  *        and broadcasts button events to all connected clients.
+ *        All fds are non-blocking so the main poll() loop never stalls.
  */
 
 #include "SocketUnix.h"
@@ -84,6 +85,7 @@ void uss_accept_clients(UnixSocketServer *server)
             break;
         }
 
+        set_nonblocking(fd);
         server->client_fds[server->num_clients++] = fd;
         printf("UNIX client connected (fd=%d, total=%d)\n",
                fd, server->num_clients);
@@ -99,6 +101,11 @@ int uss_broadcast(UnixSocketServer *server, const char *message)
         ssize_t n = send(server->client_fds[i], message, len, MSG_NOSIGNAL);
 
         if (n < 0) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                /* Client buffer full — skip, don't disconnect */
+                i++;
+                continue;
+            }
             printf("UNIX client disconnected (fd=%d)\n", server->client_fds[i]);
             close(server->client_fds[i]);
             server->client_fds[i] = server->client_fds[--server->num_clients];

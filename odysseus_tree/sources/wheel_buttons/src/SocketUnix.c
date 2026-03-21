@@ -1,7 +1,9 @@
 /**
  * @brief Unix socket server — binds, listens, accepts clients,
  *        and broadcasts button events to all connected clients.
- *        All fds are non-blocking so the main poll() loop never stalls.
+ *        All fds are non-blocking.  Client acceptance is lazy:
+ *        new clients are picked up each time we broadcast,
+ *        so the server fd never needs to be polled.
  */
 
 #include "SocketUnix.h"
@@ -74,16 +76,12 @@ void uss_shutdown(UnixSocketServer *server)
     printf("UNIX socket server shut down.\n");
 }
 
-void uss_accept_clients(UnixSocketServer *server)
+static void accept_pending(UnixSocketServer *server)
 {
     while (server->num_clients < MAX_CLIENTS) {
         int fd = accept(server->server_fd, NULL, NULL);
-        if (fd < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-                break;
-            perror("accept(UNIX)");
+        if (fd < 0)
             break;
-        }
 
         set_nonblocking(fd);
         server->client_fds[server->num_clients++] = fd;
@@ -94,6 +92,9 @@ void uss_accept_clients(UnixSocketServer *server)
 
 int uss_broadcast(UnixSocketServer *server, const char *message)
 {
+    /* Pick up any waiting clients before sending */
+    accept_pending(server);
+
     size_t len = strlen(message);
     int sent   = 0;
 
@@ -102,7 +103,6 @@ int uss_broadcast(UnixSocketServer *server, const char *message)
 
         if (n < 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                /* Client buffer full — skip, don't disconnect */
                 i++;
                 continue;
             }

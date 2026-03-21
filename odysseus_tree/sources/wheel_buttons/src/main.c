@@ -3,9 +3,9 @@
  *        sends CAN frames and broadcasts Unix socket messages
  *        to any connected clients.
  *
- *        Uses poll() on both GPIO and Unix server fds so client
- *        connections and button presses are handled instantly
- *        with no threads.
+ *        poll() watches ONLY the GPIO fd so button presses are
+ *        never blocked by socket activity.  Unix clients are
+ *        accepted lazily inside uss_broadcast().
  *
  * Build:
  *   gcc -o wheel_buttons main.c SocketCan.c SocketUnix.c -lgpiod
@@ -35,8 +35,6 @@
 #include <unistd.h>
 
 #define EVENT_BUF_SIZE  NUM_BUTTONS
-
-enum { PFD_GPIO = 0, PFD_UNIX, PFD_COUNT };
 
 /* ── GPIO helpers ──────────────────────────────────────────────── */
 
@@ -160,64 +158,57 @@ int main(void)
         goto cleanup;
     }
 
-    /* ── Poll both GPIO and Unix server fds ───────────────────── */
-    struct pollfd pfds[PFD_COUNT];
-
-    pfds[PFD_GPIO].fd     = gpiod_line_request_get_fd(gpio_request);
-    pfds[PFD_GPIO].events = POLLIN;
-
-    pfds[PFD_UNIX].fd     = unix_ok ? unix_server.server_fd : -1;
-    pfds[PFD_UNIX].events = POLLIN;
+    /* ── Poll ONLY the GPIO fd ────────────────────────────────── */
+    struct pollfd pfd;
+    pfd.fd     = gpiod_line_request_get_fd(gpio_request);
+    pfd.events = POLLIN;
 
     printf("\nMonitoring %d buttons — Ctrl+C to exit\n", NUM_BUTTONS);
-    printf("Clients can connect with: socat - UNIX-CONNECT:%s\n\n",
-           UNIX_SOCK_PATH);
+    if (unix_ok)
+        printf("Clients can connect with: socat - UNIX-CONNECT:%s\n\n",
+               UNIX_SOCK_PATH);
 
     for (;;) {
-        ret = poll(pfds, PFD_COUNT, -1);
+        ret = poll(&pfd, 1, -1);
         if (ret < 0) {
             if (errno == EINTR) continue;
             perror("poll");
             break;
         }
 
-        /* Accept new clients */
-        if (pfds[PFD_UNIX].revents & POLLIN)
-            uss_accept_clients(&unix_server);
+        if (!(pfd.revents & POLLIN))
+            continue;
 
-        /* Handle button events */
-        if (pfds[PFD_GPIO].revents & POLLIN) {
-            int nevents = gpiod_line_request_read_edge_events(gpio_request,
-                                                              event_buffer,
-                                                              EVENT_BUF_SIZE);
-            if (nevents < 0) {
-                perror("gpiod_line_request_read_edge_events");
-                break;
+        int nevents = gpiod_line_request_read_edge_events(gpio_request,
+                                                          event_buffer,
+                                                          EVENT_BUF_SIZE);
+        if (nevents < 0) {
+            perror("gpiod_line_request_read_edge_events");
+            break;
+        }
+
+        for (int i = 0; i < nevents; i++) {
+            struct gpiod_edge_event *ev =
+                gpiod_edge_event_buffer_get_event(event_buffer, i);
+
+            unsigned int gpio = gpiod_edge_event_get_line_offset(ev);
+            int pressed       = is_pressed(ev);
+
+            const ButtonMapping *btn = button_map_find(gpio);
+            if (!btn) {
+                fprintf(stderr, "Unexpected GPIO %u event, skipping.\n", gpio);
+                continue;
             }
 
-            for (int i = 0; i < nevents; i++) {
-                struct gpiod_edge_event *ev =
-                    gpiod_edge_event_buffer_get_event(event_buffer, i);
-
-                unsigned int gpio = gpiod_edge_event_get_line_offset(ev);
-                int pressed       = is_pressed(ev);
-
-                const ButtonMapping *btn = button_map_find(gpio);
-                if (!btn) {
-                    fprintf(stderr, "Unexpected GPIO %u event, skipping.\n", gpio);
-                    continue;
-                }
-
-                if (can_send_button_event(can_socket, btn, pressed) == 0) {
-                    printf("[CAN ] 0x%03X  %-14s %s  [%02X %02X]\n",
-                           btn->can_id, btn->name,
-                           pressed ? "PRESSED " : "RELEASED",
-                           btn->gpio, pressed);
-                }
-
-                if (unix_ok)
-                    broadcast_button_event(&unix_server, btn, pressed);
+            if (can_send_button_event(can_socket, btn, pressed) == 0) {
+                printf("[CAN ] 0x%03X  %-14s %s  [%02X %02X]\n",
+                       btn->can_id, btn->name,
+                       pressed ? "PRESSED " : "RELEASED",
+                       btn->gpio, pressed);
             }
+
+            if (unix_ok)
+                broadcast_button_event(&unix_server, btn, pressed);
         }
     }
 

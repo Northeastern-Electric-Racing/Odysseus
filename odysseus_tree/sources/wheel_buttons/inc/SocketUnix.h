@@ -19,10 +19,7 @@ int  uss_init(UnixSocketServer *server, const char *socket_path);
 /** Close all fds, unlink the socket file. */
 void uss_shutdown(UnixSocketServer *server);
 
-/** Non-blocking accept — picks up any pending clients. */
-void uss_accept_clients(UnixSocketServer *server);
-
-/** Send a message to all connected clients. Returns how many received it. */
+/** Accept pending clients, then send message to all. Returns how many received it. */
 int  uss_broadcast(UnixSocketServer *server, const char *message);
 
 #endif

@@ -11,7 +11,6 @@
 #include <string.h>
 #include <unistd.h>
 
-/* Set a file descriptor to non-blocking mode */
 static int set_nonblocking(int fd)
 {
     int flags = fcntl(fd, F_GETFL, 0);
@@ -21,7 +20,6 @@ static int set_nonblocking(int fd)
 
 int uss_init(UnixSocketServer *server, const char *socket_path)
 {
-    /* Remove stale socket file if it exists */
     unlink(socket_path);
 
     server->server_fd   = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -54,7 +52,6 @@ int uss_init(UnixSocketServer *server, const char *socket_path)
         return -1;
     }
 
-    /* Non-blocking so accept_clients() doesn't stall the main loop */
     set_nonblocking(server->server_fd);
 
     printf("UNIX socket server listening on %s\n", socket_path);
@@ -63,9 +60,8 @@ int uss_init(UnixSocketServer *server, const char *socket_path)
 
 void uss_shutdown(UnixSocketServer *server)
 {
-    for (int i = 0; i < server->num_clients; i++) {
+    for (int i = 0; i < server->num_clients; i++)
         close(server->client_fds[i]);
-    }
     server->num_clients = 0;
 
     if (server->server_fd >= 0) {
@@ -79,15 +75,11 @@ void uss_shutdown(UnixSocketServer *server)
 
 void uss_accept_clients(UnixSocketServer *server)
 {
-    /*
-     * Non-blocking accept — pick up any new clients that connected
-     * since the last call. Called once per main-loop iteration.
-     */
     while (server->num_clients < MAX_CLIENTS) {
         int fd = accept(server->server_fd, NULL, NULL);
         if (fd < 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK)
-                break;  /* no more pending connections */
+                break;
             perror("accept(UNIX)");
             break;
         }
@@ -100,9 +92,6 @@ void uss_accept_clients(UnixSocketServer *server)
 
 int uss_broadcast(UnixSocketServer *server, const char *message)
 {
-    /* Scoop up any clients that connected since the last call */
-    uss_accept_clients(server);
-
     size_t len = strlen(message);
     int sent   = 0;
 
@@ -110,11 +99,9 @@ int uss_broadcast(UnixSocketServer *server, const char *message)
         ssize_t n = send(server->client_fds[i], message, len, MSG_NOSIGNAL);
 
         if (n < 0) {
-            /* Client gone — close and swap with last element */
             printf("UNIX client disconnected (fd=%d)\n", server->client_fds[i]);
             close(server->client_fds[i]);
             server->client_fds[i] = server->client_fds[--server->num_clients];
-            /* don't increment i — re-check swapped element */
         } else {
             sent++;
             i++;

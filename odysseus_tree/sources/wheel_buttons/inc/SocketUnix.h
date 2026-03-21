@@ -13,13 +13,13 @@ typedef struct {
     struct sockaddr_un addr;
 } UnixSocketServer;
 
-/** Create and bind the server socket. */
+/** Create, bind, and listen (non-blocking). */
 int  uss_init(UnixSocketServer *server, const char *socket_path);
 
-/** Close all clients and the server socket, unlink the file. */
+/** Close all fds, unlink the socket file. */
 void uss_shutdown(UnixSocketServer *server);
 
-/** Non-blocking accept — call once per main-loop iteration. */
+/** Non-blocking accept — picks up any pending clients. */
 void uss_accept_clients(UnixSocketServer *server);
 
 /** Send a message to all connected clients. Returns how many received it. */

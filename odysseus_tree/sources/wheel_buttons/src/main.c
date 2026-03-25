@@ -106,11 +106,11 @@ int main(void)
 
             can_send(can, btn, pressed);
             printf("[CAN ] 0x%03X [%u %d] %-14s %s\n",
-                   CAN_ID, btn->index, pressed, btn->name, state);
+                   CAN_ID, btn->index, btn->name, state);
 
             if (unix_ok) {
                 char msg[64];
-                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index, state);
+                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index);
                 uss_send(&unix_tx, msg);
             }
         }

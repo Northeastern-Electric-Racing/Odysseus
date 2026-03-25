@@ -26,9 +26,9 @@ void uss_shutdown(UnixSender *s)
     s->fd = -1;
 }
 
-int uss_send(UnixSender *s, const char *msg)
+int uss_send(UnixSender *s, const char *msg, const size_t msg_len)
 {
-    ssize_t n = sendto(s->fd, msg, strlen(msg), MSG_NOSIGNAL,
+    ssize_t n = sendto(s->fd, msg, msg_len, MSG_NOSIGNAL,
                        (struct sockaddr *)&s->dest,
                        sizeof(s->dest));
     if (n < 0 && errno != ENOENT && errno != ECONNREFUSED)

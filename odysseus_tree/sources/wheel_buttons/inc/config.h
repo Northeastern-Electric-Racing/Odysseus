@@ -2,7 +2,7 @@
 #define NER_CONFIG_H
 
 #define CHIP_PATH       "/dev/gpiochip0"
-#define DEBOUNCE_US     10000
+#define DEBOUNCE_US     100
 
 #define CAN_INTERFACE   "can0"
 #define CAN_ID          0x680

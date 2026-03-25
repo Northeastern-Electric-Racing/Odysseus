@@ -19,7 +19,6 @@
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 static struct gpiod_line_request *request_buttons(unsigned int *offsets,
@@ -39,8 +38,8 @@ static struct gpiod_line_request *request_buttons(unsigned int *offsets,
     if (!set || !lcfg || !rcfg) goto out;
 
     gpiod_line_settings_set_direction(set, GPIOD_LINE_DIRECTION_INPUT);
-    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_BOTH);
-    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_UP);
+    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_RISING);
+    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_DOWN);
     gpiod_line_settings_set_debounce_period_us(set, DEBOUNCE_US);
 
     if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set))
@@ -66,7 +65,7 @@ int main(void)
     if (can < 0) return EXIT_FAILURE;
 
     UnixSender unix_tx;
-    int unix_ok = (uss_init(&unix_tx, UNIX_SOCK_PATH) == 0);
+    uss_init(&unix_tx, UNIX_SOCK_PATH);
 
     struct gpiod_line_request *req = request_buttons(gpios, NUM_BUTTONS);
     if (!req) { fprintf(stderr, "GPIO request failed\n"); return EXIT_FAILURE; }
@@ -96,29 +95,21 @@ int main(void)
             struct gpiod_edge_event *ev =
                 gpiod_edge_event_buffer_get_event(buf, i);
             unsigned int gpio = gpiod_edge_event_get_line_offset(ev);
-            int pressed = gpiod_edge_event_get_event_type(ev)
-                          == GPIOD_EDGE_EVENT_FALLING_EDGE;
 
             const ButtonMapping *btn = button_map_find(gpio);
             if (!btn) continue;
 
-            const char *state = pressed ? "PRESSED" : "RELEASED";
+            can_send(can, btn);
+            printf("[CAN ] 0x%03X [%u %s] \n",
+                   CAN_ID, btn->index, btn->name);
 
-            can_send(can, btn, pressed);
-            printf("[CAN ] 0x%03X [%u %d] %-14s %s\n",
-                   CAN_ID, btn->index, pressed, btn->name, state);
-
-            if (unix_ok) {
-                char msg[64];
-                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index, state);
-                uss_send(&unix_tx, msg);
-            }
+            uss_send(&unix_tx, &btn->index, sizeof(btn->index));
         }
     }
 
     gpiod_edge_event_buffer_free(buf);
     gpiod_line_request_release(req);
-    if (unix_ok) uss_shutdown(&unix_tx);
+    uss_shutdown(&unix_tx);
     close(can);
     return 0;
 }

@@ -11,6 +11,6 @@ typedef struct {
 /** Create a DGRAM socket aimed at dest_path. Fire-and-forget. */
 int  uss_init(UnixSender *s, const char *dest_path);
 void uss_shutdown(UnixSender *s);
-int  uss_send(UnixSender *s, const char *msg);
+int  uss_send(UnixSender *s, const char *msg, const size_t msg_len);
 
 #endif

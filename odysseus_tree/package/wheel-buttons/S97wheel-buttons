@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PIDFILE=/var/run/wheel-buttons.pid
+PIDFILE=/var/run/wheel_buttons.pid
 EXECUTABLE=/usr/bin/wheel-buttons
 
 case "$1" in
@@ -10,7 +10,7 @@ case "$1" in
     start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
     ;;
   stop)
-    echo "Stopping tpu telemetry..."
+    echo "Stopping wheel buttons..."
     # stop (K) and remove pidfile
     start-stop-daemon -K -p "$PIDFILE"
     rm "$PIDFILE"

@@ -7,7 +7,7 @@
 #define CAN_INTERFACE   "can0"
 #define CAN_ID          0x680
 
-#define UNIX_SOCK_PATH  "/tmp/wheel_buttons_socket"
+#define UNIX_SOCK_PATH  "/var/run/wheel_buttons.sock"
 
 #define NUM_BUTTONS     10
 

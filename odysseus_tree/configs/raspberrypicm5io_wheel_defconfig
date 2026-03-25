@@ -12,7 +12,7 @@ BR2_TARGET_GENERIC_ROOT_PASSWD="$(ODY_WHEEL_ROOT_PASSWORD)"
 # BR2_TARGET_GENERIC_GETTY is not set
 BR2_TARGET_TZ_INFO=y
 BR2_TARGET_LOCALTIME="America/New_York"
-BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_common $(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_odyssey_common $(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_wheel"
+BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_common $(BR2_EXTERNAL_ODY_TREE_PATH)/overlays/rootfs_overlay_wheel"
 BR2_ROOTFS_POST_BUILD_SCRIPT="$(BR2_EXTERNAL_ODY_TREE_PATH)/post-build-os-release.sh $(BR2_EXTERNAL_ODY_TREE_PATH)/post-build-base-connect.sh board/raspberrypicm5io/post-build.sh"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypicm5io/post-image.sh"
 BR2_ROOTFS_POST_SCRIPT_ARGS="WHEEL"

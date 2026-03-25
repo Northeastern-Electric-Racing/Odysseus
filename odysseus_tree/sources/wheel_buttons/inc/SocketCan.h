@@ -2,6 +2,7 @@
 #define NER_SOCKETCAN_H
 
 #include "config.h"
+#include <stddef.h>
 #include <stdint.h>
 
 /**

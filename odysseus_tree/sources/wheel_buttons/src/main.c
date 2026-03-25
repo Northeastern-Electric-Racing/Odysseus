@@ -39,8 +39,8 @@ static struct gpiod_line_request *request_buttons(unsigned int *offsets,
     if (!set || !lcfg || !rcfg) goto out;
 
     gpiod_line_settings_set_direction(set, GPIOD_LINE_DIRECTION_INPUT);
-    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_BOTH);
-    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_UP);
+    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_RISING);
+    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_DOWN);
     gpiod_line_settings_set_debounce_period_us(set, DEBOUNCE_US);
 
     if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set))

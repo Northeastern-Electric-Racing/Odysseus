@@ -1,18 +1,14 @@
 #ifndef NER_CONFIG_H
 #define NER_CONFIG_H
 
-/* ── GPIO ──────────────────────────────────────────────────────── */
-#define CHIP_PATH           "/dev/gpiochip0"   /*  /dev/gpiochip0 on Pi 4    /dev/gpiochip4 on Pi 5 */
-#define DEBOUNCE_US         10000              /* 10 ms debounce */
+#define CHIP_PATH       "/dev/gpiochip0"
+#define DEBOUNCE_US     10000
 
-/* ── CAN ───────────────────────────────────────────────────────── */
-#define CAN_INTERFACE       "can0"
-#define CAN_BASE_ID         0x100
+#define CAN_INTERFACE   "can0"
+#define CAN_ID          0x100
 
-/* ── Unix Socket ───────────────────────────────────────────────── */
-#define UNIX_SOCK_PATH      "/tmp/wheel_buttons_socket"
+#define UNIX_SOCK_PATH  "/tmp/wheel_buttons_socket"
 
-/* ── Buttons ───────────────────────────────────────────────────── */
-#define NUM_BUTTONS         10
+#define NUM_BUTTONS     10
 
 #endif

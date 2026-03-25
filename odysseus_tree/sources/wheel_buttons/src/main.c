@@ -1,25 +1,13 @@
 /**
- * @brief Main loop — monitors all steering wheel GPIO buttons,
- *        sends CAN frames and broadcasts Unix socket messages
- *        to any connected clients.
+ * Build:  gcc -o wheel_buttons main.c SocketCan.c SocketUnix.c -lgpiod
  *
- *        poll() watches ONLY the GPIO fd so button presses are
- *        never blocked by socket activity.  Unix clients are
- *        accepted lazily inside uss_broadcast().
- *
- * Build:
- *   gcc -o wheel_buttons main.c SocketCan.c SocketUnix.c -lgpiod
- *
- * Setup (vcan for testing):
+ * vcan setup:
  *   sudo modprobe vcan
  *   sudo ip link add dev vcan0 type vcan
  *   sudo ip link set up vcan0
  *
- * Monitor CAN:
- *   candump vcan0
- *
- * Monitor Unix socket:
- *   socat - UNIX-CONNECT:/tmp/wheel_buttons_socket
+ * Monitor CAN:   candump vcan0
+ * Monitor UNIX:  socat UNIX-RECVFROM:/tmp/wheel_buttons_socket,fork -
  */
 
 #include "config.h"
@@ -34,191 +22,103 @@
 #include <string.h>
 #include <unistd.h>
 
-#define EVENT_BUF_SIZE  NUM_BUTTONS
-
-/* ── GPIO helpers ──────────────────────────────────────────────── */
-
-static struct gpiod_line_request *request_button_lines(unsigned int *offsets,
-                                                       unsigned int num_lines)
+static struct gpiod_line_request *request_buttons(unsigned int *offsets,
+                                                  unsigned int n)
 {
-    struct gpiod_request_config *req_cfg = NULL;
-    struct gpiod_line_request *request   = NULL;
-    struct gpiod_line_settings *settings = NULL;
-    struct gpiod_line_config *line_cfg   = NULL;
-    struct gpiod_chip *chip              = NULL;
-    int ret;
+    struct gpiod_chip *chip           = gpiod_chip_open(CHIP_PATH);
+    struct gpiod_line_settings *set   = NULL;
+    struct gpiod_line_config *lcfg    = NULL;
+    struct gpiod_request_config *rcfg = NULL;
+    struct gpiod_line_request *req    = NULL;
 
-    chip = gpiod_chip_open(CHIP_PATH);
-    if (!chip) {
-        perror("gpiod_chip_open");
-        return NULL;
-    }
+    if (!chip) { perror("gpiod_chip_open"); return NULL; }
 
-    settings = gpiod_line_settings_new();
-    if (!settings) goto out;
+    set  = gpiod_line_settings_new();
+    lcfg = gpiod_line_config_new();
+    rcfg = gpiod_request_config_new();
+    if (!set || !lcfg || !rcfg) goto out;
 
-    gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_INPUT);
-    gpiod_line_settings_set_edge_detection(settings, GPIOD_LINE_EDGE_BOTH);
-    gpiod_line_settings_set_bias(settings, GPIOD_LINE_BIAS_PULL_UP);
-    gpiod_line_settings_set_debounce_period_us(settings, DEBOUNCE_US);
+    gpiod_line_settings_set_direction(set, GPIOD_LINE_DIRECTION_INPUT);
+    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_BOTH);
+    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_UP);
+    gpiod_line_settings_set_debounce_period_us(set, DEBOUNCE_US);
 
-    line_cfg = gpiod_line_config_new();
-    if (!line_cfg) goto out;
+    if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set))
+        goto out;
 
-    ret = gpiod_line_config_add_line_settings(line_cfg, offsets, num_lines, settings);
-    if (ret) goto out;
-
-    req_cfg = gpiod_request_config_new();
-    if (!req_cfg) goto out;
-    gpiod_request_config_set_consumer(req_cfg, "wheel-buttons");
-
-    request = gpiod_chip_request_lines(chip, req_cfg, line_cfg);
+    gpiod_request_config_set_consumer(rcfg, "wheel-buttons");
+    req = gpiod_chip_request_lines(chip, rcfg, lcfg);
 
 out:
-    gpiod_request_config_free(req_cfg);
-    gpiod_line_config_free(line_cfg);
-    gpiod_line_settings_free(settings);
+    gpiod_request_config_free(rcfg);
+    gpiod_line_config_free(lcfg);
+    gpiod_line_settings_free(set);
     gpiod_chip_close(chip);
-    return request;
+    return req;
 }
-
-static int is_pressed(struct gpiod_edge_event *event)
-{
-    return gpiod_edge_event_get_event_type(event) == GPIOD_EDGE_EVENT_FALLING_EDGE;
-}
-
-/* ── Format + broadcast a button event over Unix socket ────────── */
-
-static void broadcast_button_event(UnixSocketServer *server,
-                                   const ButtonMapping *btn,
-                                   int pressed)
-{
-    char msg[128];
-    snprintf(msg, sizeof(msg), "BTN:%s:%s\n",
-             btn->name,
-             pressed ? "PRESSED" : "RELEASED");
-
-    int n = uss_broadcast(server, msg);
-    printf("[UNIX] %-14s %-8s  -> %d client(s)\n",
-           btn->name,
-           pressed ? "PRESSED" : "RELEASED",
-           n);
-}
-
-/* ── Main ─────────────────────────────────────────────────────── */
 
 int main(void)
 {
-    struct gpiod_edge_event_buffer *event_buffer = NULL;
-    struct gpiod_line_request *gpio_request      = NULL;
-    UnixSocketServer unix_server;
-    int can_socket = -1;
-    int unix_ok    = 0;
-    int ret;
+    unsigned int gpios[NUM_BUTTONS];
+    button_map_get_gpios(gpios);
 
-    unsigned int gpio_pins[NUM_BUTTONS];
-    button_map_get_gpios(gpio_pins);
+    int can = can_init(CAN_INTERFACE);
+    if (can < 0) return EXIT_FAILURE;
 
-    printf("=== Wheel Button Controller ===\n");
-    printf("GPIO chip     : %s\n", CHIP_PATH);
-    printf("CAN interface : %s\n", CAN_INTERFACE);
-    printf("UNIX socket   : %s\n", UNIX_SOCK_PATH);
-    printf("Buttons       : %d\n\n", NUM_BUTTONS);
+    UnixSender unix_tx;
+    int unix_ok = (uss_init(&unix_tx, UNIX_SOCK_PATH) == 0);
 
-    /* ── Init CAN ─────────────────────────────────────────────── */
-    can_socket = can_init(CAN_INTERFACE);
-    if (can_socket < 0) {
-        fprintf(stderr, "CAN init failed. Make sure the interface is up:\n"
-                "  sudo ip link add dev %s type vcan && sudo ip link set up %s\n",
-                CAN_INTERFACE, CAN_INTERFACE);
-        return EXIT_FAILURE;
-    }
-    printf("CAN socket ready.\n");
+    struct gpiod_line_request *req = request_buttons(gpios, NUM_BUTTONS);
+    if (!req) { fprintf(stderr, "GPIO request failed\n"); return EXIT_FAILURE; }
 
-    /* ── Init Unix socket server ──────────────────────────────── */
-    if (uss_init(&unix_server, UNIX_SOCK_PATH) == 0) {
-        unix_ok = 1;
-    } else {
-        fprintf(stderr, "UNIX socket server failed to start, CAN-only mode.\n");
-    }
+    struct gpiod_edge_event_buffer *buf =
+        gpiod_edge_event_buffer_new(NUM_BUTTONS);
+    if (!buf) { fprintf(stderr, "Event buffer alloc failed\n"); return EXIT_FAILURE; }
 
-    /* ── Request GPIO lines ───────────────────────────────────── */
-    gpio_request = request_button_lines(gpio_pins, NUM_BUTTONS);
-    if (!gpio_request) {
-        fprintf(stderr, "Failed to request GPIO lines: %s\n", strerror(errno));
-        ret = EXIT_FAILURE;
-        goto cleanup;
-    }
-    printf("GPIO lines acquired.\n");
+    struct pollfd pfd = {
+        .fd     = gpiod_line_request_get_fd(req),
+        .events = POLLIN
+    };
 
-    event_buffer = gpiod_edge_event_buffer_new(EVENT_BUF_SIZE);
-    if (!event_buffer) {
-        fprintf(stderr, "Failed to create event buffer: %s\n", strerror(errno));
-        ret = EXIT_FAILURE;
-        goto cleanup;
-    }
-
-    /* ── Poll ONLY the GPIO fd ────────────────────────────────── */
-    struct pollfd pfd;
-    pfd.fd     = gpiod_line_request_get_fd(gpio_request);
-    pfd.events = POLLIN;
-
-    printf("\nMonitoring %d buttons — Ctrl+C to exit\n", NUM_BUTTONS);
-    if (unix_ok)
-        printf("Clients can connect with: socat - UNIX-CONNECT:%s\n\n",
-               UNIX_SOCK_PATH);
+    printf("Monitoring %d buttons — Ctrl+C to exit\n", NUM_BUTTONS);
 
     for (;;) {
-        ret = poll(&pfd, 1, -1);
-        if (ret < 0) {
+        if (poll(&pfd, 1, -1) < 0) {
             if (errno == EINTR) continue;
-            perror("poll");
-            break;
+            perror("poll"); break;
         }
+        if (!(pfd.revents & POLLIN)) continue;
 
-        if (!(pfd.revents & POLLIN))
-            continue;
+        int n = gpiod_line_request_read_edge_events(req, buf, NUM_BUTTONS);
+        if (n < 0) { perror("read_edge_events"); break; }
 
-        int nevents = gpiod_line_request_read_edge_events(gpio_request,
-                                                          event_buffer,
-                                                          EVENT_BUF_SIZE);
-        if (nevents < 0) {
-            perror("gpiod_line_request_read_edge_events");
-            break;
-        }
-
-        for (int i = 0; i < nevents; i++) {
+        for (int i = 0; i < n; i++) {
             struct gpiod_edge_event *ev =
-                gpiod_edge_event_buffer_get_event(event_buffer, i);
-
+                gpiod_edge_event_buffer_get_event(buf, i);
             unsigned int gpio = gpiod_edge_event_get_line_offset(ev);
-            int pressed       = is_pressed(ev);
+            int pressed = gpiod_edge_event_get_event_type(ev)
+                          == GPIOD_EDGE_EVENT_FALLING_EDGE;
 
             const ButtonMapping *btn = button_map_find(gpio);
-            if (!btn) {
-                fprintf(stderr, "Unexpected GPIO %u event, skipping.\n", gpio);
-                continue;
-            }
+            if (!btn) continue;
 
-            if (can_send_button_event(can_socket, btn, pressed) == 0) {
-                printf("[CAN ] 0x%03X  %-14s %s  [%02X %02X]\n",
-                       btn->can_id, btn->name,
-                       pressed ? "PRESSED " : "RELEASED",
-                       btn->gpio, pressed);
-            }
+            const char *state = pressed ? "PRESSED" : "RELEASED";
 
-            if (unix_ok)
-                broadcast_button_event(&unix_server, btn, pressed);
+            can_send(can, btn, pressed);
+            printf("[CAN ] 0x%03X [%u %d] %-14s %s\n",
+                   CAN_ID, btn->index, pressed, btn->name, state);
+
+            if (unix_ok) {
+                char msg[64];
+                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index, state);
+                uss_send(&unix_tx, msg);
+            }
         }
     }
 
-    ret = EXIT_SUCCESS;
-
-cleanup:
-    if (event_buffer)    gpiod_edge_event_buffer_free(event_buffer);
-    if (gpio_request)    gpiod_line_request_release(gpio_request);
-    if (unix_ok)         uss_shutdown(&unix_server);
-    if (can_socket >= 0) close(can_socket);
-
-    return ret;
+    gpiod_edge_event_buffer_free(buf);
+    gpiod_line_request_release(req);
+    if (unix_ok) uss_shutdown(&unix_tx);
+    close(can);
+    return 0;
 }

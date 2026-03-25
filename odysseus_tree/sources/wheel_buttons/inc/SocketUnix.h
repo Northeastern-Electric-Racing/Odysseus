@@ -1,25 +1,16 @@
-#ifndef SOCKETUNIX_H
-#define SOCKETUNIX_H
+#ifndef NER_SOCKETUNIX_H
+#define NER_SOCKETUNIX_H
 
-#include <sys/socket.h>
 #include <sys/un.h>
 
-#define MAX_CLIENTS 8
-
 typedef struct {
-    int server_fd;
-    int client_fds[MAX_CLIENTS];
-    int num_clients;
-    struct sockaddr_un addr;
-} UnixSocketServer;
+    int fd;
+    struct sockaddr_un dest;
+} UnixSender;
 
-/** Create, bind, and listen (non-blocking). */
-int  uss_init(UnixSocketServer *server, const char *socket_path);
-
-/** Close all fds, unlink the socket file. */
-void uss_shutdown(UnixSocketServer *server);
-
-/** Accept pending clients, then send message to all. Returns how many received it. */
-int  uss_broadcast(UnixSocketServer *server, const char *message);
+/** Create a DGRAM socket aimed at dest_path. Fire-and-forget. */
+int  uss_init(UnixSender *s, const char *dest_path);
+void uss_shutdown(UnixSender *s);
+int  uss_send(UnixSender *s, const char *msg);
 
 #endif

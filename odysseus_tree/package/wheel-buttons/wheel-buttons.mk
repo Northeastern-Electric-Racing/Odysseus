@@ -4,4 +4,9 @@ WHEEL_BUTTONS_SITE_METHOD = local
 WHEEL_BUTTONS_CMAKE_BACKEND = ninja
 
 WHEEL_BUTTONS_DEPENDENCIES += libgpiod2
+
+define WHEEL_BUTTONS_INSTALL_INIT_SYSV
+    $(INSTALL) -D -m 0755 $(TPU_TELEMETRY_PKGDIR)/S97wheel-buttons $(TARGET_DIR)/etc/init.d/S97wheel-buttons
+endef
+
 $(eval $(cmake-package))

@@ -19,8 +19,9 @@
  *  9     |   5  |  8    | Up (torque)
  * 10     |   7  |  9    | Down (torque)
  *
- * CAN frame (all buttons use CAN_ID):
+ * CAN frame (all buttons use CAN_ID 0x100):
  *   data[0] = button index (0-9)
+ *   data[1] = 1 pressed, 0 released
  */
 
 typedef struct {

@@ -39,8 +39,8 @@ static struct gpiod_line_request *request_buttons(unsigned int *offsets,
     if (!set || !lcfg || !rcfg) goto out;
 
     gpiod_line_settings_set_direction(set, GPIOD_LINE_DIRECTION_INPUT);
-    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_RISING);
-    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_DOWN);
+    gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_BOTH);
+    gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_UP);
     gpiod_line_settings_set_debounce_period_us(set, DEBOUNCE_US);
 
     if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set))
@@ -106,11 +106,11 @@ int main(void)
 
             can_send(can, btn, pressed);
             printf("[CAN ] 0x%03X [%u %d] %-14s %s\n",
-                   CAN_ID, btn->index, btn->name, state);
+                   CAN_ID, btn->index, pressed, btn->name, state);
 
             if (unix_ok) {
                 char msg[64];
-                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index);
+                snprintf(msg, sizeof(msg), "BTN:%u:%s\n", btn->index, state);
                 uss_send(&unix_tx, msg);
             }
         }

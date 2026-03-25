@@ -19,9 +19,8 @@
  *  9     |   5  |  8    | Up (torque)
  * 10     |   7  |  9    | Down (torque)
  *
- * CAN frame (all buttons use CAN_ID 0x100):
+ * CAN frame (all buttons use CAN_ID):
  *   data[0] = button index (0-9)
- *   data[1] = 1 pressed, 0 released
  */
 
 typedef struct {
@@ -58,6 +57,6 @@ static inline void button_map_get_gpios(unsigned int *out)
 }
 
 int can_init(const char *ifname);
-int can_send(int sock, const ButtonMapping *btn, int pressed);
+int can_send(int sock, const ButtonMapping *btn);
 
 #endif

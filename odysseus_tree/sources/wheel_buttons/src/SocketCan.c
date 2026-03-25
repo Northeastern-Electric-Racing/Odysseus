@@ -30,12 +30,12 @@ int can_init(const char *ifname)
     return s;
 }
 
-int can_send(int sock, const ButtonMapping *btn, int pressed)
+int can_send(int sock, const ButtonMapping *btn)
 {
     struct can_frame frame = {
         .can_id  = CAN_ID,
-        .can_dlc = 2,
-        .data    = { btn->index, pressed ? 1 : 0 },
+        .can_dlc = 1,
+        .data    = { btn->index },
     };
 
     if (write(sock, &frame, sizeof(frame)) != sizeof(frame)) {

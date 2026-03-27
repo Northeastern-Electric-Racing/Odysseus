@@ -1,0 +1,39 @@
+From 1ac663c2f62a2c88ced004d961885019ab2e304b Mon Sep 17 00:00:00 2001
+From: Jack Rubacha <rubacha.jack03@gmail.com>
+Date: Tue, 20 May 2025 14:30:33 -0400
+Subject: [PATCH] Fix the netlink ptr for kernel v6.6+ compilation
+
+Signed-off-by: Jack Rubacha <rubacha.jack03@gmail.com>
+---
+ package/src/nrc/nrc-netlink.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/package/src/nrc/nrc-netlink.c b/package/src/nrc/nrc-netlink.c
+index 9c75a52..fe8cefb 100644
+--- a/package/src/nrc/nrc-netlink.c
++++ b/package/src/nrc/nrc-netlink.c
+@@ -31,8 +31,8 @@ static struct nrc *nrc_nw;
+ 
+ 
+ #ifdef CONFIG_SUPPORT_NEW_NETLINK
+-static int nrc_nl_pre_doit(const struct genl_ops *ops,
+-			   struct sk_buff *skb, struct genl_info *info)
++static int nrc_nl_pre_doit(const struct genl_split_ops *ops,
++		struct sk_buff *skb, struct genl_info *info)
+ #else
+ static int nrc_nl_pre_doit(struct genl_ops *ops,
+ 			   struct sk_buff *skb, struct genl_info *info)
+@@ -42,8 +42,8 @@ static int nrc_nl_pre_doit(struct genl_ops *ops,
+ }
+ 
+ #ifdef CONFIG_SUPPORT_NEW_NETLINK
+-static void nrc_nl_post_doit(const struct genl_ops *ops,
+-			     struct sk_buff *skb, struct genl_info *info)
++static void nrc_nl_post_doit(const struct genl_split_ops *ops,
++		struct sk_buff *skb, struct genl_info *info)
+ #else
+ static void nrc_nl_post_doit(struct genl_ops *ops,
+ 			     struct sk_buff *skb, struct genl_info *info)
+-- 
+2.53.0
+

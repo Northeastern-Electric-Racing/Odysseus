@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 1: The name of the device ("wheel","iroh", or "tpu")
-# 2: The name of the package to update ("calypso", "odysseus-daemon", or "nero")
+# 1: The name of the device ("wheel","iroh","tpu", "tpu-cm5", "ap-pi5")
+# 2: The name of the package to update ("calypso", "odysseus-daemon", "nero", or "wheel_buttons")
 # 3: The root password of the device
 # 4: The commit sha (only if calypso or odysseus-daemon)
 
@@ -11,8 +11,14 @@ if [ "$1" == "wheel" ]; then
    def_path="wheel-cm5"
    ip_addr="192.168.100.14"
 elif [ "$1" == "tpu" ]; then
-   def_path="tpu-cm5"
+   def_path="tpu"
    ip_addr="192.168.100.12"
+elif [ "$1" == "tpu-cm5" ]; then
+   def_path="tpu-cm5"  
+   ip_addr="192.168.100.12"
+elif [ "$1" == "ap-pi5" ]; then
+   def_path="ap-pi5"  
+   ip_addr="192.168.100.11"
 elif [ "$1" == "iroh" ]; then
    def_path="iroh"
    ip_addr="192.168.100.13"
@@ -44,7 +50,7 @@ if [ "$2" == "calypso" ]; then
    sed -i "1 s/.*/CALYPSO_VERSION = $4/" ./odysseus_tree/package/calypso/calypso.mk
    update_pkg_br "calypso"
    refresh_local "$3" "S76calypso" "./outputs/$def_path/per-package/calypso/target/usr/bin/calypso" "/usr/bin/calypso"
-   sshpass -p "$2" scp "./outputs/$def_path/per-package/calypso/target/usr/bin/nerimd" "root@192.168.100.12:/usr/bin/nerimd"
+   sshpass -p "$2" scp "./outputs/$def_path/per-package/calypso/target/usr/bin/nerimd" "root@$ip_addr:/usr/bin/nerimd"
 elif [ "$2" == "odysseus-daemon" ]; then
    echo "Updating odysseus-daemon"
    sed -i "1 s/.*/ODYSSEUS_DAEMON_VERSION = $4/" ./odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk
@@ -56,6 +62,10 @@ elif [ "$2" == "nero" ]; then
    echo "Updating NERO"
    update_pkg_br "nero2"
    refresh_local "$3" "S99nero2" "./outputs/$def_path/per-package/nero2/target/usr/bin/NEROApp" "/usr/bin/NEROApp"
+elif [ "$2" == "wheel_buttons" ]; then
+   echo "Updating wheel_buttons"
+   update_pkg_br "wheel-buttons"
+   refresh_local "$3" "S97wheel-buttons" "./outputs/$def_path/per-package/wheel-buttons/target/usr/bin/wheel_buttons" "/usr/bin/wheel_buttons"
 else
    echo "Not a valid project to update"
 fi

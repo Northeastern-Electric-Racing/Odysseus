@@ -1,4 +1,4 @@
-NRC_CLI_VERSION = v1.5
+NRC_CLI_VERSION = v1.5.2
 NRC_CLI_SITE = https://github.com/newracom/nrc7292_sw_pkg
 NRC_CLI_SITE_METHOD = git
 NRC_CLI_LICENSE = Proprietary

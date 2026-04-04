@@ -9,7 +9,7 @@ case "$1" in
     echo "Starting odysseus_daemon..."
     # start (S) executable (x) in background (b), make pid file (m) at p
     mkdir /root/data
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --scylla-url 192.168.100.11:8000 -f /root/data --net --net-ifaces br0 --halow
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -f /root/data --net --net-ifaces br0 --halow --base-node "AP"
     ;;
   stop)
     echo "Stopping odysseus_daemon..."

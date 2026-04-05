@@ -18,3 +18,6 @@ SECRETS.env-example
 **/*SECRETS.env*
 /.idea
 .img
+
+# rs
+target

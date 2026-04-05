@@ -9,6 +9,8 @@
 odysseus/outputs/**
 outputs/**
 
+**/.build/
+
 # for passwords
 SECRETS.env
 SECRETS.env-example

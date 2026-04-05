@@ -1,3 +1,0 @@
-protobuf
-psutil
-gmqtt

@@ -1,0 +1,22 @@
+diff --git a/package/src/cli_app/cli_cmd.c b/package/src/cli_app/cli_cmd.c
+index e9a914f..ac01b56 100644
+--- a/package/src/cli_app/cli_cmd.c
++++ b/package/src/cli_app/cli_cmd.c
+@@ -165,7 +165,7 @@ static int cmd_gpio_pullup(cmd_tbl_t *t, int argc, char *argv[]);
+ /*******************************************************************************
+ * function for periodic show signal command
+ *******************************************************************************/
+-void *showRxThreadRun();
++void *showRxThreadRun(cmd_tbl_t *t);
+ 
+ /*******************************************************************************
+ * defines
+@@ -933,7 +933,7 @@ static int cmd_show_signal(cmd_tbl_t *t, int argc, char *argv[])
+ 					show_signal_try_number = 0; /* 0 means infinite */
+ 				}
+ 
+-				threadErr = pthread_create(&showRxThread,NULL,showRxThreadRun,(cmd_tbl_t *)t);
++				threadErr = pthread_create(&showRxThread,NULL,(void *) showRxThreadRun,(cmd_tbl_t *)t);
+ 				if(threadErr){
+ 					printf("Thread Err = %d",threadErr);
+ 					ret = CMD_RET_FAILURE;

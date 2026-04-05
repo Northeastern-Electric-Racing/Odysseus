@@ -1,16 +1,18 @@
 #!/bin/sh
 
-PIDFILE=/var/run/tpu-telemetry.pid
-EXECUTABLE=/usr/bin/tpu-telemetry
+PIDFILE=/var/run/odysseus-daemon.pid
+EXECUTABLE=/usr/bin/odysseus-daemon
+
 
 case "$1" in
   start)
-    echo "Starting tpu telemetry..."
+    echo "Starting odysseus_daemon..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
+    mkdir /root/data
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -f /root/data --net --net-ifaces br0 --halow --base-node "AP"
     ;;
   stop)
-    echo "Stopping tpu telemetry..."
+    echo "Stopping odysseus_daemon..."
     # stop (K) and remove pidfile
     start-stop-daemon -K -p "$PIDFILE"
     rm "$PIDFILE"
@@ -23,4 +25,3 @@ case "$1" in
     echo "Usage: {start|stop|restart/reload}"
     exit 1
 esac
-

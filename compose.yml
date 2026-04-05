@@ -1,7 +1,7 @@
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:cm5
+        image: ghcr.io/northeastern-electric-racing/odysseus:develop-stability-and-improvements
         command: /bin/bash
         tty: true
         stdin_open: true

@@ -1,0 +1,12 @@
+[package]
+name = "odydeploy"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+
+[dependencies]
+clap = { version = "4.6.0", features = ["derive"] }
+russh = "0.60.0"
+russh-sftp = "2.1.1"
+serde = "1.0.228"
+tokio = { version = "1.51.0", features = ["full"] }

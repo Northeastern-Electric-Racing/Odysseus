@@ -37,8 +37,8 @@ RUN apt-get update && apt-get install -y \
 
 # add all buildroot files there
 WORKDIR /home/odysseus/build
-
-RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2026.05-rc1 && curl https://patchwork.ozlabs.org/series/460278/mbox/ | git apply
+COPY v4-0001-package-qt6-qt6grpc-new-package.patch .
+RUN  git clone https://gitlab.com/buildroot.org/buildroot.git && cd ./buildroot && git checkout 2026.05-rc1 && git apply ./v4-0001-package-qt6-qt6grpc-new-package.patch
 
 
 WORKDIR /home/odysseus/outputs/

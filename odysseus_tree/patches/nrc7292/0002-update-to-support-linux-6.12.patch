@@ -1,4 +1,4 @@
-From cba8f2de9b8e678bc70ec9e682bfa05fcae3d4f8 Mon Sep 17 00:00:00 2001
+From dae75af8794e6ebd52b92616cb026a41c41896c9 Mon Sep 17 00:00:00 2001
 From: Jack Rubacha <rubacha.jack03@gmail.com>
 Date: Thu, 14 May 2026 15:49:22 -0400
 Subject: [PATCH] update to support linux 6.12
@@ -6,16 +6,18 @@ Subject: [PATCH] update to support linux 6.12
 ---
  package/src/nrc/hif.c          | 10 +++++-----
  package/src/nrc/nrc-bd.c       |  4 ++--
+ package/src/nrc/nrc-debug.c    |  1 -
  package/src/nrc/nrc-dump.c     |  4 ----
  package/src/nrc/nrc-fw.c       |  2 +-
- package/src/nrc/nrc-hif-cspi.c |  4 ++--
+ package/src/nrc/nrc-hif-cspi.c | 11 ++++++-----
+ package/src/nrc/nrc-hif-cspi.h |  1 +
  package/src/nrc/nrc-init.c     |  2 +-
  package/src/nrc/nrc-mac80211.c | 23 ++++++++++++-----------
  package/src/nrc/nrc-mac80211.h |  2 +-
  package/src/nrc/nrc-trx.c      |  6 +++---
  package/src/nrc/nrc.mod        | 15 +++++++++++++++
  package/src/nrc/wim.c          | 14 +++++++-------
- 11 files changed, 49 insertions(+), 37 deletions(-)
+ 13 files changed, 54 insertions(+), 41 deletions(-)
  create mode 100644 package/src/nrc/nrc.mod
 
 diff --git a/package/src/nrc/hif.c b/package/src/nrc/hif.c
@@ -89,6 +91,18 @@ index 6c541c3..0bb1dd6 100644
  {
  	int i, j;
  	bool ret = false;
+diff --git a/package/src/nrc/nrc-debug.c b/package/src/nrc/nrc-debug.c
+index f6c097f..b9afa19 100644
+--- a/package/src/nrc/nrc-debug.c
++++ b/package/src/nrc/nrc-debug.c
+@@ -159,7 +159,6 @@ void nrc_dump_wim(struct sk_buff *skb)
+ }
+ 
+ #define CREDIT_QUEUE_MAX 12
+-extern void nrc_hif_cspi_read_credit(struct nrc_hif_device *hdev, int q, int *p_front, int *p_rear, int *p_credit); 
+ 
+ static int nrc_debugfs_txq_read(void *data, u64 *val)
+ {
 diff --git a/package/src/nrc/nrc-dump.c b/package/src/nrc/nrc-dump.c
 index a0624bc..c637ed5 100644
 --- a/package/src/nrc/nrc-dump.c
@@ -118,7 +132,7 @@ index 058115d..dc0a604 100644
  	struct fw_frag_hdr *frag_hdr = &priv->frag_hdr;
  
 diff --git a/package/src/nrc/nrc-hif-cspi.c b/package/src/nrc/nrc-hif-cspi.c
-index e7fd8fe..d4d9b62 100644
+index e7fd8fe..05a65f7 100644
 --- a/package/src/nrc/nrc-hif-cspi.c
 +++ b/package/src/nrc/nrc-hif-cspi.c
 @@ -22,7 +22,7 @@
@@ -130,7 +144,15 @@ index e7fd8fe..d4d9b62 100644
  #include <linux/smp.h>
  #ifdef CONFIG_SUPPORT_AFTER_KERNEL_3_0_36
  #include <linux/timekeeping.h>
-@@ -1372,7 +1372,7 @@ no_restart:
+@@ -33,6 +33,7 @@
+ #include "nrc-init.h"
+ #include "nrc-fw.h"
+ #include "nrc-hif.h"
++#include "nrc-hif-cspi.h"
+ #include "nrc-debug.h"
+ #include "nrc-vendor.h"
+ #include "nrc-mac80211.h"
+@@ -1372,7 +1373,7 @@ no_restart:
  						nw->vif[nw->d_deauth.vif_index] = NULL;
  						nw->enable_vif[nw->d_deauth.vif_index] = false;
  						atomic_set(&nw->d_deauth.delayed_deauth, 0);
@@ -139,6 +161,44 @@ index e7fd8fe..d4d9b62 100644
  					}
  					while (atomic_read(&nw->d_deauth.delayed_deauth)) {
  						atomic_set(&nw->d_deauth.delayed_deauth, 0);
+@@ -2027,7 +2028,7 @@ int spi_test(struct nrc_hif_device *hdev)
+ 	return 0;
+ }
+ 
+-void spi_wakeup(struct nrc_hif_device *hdev)
++static void spi_wakeup(struct nrc_hif_device *hdev)
+ {
+ 	struct nrc_spi_priv *priv = hdev->priv;
+ 	struct spi_device *spi = priv->spi;
+@@ -2334,7 +2335,7 @@ static void c_spi_config(struct nrc_spi_priv *priv)
+ 	c_spi_enable_irq(priv->spi, priv->spi->irq >= 0 ? true : false, CSPI_EIRQ_A_ENABLE);
+ }
+ 
+-int nrc_cspi_gpio_alloc(struct spi_device *spi)
++static int nrc_cspi_gpio_alloc(struct spi_device *spi)
+ {
+ #if defined(SPI_DBG)
+ 	/* Claim gpio used for debugging */
+@@ -2393,7 +2394,7 @@ err:
+ 	return -EINVAL;
+ }
+ 
+-void nrc_cspi_gpio_free(struct spi_device *spi)
++static void nrc_cspi_gpio_free(struct spi_device *spi)
+ {
+ 
+ #if defined(SPI_DBG)
+diff --git a/package/src/nrc/nrc-hif-cspi.h b/package/src/nrc/nrc-hif-cspi.h
+index 0c0fccd..2c7f5f3 100644
+--- a/package/src/nrc/nrc-hif-cspi.h
++++ b/package/src/nrc/nrc-hif-cspi.h
+@@ -19,5 +19,6 @@
+ 
+ struct nrc_hif_device *nrc_hif_cspi_init(void);
+ int nrc_hif_cspi_exit(struct nrc_hif_device *hdev);
++void nrc_hif_cspi_read_credit(struct nrc_hif_device *hdev, int q, int *p_front, int *p_rear, int *p_credit);
+ 
+ #endif
 diff --git a/package/src/nrc/nrc-init.c b/package/src/nrc/nrc-init.c
 index 013c080..c036bbf 100644
 --- a/package/src/nrc/nrc-init.c

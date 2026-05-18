@@ -1,24 +1,23 @@
-From dae75af8794e6ebd52b92616cb026a41c41896c9 Mon Sep 17 00:00:00 2001
+From 493ce666f718055eb3fa260d6534ae36c4b9a425 Mon Sep 17 00:00:00 2001
 From: Jack Rubacha <rubacha.jack03@gmail.com>
-Date: Thu, 14 May 2026 15:49:22 -0400
+Date: Mon, 18 May 2026 14:30:49 -0400
 Subject: [PATCH] update to support linux 6.12
 
 ---
- package/src/nrc/hif.c          | 10 +++++-----
- package/src/nrc/nrc-bd.c       |  4 ++--
- package/src/nrc/nrc-debug.c    |  1 -
- package/src/nrc/nrc-dump.c     |  4 ----
- package/src/nrc/nrc-fw.c       |  2 +-
- package/src/nrc/nrc-hif-cspi.c | 11 ++++++-----
- package/src/nrc/nrc-hif-cspi.h |  1 +
- package/src/nrc/nrc-init.c     |  2 +-
- package/src/nrc/nrc-mac80211.c | 23 ++++++++++++-----------
- package/src/nrc/nrc-mac80211.h |  2 +-
- package/src/nrc/nrc-trx.c      |  6 +++---
- package/src/nrc/nrc.mod        | 15 +++++++++++++++
- package/src/nrc/wim.c          | 14 +++++++-------
- 13 files changed, 54 insertions(+), 41 deletions(-)
- create mode 100644 package/src/nrc/nrc.mod
+ package/src/nrc/hif.c              | 10 +++++-----
+ package/src/nrc/nrc-bd.c           |  4 ++--
+ package/src/nrc/nrc-build-config.h |  4 ++--
+ package/src/nrc/nrc-debug.c        |  1 -
+ package/src/nrc/nrc-dump.c         |  4 ----
+ package/src/nrc/nrc-fw.c           |  2 +-
+ package/src/nrc/nrc-hif-cspi.c     | 11 ++++++-----
+ package/src/nrc/nrc-hif-cspi.h     |  1 +
+ package/src/nrc/nrc-init.c         |  2 +-
+ package/src/nrc/nrc-mac80211.c     | 25 ++++++++++++++-----------
+ package/src/nrc/nrc-mac80211.h     |  2 +-
+ package/src/nrc/nrc-trx.c          |  6 +++---
+ package/src/nrc/wim.c              | 14 +++++++-------
+ 13 files changed, 43 insertions(+), 43 deletions(-)
 
 diff --git a/package/src/nrc/hif.c b/package/src/nrc/hif.c
 index bf0e8a5..6a824b8 100644
@@ -91,6 +90,21 @@ index 6c541c3..0bb1dd6 100644
  {
  	int i, j;
  	bool ret = false;
+diff --git a/package/src/nrc/nrc-build-config.h b/package/src/nrc/nrc-build-config.h
+index b8991f5..c4af7ef 100644
+--- a/package/src/nrc/nrc-build-config.h
++++ b/package/src/nrc/nrc-build-config.h
+@@ -185,8 +185,8 @@
+ #define ieee80211_hw_check(hw, flg) (hw->flags & IEEE80211_HW_##flg)
+ #endif
+ 
+-#if defined(CONFIG_WIRELESS_WDS) || defined(CONFIG_USE_CHANNEL_CONTEXT)
+-/* Cannot use CONFIG_USE_CHANNEL_CONTEXT) */
++#if defined(CONFIG_WIRELESS_WDS)
++/* Cannot use CONFIG_USE_CHANNEL_CONTEXT with CONFIG_WIRELESS_WDS */
+ #undef CONFIG_USE_CHANNEL_CONTEXT
+ #endif
+ 
 diff --git a/package/src/nrc/nrc-debug.c b/package/src/nrc/nrc-debug.c
 index f6c097f..b9afa19 100644
 --- a/package/src/nrc/nrc-debug.c
@@ -213,7 +227,7 @@ index 013c080..c036bbf 100644
  	struct sk_buff *skb_req, *skb_resp;
  	struct wim_drv_info_param *p;
 diff --git a/package/src/nrc/nrc-mac80211.c b/package/src/nrc/nrc-mac80211.c
-index 8d5f8df..3a8ad98 100644
+index 8d5f8df..69cbfe8 100644
 --- a/package/src/nrc/nrc-mac80211.c
 +++ b/package/src/nrc/nrc-mac80211.c
 @@ -425,7 +425,7 @@ static void nrc_flush_txq(struct nrc *nw)
@@ -252,7 +266,23 @@ index 8d5f8df..3a8ad98 100644
  {
  #ifdef CONFIG_USE_CFG80211_SCAN_INFO
  	struct cfg80211_scan_info info = {
-@@ -3254,7 +3254,8 @@ static int nrc_pre_channel_switch(struct ieee80211_hw *hw,struct ieee80211_vif *
+@@ -3125,6 +3125,7 @@ static void nrc_mac_change_chanctx(struct ieee80211_hw *hw,
+ 
+ static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,
+ 		struct ieee80211_vif *vif,
++		struct ieee80211_bss_conf *link_conf,
+ 		struct ieee80211_chanctx_conf *ctx)
+ {
+ 	struct nrc *nw = hw->priv;
+@@ -3157,6 +3158,7 @@ static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,
+ 
+ static void nrc_mac_unassign_vif_chanctx(struct ieee80211_hw *hw,
+ 		struct ieee80211_vif *vif,
++		struct ieee80211_bss_conf *link_conf,
+ 		struct ieee80211_chanctx_conf *ctx)
+ {
+ 	nrc_mac_dbg("%s, vif[type:%d, addr:%pM] %d MHz/width: %d/cfreqs:%d/%d MHz\n",
+@@ -3254,7 +3256,8 @@ static int nrc_pre_channel_switch(struct ieee80211_hw *hw,struct ieee80211_vif *
  	return 0;
  }
  
@@ -262,7 +292,7 @@ index 8d5f8df..3a8ad98 100644
  {
  	nrc_dbg(NRC_DBG_STATE, "[%s, %d] Channel switch complete\n", __func__, __LINE__);
  	return 0;
-@@ -3278,7 +3279,7 @@ static struct wiphy_wowlan_support nrc_wowlan_support = {
+@@ -3278,7 +3281,7 @@ static struct wiphy_wowlan_support nrc_wowlan_support = {
  	.max_pkt_offset = 16,
  };
  
@@ -271,7 +301,7 @@ index 8d5f8df..3a8ad98 100644
  {
  	struct nrc *nw = hw->priv;
  	nw->wowlan_enabled = enabled;
-@@ -3286,7 +3287,7 @@ void nrc_mac_set_wakeup(struct ieee80211_hw *hw, bool enabled)
+@@ -3286,7 +3289,7 @@ void nrc_mac_set_wakeup(struct ieee80211_hw *hw, bool enabled)
  	return;
  }
  
@@ -280,7 +310,7 @@ index 8d5f8df..3a8ad98 100644
  {
  	struct nrc *nw = hw->priv;
  
-@@ -3303,7 +3304,7 @@ int nrc_mac_resume(struct ieee80211_hw *hw)
+@@ -3303,7 +3306,7 @@ int nrc_mac_resume(struct ieee80211_hw *hw)
  	return 0;
  }
  
@@ -289,7 +319,7 @@ index 8d5f8df..3a8ad98 100644
  {
  	struct nrc *nw = hw->priv;
  	struct sk_buff *skb;
-@@ -3732,14 +3733,14 @@ struct timer_list remotecmd_timer;
+@@ -3732,14 +3735,14 @@ struct timer_list remotecmd_timer;
  struct remotecmd_params remotecmd_params;
  
  #if KERNEL_VERSION(4, 15, 0) > NRC_TARGET_KERNEL_VERSION
@@ -306,7 +336,7 @@ index 8d5f8df..3a8ad98 100644
  {
  	struct wiphy *wiphy = remotecmd_params.wiphy;
  	struct wireless_dev *wdev = remotecmd_params.wdev;
-@@ -3748,7 +3749,7 @@ void remotecmd_callback(struct timer_list *t)
+@@ -3748,7 +3751,7 @@ void remotecmd_callback(struct timer_list *t)
  	nrc_vendor_cmd_remove(wiphy, wdev, subcmd);
  }
  
@@ -357,27 +387,6 @@ index 2466c67..de43614 100644
  
  	struct ieee80211_hdr *mh = (void *) skb->data;
  	bool is_multi = ((mh->addr1[0] & 0x01) != 0);
-diff --git a/package/src/nrc/nrc.mod b/package/src/nrc/nrc.mod
-new file mode 100644
-index 0000000..5d40f89
---- /dev/null
-+++ b/package/src/nrc/nrc.mod
-@@ -0,0 +1,15 @@
-+./nrc-mac80211.o
-+./nrc-trx.o
-+./nrc-init.o
-+./nrc-debug.o
-+./hif.o
-+./wim.o
-+./nrc-fw.o
-+./nrc-netlink.o
-+./nrc-hif-cspi.o
-+./mac80211-ext.o
-+./nrc-stats.o
-+./nrc-pm.o
-+./nrc-dump.o
-+./nrc-bd.o
-+./nrc-s1g.o
 diff --git a/package/src/nrc/wim.c b/package/src/nrc/wim.c
 index 3020f54..4141d9e 100644
 --- a/package/src/nrc/wim.c

@@ -1,23 +1,23 @@
-From 493ce666f718055eb3fa260d6534ae36c4b9a425 Mon Sep 17 00:00:00 2001
+From e18099740b2d92880c8ae82f45417866436ed051 Mon Sep 17 00:00:00 2001
 From: Jack Rubacha <rubacha.jack03@gmail.com>
-Date: Mon, 18 May 2026 14:30:49 -0400
+Date: Mon, 18 May 2026 15:39:34 -0400
 Subject: [PATCH] update to support linux 6.12
 
 ---
- package/src/nrc/hif.c              | 10 +++++-----
+ package/src/nrc/hif.c              | 10 ++++----
  package/src/nrc/nrc-bd.c           |  4 ++--
  package/src/nrc/nrc-build-config.h |  4 ++--
  package/src/nrc/nrc-debug.c        |  1 -
  package/src/nrc/nrc-dump.c         |  4 ----
  package/src/nrc/nrc-fw.c           |  2 +-
- package/src/nrc/nrc-hif-cspi.c     | 11 ++++++-----
+ package/src/nrc/nrc-hif-cspi.c     | 11 +++++----
  package/src/nrc/nrc-hif-cspi.h     |  1 +
  package/src/nrc/nrc-init.c         |  2 +-
- package/src/nrc/nrc-mac80211.c     | 25 ++++++++++++++-----------
+ package/src/nrc/nrc-mac80211.c     | 38 ++++++++++++++++++++----------
  package/src/nrc/nrc-mac80211.h     |  2 +-
- package/src/nrc/nrc-trx.c          |  6 +++---
- package/src/nrc/wim.c              | 14 +++++++-------
- 13 files changed, 43 insertions(+), 43 deletions(-)
+ package/src/nrc/nrc-trx.c          |  6 ++---
+ package/src/nrc/wim.c              | 14 +++++------
+ 13 files changed, 55 insertions(+), 44 deletions(-)
 
 diff --git a/package/src/nrc/hif.c b/package/src/nrc/hif.c
 index bf0e8a5..6a824b8 100644
@@ -227,7 +227,7 @@ index 013c080..c036bbf 100644
  	struct sk_buff *skb_req, *skb_resp;
  	struct wim_drv_info_param *p;
 diff --git a/package/src/nrc/nrc-mac80211.c b/package/src/nrc/nrc-mac80211.c
-index 8d5f8df..69cbfe8 100644
+index 8d5f8df..dbc193d 100644
 --- a/package/src/nrc/nrc-mac80211.c
 +++ b/package/src/nrc/nrc-mac80211.c
 @@ -425,7 +425,7 @@ static void nrc_flush_txq(struct nrc *nw)
@@ -257,7 +257,38 @@ index 8d5f8df..69cbfe8 100644
  {
  	switch (iftype) {
  	case NL80211_IFTYPE_UNSPECIFIED: return "UNSPECIFIED";
-@@ -2448,7 +2448,7 @@ static void change_scan_mode(struct nrc *nw, enum NRC_SCAN_MODE new_mode)
+@@ -1476,11 +1476,21 @@ static int nrc_mac_config(struct ieee80211_hw *hw, u32 changed)
+ #endif /* defined(CONFIG_SUPPORT_BD) */
+ #ifdef CONFIG_SUPPORT_CHANNEL_INFO
+ 	struct cfg80211_chan_def chandef = {0,};
++#else
++	struct ieee80211_conf chandef = {0,};
++#endif
++
++	/* With channel context ops in use, mac80211 leaves hw->conf.chandef.chan
++	 * NULL and surfaces the operating channel via chanctx callbacks instead.
++	 * Skip all channel handling in that case; only PS work below applies. */
++	if (!hw->conf.chandef.chan)
++		goto config_ps;
++
++#ifdef CONFIG_SUPPORT_CHANNEL_INFO
+ 	memcpy(&chandef, &hw->conf.chandef, sizeof(struct cfg80211_chan_def));
+ 	memcpy(&ch, hw->conf.chandef.chan, sizeof(struct ieee80211_channel));
+ 	chandef.chan = &ch;
+ #else
+-	struct ieee80211_conf chandef = {0,};
+ 	memcpy(&chandef, &hw->conf, sizeof(struct ieee80211_conf));
+ 	memcpy(&ch, hw->conf.channel, sizeof(struct ieee80211_channel));
+ 	chandef.channel = &ch;
+@@ -1562,6 +1572,7 @@ static int nrc_mac_config(struct ieee80211_hw *hw, u32 changed)
+ 		/* TODO: band (2G, 5G, etc) and bandwidth (20MHz, 40MHz, etc) */
+ 	}
+ 
++config_ps:
+ 	if (changed & IEEE80211_CONF_CHANGE_PS) {
+ 		nw->ps_enabled = (hw->conf.flags & IEEE80211_CONF_PS);
+ 		nw->ps_drv_state = nw->ps_enabled;
+@@ -2448,7 +2459,7 @@ static void change_scan_mode(struct nrc *nw, enum NRC_SCAN_MODE new_mode)
  	mutex_unlock(&nw->state_mtx);
  }
  
@@ -266,7 +297,7 @@ index 8d5f8df..69cbfe8 100644
  {
  #ifdef CONFIG_USE_CFG80211_SCAN_INFO
  	struct cfg80211_scan_info info = {
-@@ -3125,6 +3125,7 @@ static void nrc_mac_change_chanctx(struct ieee80211_hw *hw,
+@@ -3125,6 +3136,7 @@ static void nrc_mac_change_chanctx(struct ieee80211_hw *hw,
  
  static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,
  		struct ieee80211_vif *vif,
@@ -274,7 +305,7 @@ index 8d5f8df..69cbfe8 100644
  		struct ieee80211_chanctx_conf *ctx)
  {
  	struct nrc *nw = hw->priv;
-@@ -3157,6 +3158,7 @@ static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,
+@@ -3157,6 +3169,7 @@ static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,
  
  static void nrc_mac_unassign_vif_chanctx(struct ieee80211_hw *hw,
  		struct ieee80211_vif *vif,
@@ -282,7 +313,7 @@ index 8d5f8df..69cbfe8 100644
  		struct ieee80211_chanctx_conf *ctx)
  {
  	nrc_mac_dbg("%s, vif[type:%d, addr:%pM] %d MHz/width: %d/cfreqs:%d/%d MHz\n",
-@@ -3254,7 +3256,8 @@ static int nrc_pre_channel_switch(struct ieee80211_hw *hw,struct ieee80211_vif *
+@@ -3254,7 +3267,8 @@ static int nrc_pre_channel_switch(struct ieee80211_hw *hw,struct ieee80211_vif *
  	return 0;
  }
  
@@ -292,7 +323,7 @@ index 8d5f8df..69cbfe8 100644
  {
  	nrc_dbg(NRC_DBG_STATE, "[%s, %d] Channel switch complete\n", __func__, __LINE__);
  	return 0;
-@@ -3278,7 +3281,7 @@ static struct wiphy_wowlan_support nrc_wowlan_support = {
+@@ -3278,7 +3292,7 @@ static struct wiphy_wowlan_support nrc_wowlan_support = {
  	.max_pkt_offset = 16,
  };
  
@@ -301,7 +332,7 @@ index 8d5f8df..69cbfe8 100644
  {
  	struct nrc *nw = hw->priv;
  	nw->wowlan_enabled = enabled;
-@@ -3286,7 +3289,7 @@ void nrc_mac_set_wakeup(struct ieee80211_hw *hw, bool enabled)
+@@ -3286,7 +3300,7 @@ void nrc_mac_set_wakeup(struct ieee80211_hw *hw, bool enabled)
  	return;
  }
  
@@ -310,7 +341,7 @@ index 8d5f8df..69cbfe8 100644
  {
  	struct nrc *nw = hw->priv;
  
-@@ -3303,7 +3306,7 @@ int nrc_mac_resume(struct ieee80211_hw *hw)
+@@ -3303,7 +3317,7 @@ int nrc_mac_resume(struct ieee80211_hw *hw)
  	return 0;
  }
  
@@ -319,7 +350,7 @@ index 8d5f8df..69cbfe8 100644
  {
  	struct nrc *nw = hw->priv;
  	struct sk_buff *skb;
-@@ -3732,14 +3735,14 @@ struct timer_list remotecmd_timer;
+@@ -3732,14 +3746,14 @@ struct timer_list remotecmd_timer;
  struct remotecmd_params remotecmd_params;
  
  #if KERNEL_VERSION(4, 15, 0) > NRC_TARGET_KERNEL_VERSION
@@ -336,7 +367,7 @@ index 8d5f8df..69cbfe8 100644
  {
  	struct wiphy *wiphy = remotecmd_params.wiphy;
  	struct wireless_dev *wdev = remotecmd_params.wdev;
-@@ -3748,7 +3751,7 @@ void remotecmd_callback(struct timer_list *t)
+@@ -3748,7 +3762,7 @@ void remotecmd_callback(struct timer_list *t)
  	nrc_vendor_cmd_remove(wiphy, wdev, subcmd);
  }
  

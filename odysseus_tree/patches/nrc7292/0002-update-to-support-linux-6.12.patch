@@ -1,23 +1,23 @@
-From e18099740b2d92880c8ae82f45417866436ed051 Mon Sep 17 00:00:00 2001
+From 3366c0c4e1e6217c76124234858697ebd3b87b16 Mon Sep 17 00:00:00 2001
 From: Jack Rubacha <rubacha.jack03@gmail.com>
-Date: Mon, 18 May 2026 15:39:34 -0400
+Date: Mon, 18 May 2026 15:56:54 -0400
 Subject: [PATCH] update to support linux 6.12
 
 ---
  package/src/nrc/hif.c              | 10 ++++----
- package/src/nrc/nrc-bd.c           |  4 ++--
- package/src/nrc/nrc-build-config.h |  4 ++--
+ package/src/nrc/nrc-bd.c           |  4 +--
+ package/src/nrc/nrc-build-config.h |  4 +--
  package/src/nrc/nrc-debug.c        |  1 -
- package/src/nrc/nrc-dump.c         |  4 ----
+ package/src/nrc/nrc-dump.c         |  4 ---
  package/src/nrc/nrc-fw.c           |  2 +-
- package/src/nrc/nrc-hif-cspi.c     | 11 +++++----
+ package/src/nrc/nrc-hif-cspi.c     | 11 ++++----
  package/src/nrc/nrc-hif-cspi.h     |  1 +
  package/src/nrc/nrc-init.c         |  2 +-
- package/src/nrc/nrc-mac80211.c     | 38 ++++++++++++++++++++----------
+ package/src/nrc/nrc-mac80211.c     | 40 ++++++++++++++++++++----------
  package/src/nrc/nrc-mac80211.h     |  2 +-
  package/src/nrc/nrc-trx.c          |  6 ++---
  package/src/nrc/wim.c              | 14 +++++------
- 13 files changed, 55 insertions(+), 44 deletions(-)
+ 13 files changed, 56 insertions(+), 45 deletions(-)
 
 diff --git a/package/src/nrc/hif.c b/package/src/nrc/hif.c
 index bf0e8a5..6a824b8 100644
@@ -227,7 +227,7 @@ index 013c080..c036bbf 100644
  	struct sk_buff *skb_req, *skb_resp;
  	struct wim_drv_info_param *p;
 diff --git a/package/src/nrc/nrc-mac80211.c b/package/src/nrc/nrc-mac80211.c
-index 8d5f8df..dbc193d 100644
+index 8d5f8df..0e13d31 100644
 --- a/package/src/nrc/nrc-mac80211.c
 +++ b/package/src/nrc/nrc-mac80211.c
 @@ -425,7 +425,7 @@ static void nrc_flush_txq(struct nrc *nw)
@@ -297,6 +297,15 @@ index 8d5f8df..dbc193d 100644
  {
  #ifdef CONFIG_USE_CFG80211_SCAN_INFO
  	struct cfg80211_scan_info info = {
+@@ -2972,7 +2983,7 @@ static void nrc_mac_channel_policy(void *data, u8 *mac,
+ #ifdef CONFIG_SUPPORT_CHANNEL_INFO
+ #ifdef CONFIG_USE_LINK_ID
+ 	chandef = wdev_chandef(wdev, vif->bss_conf.link_id);
+-	if (chandef->chan &&
++	if (chandef && chandef->chan &&
+ 		chandef->chan->center_freq ==
+ 		chan_to_follow->chan->center_freq)
+ #else
 @@ -3125,6 +3136,7 @@ static void nrc_mac_change_chanctx(struct ieee80211_hw *hw,
  
  static int nrc_mac_assign_vif_chanctx(struct ieee80211_hw *hw,

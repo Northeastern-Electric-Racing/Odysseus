@@ -5,7 +5,6 @@ alias load-secrets="source /home/odysseus/scripts/load-secrets.sh"
 
 # for each defconfig make output subdirectory 
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/tpu BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi4_64_tpu_defconfig
-make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/ap-pi4 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi4_64_ap_defconfig
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/iroh BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi3_64_iroh_defconfig
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/ap-pi5 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi5_ap_defconfig
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/tpu-cm5 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypicm5io_tpu_defconfig

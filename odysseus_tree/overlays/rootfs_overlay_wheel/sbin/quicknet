@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# if 1, run as AP, if 0 connect to HermesBay
+AP=1
+
 do_start() {
    # lo
    ip addr add 127.0.0.1/8 dev lo
@@ -12,14 +15,18 @@ do_start() {
    # add wlan0
    ip link set dev wlan1 up
 
-   start-stop-daemon -S -x /usr/sbin/wpa_supplicant -b -m -p /var/run/wpa_supplicant.wlan1.pid -- -i wlan1 -c /etc/wpa_supplicant_base.conf -f /var/log/wpa1.log -d
+   if [ "$AP" -ne 1 ]; then
+      start-stop-daemon -S -x /usr/sbin/wpa_supplicant -b -m -p /var/run/wpa_supplicant.wlan1.pid -- -i wlan1 -c /etc/wpa_supplicant_base.conf -f /var/log/wpa1.log -d
+   fi
 
 }
 
 do_stop() {
 
-   start-stop-daemon -K -p /var/run/wpa_supplicant.wlan1.pid
-   rm /var/run/wpa_supplicant.wlan1.pid
+   if [ "$AP" -ne 1 ]; then
+      start-stop-daemon -K -p /var/run/wpa_supplicant.wlan1.pid
+      rm /var/run/wpa_supplicant.wlan1.pid
+   fi
 
 
    ip link set dev wlan1 down

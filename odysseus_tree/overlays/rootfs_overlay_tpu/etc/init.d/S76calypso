@@ -1,18 +1,18 @@
 #!/bin/sh
 
-PIDFILE=/var/run/odysseus-daemon.pid
-EXECUTABLE=/usr/bin/odysseus-daemon
-
+PIDFILE=/var/run/calypso.pid
+EXECUTABLE=/usr/bin/calypso
+INTERFACE_NAME=can0
+BROKER_IP="localhost:1883"
 
 case "$1" in
   start)
-    echo "Starting odysseus_daemon..."
+    echo "Starting calypso..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    mkdir /root/data
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -f /root/data --net --net-ifaces eth0 --net-ifaces wlan0 --halow --base-node "AP"
+    start-stop-daemon -S -x $EXECUTABLE -b -m -p "$PIDFILE" -- --imd -u $BROKER_IP -c $INTERFACE_NAME -e
     ;;
   stop)
-    echo "Stopping odysseus_daemon..."
+    echo "Stopping calypso..."
     # stop (K) and remove pidfile
     start-stop-daemon -K -p "$PIDFILE"
     rm "$PIDFILE"

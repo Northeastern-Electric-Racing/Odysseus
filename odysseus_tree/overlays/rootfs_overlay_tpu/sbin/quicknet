@@ -30,17 +30,28 @@ do_start() {
         -p /var/run/wpa_supplicant.wlan0.pid \
         -- -i wlan0 -c /etc/wpa_supplicant_halow.conf -f /var/log/wpa0.log
 
-    # LTE
-    ip link set dev wwp1s0u1u1i5 down
-    echo 'Y' | tee /sys/class/net/wwp1s0u1u1i5/qmi/raw_ip
-    ip link set dev wwp1s0u1u1i5 up
-    qmicli -p -d /dev/cdc-wdm0 --device-open-net='net-raw-ip|net-no-qos-header' --wds-start-network="apn='NXTGENPHONE',ip-type=4" --client-no-release-cid
+   # LTE
+   ip link set dev wwp1s0u1u1i5 down
+   echo 'Y' | tee /sys/class/net/wwp1s0u1u1i5/qmi/raw_ip
+   ip link set dev wwp1s0u1u1i5 up
+   qmicli -p -d /dev/cdc-wdm0 --device-open-net='net-raw-ip|net-no-qos-header' --wds-start-network="apn='NXTGENPHONE',ip-type=4" --client-no-release-cid
 
 
     # Loose RPF for asymmetric multi-path
     sysctl -w net.ipv4.conf.all.rp_filter=2
     sysctl -w net.ipv4.conf.wlan0.rp_filter=2
     sysctl -w net.ipv4.conf.wlan1.rp_filter=2
+
+
+    # Add to do_start() after dhcpcd has applied IPs:
+
+    # Reply-on-same-interface for HaLow
+    ip route replace default via 10.42.0.1 dev wlan0 table 100
+    ip rule add fwmark 0x1 table 100 2>/dev/null
+
+    # Mark connections coming in on wlan0; restore mark on outgoing packets
+    iptables -t mangle -A PREROUTING -i wlan0 -j CONNMARK --set-mark 0x1
+    iptables -t mangle -A OUTPUT -j CONNMARK --restore-mark
 
 }
 
@@ -50,7 +61,11 @@ do_stop() {
     start-stop-daemon -K -p /var/run/wpa_supplicant.wlan0.pid
     rm -f /var/run/wpa_supplicant.wlan0.pid
 
-    ip link set dev wwp1s0u1u1i5 down
+    iptables -t mangle -D OUTPUT -j CONNMARK --restore-mark 2>/dev/null
+    iptables -t mangle -D PREROUTING -i wlan0 -j CONNMARK --set-mark 0x1 2>/dev/null
+    ip rule del fwmark 0x1 table 100 2>/dev/null
+    ip route flush table 100 2>/dev/null
+
     ip link set dev wlan0 down
     ip link set dev wlan1 down
     ip link set dev eth1 down

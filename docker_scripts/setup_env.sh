@@ -9,6 +9,7 @@ make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/iroh BR2_EXTERNA
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/ap-pi5 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypi5_ap_defconfig
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/tpu-cm5 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypicm5io_tpu_defconfig
 make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/wheel-cm5 BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypicm5io_wheel_defconfig
+make -C /home/odysseus/build/buildroot O=/home/odysseus/outputs/mesh BR2_EXTERNAL=/home/odysseus/build/odysseus_tree raspberrypizero2w_mesh_defconfig
 
 
 cat << "EOF"

@@ -22,6 +22,7 @@ services:
             - ODY_TPU_ROOT_PASSWORD=password
             - ODY_IROH_ROOT_PASSWORD=password
             - ODY_MESH_ROOT_PASSWORD=password
+            - ODY_MESH_AP_PASSWORD=password
             - ODY_AP_ROOT_PASSWORD=password
             - ODY_BASE_WIFI_PASSWORD=password
             - ODY_WHEEL_ROOT_PASSWORD=password

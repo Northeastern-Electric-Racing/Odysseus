@@ -246,16 +246,18 @@ define WPA_SUPPLICANT_S1G_BUILD_CMDS
 endef
 
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_S1G_CLI),y)
+# NER change to s1g
 define WPA_SUPPLICANT_S1G_INSTALL_CLI
-	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_cli \
-		$(TARGET_DIR)/usr/sbin/wpa_cli
+	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_cli_s1g \
+		$(TARGET_DIR)/usr/sbin/wpa_cli_s1g
 endef
 endif
 
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_S1G_PASSPHRASE),y)
+# NER change to s1g
 define WPA_SUPPLICANT_S1G_INSTALL_PASSPHRASE
-	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_passphrase \
-		$(TARGET_DIR)/usr/sbin/wpa_passphrase
+	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_passphrase_s1g \
+		$(TARGET_DIR)/usr/sbin/wpa_passphrase_s1g
 endef
 endif
 
@@ -282,9 +284,10 @@ define WPA_SUPPLICANT_S1G_INSTALL_IFUP_SCRIPTS
 endef
 endif
 
+# NER change to s1g
 define WPA_SUPPLICANT_S1G_INSTALL_TARGET_CMDS
-	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_supplicant \
-		$(TARGET_DIR)/usr/sbin/wpa_supplicant
+	$(INSTALL) -m 0755 -D $(@D)/$(WPA_SUPPLICANT_S1G_SUBDIR)/wpa_supplicant_s1g \
+		$(TARGET_DIR)/usr/sbin/wpa_supplicant_s1g
 	$(INSTALL) -m 644 -D package/wpa_supplicant/wpa_supplicant.conf \
 		$(TARGET_DIR)/etc/wpa_supplicant.conf
 	$(WPA_SUPPLICANT_S1G_INSTALL_CLI)

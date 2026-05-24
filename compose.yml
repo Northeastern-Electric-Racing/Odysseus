@@ -27,6 +27,7 @@ services:
             - ODY_BASE_WIFI_PASSWORD=password
             - ODY_WHEEL_ROOT_PASSWORD=password
             - ODY_WHEEL_AP_PASSWORD=password
+            - ODY_MESH_SAE_PASSWORD=password
 volumes:
     shared_data:
         labels:

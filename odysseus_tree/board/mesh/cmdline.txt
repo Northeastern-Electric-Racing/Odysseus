@@ -1,1 +1,1 @@
-27024049426483091b1d5edc73cd225307e79540
+root=/dev/mmcblk0p2 rootwait console=tty1 logo.nologo cgroup_enable=cpuset cgroup_enable=memory init=/sbin/ody-resize

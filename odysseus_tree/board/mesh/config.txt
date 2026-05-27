@@ -27,3 +27,9 @@ dtoverlay=miniuart-bt
 
 # enable 64bits support
 arm_64bit=1
+
+# for Halow
+dtoverlay=wm6108_spi0
+
+# for gps
+dtoverlay=uart0

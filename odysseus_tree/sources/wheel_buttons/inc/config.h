@@ -1,7 +1,7 @@
 #ifndef NER_CONFIG_H
 #define NER_CONFIG_H
 
-#define CHIP_PATH       "/dev/gpiochip0"
+#define CHIP_PATH       "/dev/gpiochip4"
 #define DEBOUNCE_US     100
 
 #define CAN_INTERFACE   "can0"

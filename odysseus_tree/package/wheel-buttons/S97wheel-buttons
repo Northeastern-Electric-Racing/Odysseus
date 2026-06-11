@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PIDFILE=/var/run/wheel_buttons.pid
-EXECUTABLE=/usr/bin/wheel-buttons
+EXECUTABLE=/usr/bin/wheel_buttons
 
 case "$1" in
   start)

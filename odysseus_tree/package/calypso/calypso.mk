@@ -1,4 +1,4 @@
-CALYPSO_VERSION = 5afdf0e6bacc629267b5aefd9b5ba3cd1deae179
+CALYPSO_VERSION = dcfd9c8dca4ea8f56049c2d9fdb38fb228732c55
 CALYPSO_SITE_METHOD = git
 CALYPSO_SITE = https://github.com/Northeastern-Electric-Racing/Calypso
 CALYPSO_GIT_SUBMODULES = YES

@@ -21,3 +21,5 @@ source "$BR2_EXTERNAL_ODY_TREE_PATH/package/rpi-libcamera/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/rpicam-apps/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/microchip-t1s/Config.in"
 source "$BR2_EXTERNAL_ODY_TREE_PATH/package/wpa_supplicant-s1g/Config.in"
+source "$BR2_EXTERNAL_ODY_TREE_PATH/package/zenohd/Config.in"
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+PIDFILE=/var/run/zenohd.pid
+EXECUTABLE=/usr/bin/zenohd
+
+case "$1" in
+  start)
+    echo "Starting zenoh..."
+    # start (S) executable (x) in background (b), make pid file (m) at p
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --config /etc/zenoh.json5
+    ;;
+  stop)
+    echo "Stopping zenoh..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac

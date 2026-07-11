@@ -1,45 +1,20 @@
-# [Odysseus](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/107184222/Odysseus)
-Our custom buildroot-based OS.  It enables the collection, translation, and transportation of data from the car to a base station which hosts data visualization and analytics systems as part of the [Odyssey 22A project](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/105283597/Wireless+22A+Software+Design).
+# Odysseus
+Our custom buildroot-based OS.  It enables the collection, translation, and transportation of data from the car to a base station which hosts data visualization and analytics systems as part of the Odyssey project.  All developer documentation can be found in this [guide](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/1782513679/Odysseus+and+Siren+Guide?atlOrigin=eyJpIjoiYjYyZDg5ZGMzODM5NDRiNWEwODA5YmZlZDQxMTZjODgiLCJwIjoiYyJ9), or by viewing quick usage instructions below.
 
+Odysseus code holds the structure and configuration to enable the Wireless and Siren projects, which are summarized as follows:
 
-Odysseus code holds the structure and configuration to enable the Wireless and Siren projects, which are summarized below:
+## Wireless
+Our HaLow Wifi implementation and usage for low throughput high range TCP/IP data transmission.  HaLow (802.11ah) is a new 900 mhz unlicensed band wifi protocol which boasts an ultra-long range and low power usage.  This repository contains the buildroot enablement for the protocol.
 
-## [Wireless](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/71631135/Wireless+22A)
-Our HaLow Wifi implementation and usage for low throughput high range TCP/IP data transmission.  HaLow (802.11ah) is a new 900 mhz unlicensed band wifi protocol which boasts an ultra-long range and low power usage.  This repository contains the buildroot enablement for the protocol with Newracom chips.
-
-## [Siren](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/107151426/Siren)
-Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses a MQTT server to send telemetry data from the car. Siren is a custom [Mosquitto](https://mosquitto.org) server.  Configuration code for mosquitto on the car lives in the rootfs overlays of buildroot, and for the base station it lies in the `extra` folder.
+## Siren
+Siren is our [pub/sub](https://www.stackpath.com/edge-academy/what-is-pub-sub-messaging/) server that uses a MQTT server to send telemetry data from the car. Siren is a custom [Mosquitto](https://mosquitto.org) server.  Configuration code for mosquitto on the car lives in the rootfs overlays of buildroot, and for the base station it lies in the Argos repository.
 
 ### About MQTT
 For information about MQTT, check out [this confluence page](https://nerdocs.atlassian.net/wiki/spaces/NER/pages/173113345/Delving+into+MQTT).
 
-### Running with Docker
-Custom image coming soon. For now, you can run with the instructions in the `extra/mosquitto_base` folder, and to achieve in-car configuration use the image but substitute the configurations with those found in the buildroot rootfs overlay for the TPU.  More developer side Siren usage is found in the Argos repository.
-
-### Local Setup
-Docker is easiest, commands are in `extra/mosquitto_base`.  If you would like to install locally, visit the mosquitto website to learn more.
-
-### Testing Siren
-To test that Siren is working properly, run the `subscriber.py` and `publisher.py` scripts in the `extra/siren_example` folder in the same environment that Siren is hosted in. After a few seconds, the terminal running the `subscriber.py` script should begin receiving messages, which means that Siren is working properly.
-
-
 ## Building Odysseus
 
-
-### Current configurations (see below for how to build)
-- `raspberrypi4_64_tpu_defconfig` for TPU
-    - NRC HaLow station
-    - NanoMQ MQTT
-    - Calypso CAN decoding
-    - GPS support
-    - Docker
-- `raspberrypi3_64_iroh_defconfig` for off-car charging module
-    - Calypso CAN decoding
-    - 2.4/5ghz wireless connectivity to base station
-- `raspberrypi3_64_ap_defconfig` for base station HaLow access point
-    - NRC HaLow access point
-
-All defconfigs come with (in addition to busybox and util_linux utilities):
+All defconfigs come with a minimum of this:
 
 - SSH server/client (and scp client)
 - SFTP server (scp server support)
@@ -67,6 +42,7 @@ For Linux and WSL:
 ```
 docker compose run --rm odysseus
 ```
+**WSL might fail due to resource constraints, no known workaround**
 
 For mac: (experimental, limited):
 ```
@@ -80,7 +56,7 @@ cd ./<defconfig>
 make-current
 ```
 
-**Note: If failure occurs very early in the process, run `make nanomq-source` and try again before reporting the error.**
+**Note: If failure occurs very early in the process, run `make` and try again before reporting the error.**
 You can view the `output.log` for more info.
 
 ### More on docker configuration
@@ -89,9 +65,9 @@ The container has a directory structure as so:
 - `./build`
     - `./buildroot`: The buildroot tree 
     - `./odysseus_tree`: The odyssues external tree, bound to the same directory in the git repository on your local machine!
-- `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name   `odysseus_shared_data`.
+- `./shared_data`: The download and ccache cache for buildroot, should be persisted as long as space is available, there is usually no reason to enter this. A persistent docker volume with the name `odysseus_shared_data`.
 - `./outputs/*`:
-    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. For Linux hosts, this is bound to the `./odysseus/outputs` directory in the repository. For Windows users, this is a docker volume.  *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
+    - **The output folders for odysseus.  `cd` into the one named for what defconfig you would like to build, and run the `make` configuration and build commands as described below.  It is recommended to save space to run `make clean` in defconfig directories rather than removing this volume all together. For Linux hosts, this is bound to the `./odysseus/outputs` directory in the repository.  *Remember to use `make savedefconfig` when you are done as changes are overriden when you re-open the docker image!*
 
 ### Extra docker tips
 All paths relative to Siren root.
@@ -139,10 +115,7 @@ See below to learn more about developing, and check confluence for most info.  O
 2. Make any customizations you want in the menu
 3. Save changes after you've made them by running ```make savedefconfig```.  Ensure you are saving changes to the intended defconfig, it is saved to whatever directory you `cd`ed into!
 
-#### Adding defconfigs
+# Documentation
 
-Checklist when adding a defconfig:  
-[ ] Add a secret for SSH password in settings, and load it into the workflow env in `.github/workflows/build_image.yml`  
-[ ] Add the defconfig itself, changing path names, etc.  Board folders and overlays can still be shared as needed.  
-[ ] Add a pretty name to `post-build-os-release.sh`  
-[ ] Add a load command to `setup_env.sh`
+Put all documentation as a subheading in this link.  Most PRs should result in edits to this Confluence page!
+https://nerdocs.atlassian.net/wiki/spaces/NER/pages/1782513679/Odysseus+and+Siren+Guide?atlOrigin=eyJpIjoiYjYyZDg5ZGMzODM5NDRiNWEwODA5YmZlZDQxMTZjODgiLCJwIjoiYyJ9

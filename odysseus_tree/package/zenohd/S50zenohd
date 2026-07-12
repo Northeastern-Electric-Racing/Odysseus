@@ -7,7 +7,7 @@ case "$1" in
   start)
     echo "Starting zenoh..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --config /etc/zenoh.json5
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- --config /etc/zenoh/router.json5
     ;;
   stop)
     echo "Stopping zenoh..."

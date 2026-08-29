@@ -19,6 +19,7 @@
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 static struct gpiod_line_request *request_buttons(unsigned int *offsets,
@@ -35,18 +36,23 @@ static struct gpiod_line_request *request_buttons(unsigned int *offsets,
     set  = gpiod_line_settings_new();
     lcfg = gpiod_line_config_new();
     rcfg = gpiod_request_config_new();
-    if (!set || !lcfg || !rcfg) goto out;
+    if (!set || !lcfg || !rcfg) { perror("gpiod_*_new"); goto out; }
 
     gpiod_line_settings_set_direction(set, GPIOD_LINE_DIRECTION_INPUT);
     gpiod_line_settings_set_edge_detection(set, GPIOD_LINE_EDGE_RISING);
     gpiod_line_settings_set_bias(set, GPIOD_LINE_BIAS_PULL_DOWN);
     gpiod_line_settings_set_debounce_period_us(set, DEBOUNCE_US);
 
-    if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set))
+    if (gpiod_line_config_add_line_settings(lcfg, offsets, n, set)) {
+        perror("gpiod_line_config_add_line_settings");
         goto out;
+    }
 
     gpiod_request_config_set_consumer(rcfg, "wheel-buttons");
     req = gpiod_chip_request_lines(chip, rcfg, lcfg);
+    if (!req)
+        fprintf(stderr, "gpiod_chip_request_lines(%s): %s\n",
+                CHIP_PATH, strerror(errno));
 
 out:
     gpiod_request_config_free(rcfg);

@@ -225,7 +225,7 @@ async fn main() {
                 "sed -i \"1 s/.*/ODYSSEUS_DAEMON_VERSION = {}/\" ~/Projects/Odysseus/odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk", cli.id
             ))
             .await,
-        Packages::Nero => ssh_server.call(&format!("cd ~/Projects/Odysseus/odysseus_tree/sources/Nero-2.0/ && git pull && git checkout -f {}", cli.id)).await,
+        Packages::Nero => ssh_server.call(&format!("cd ~/Projects/Odysseus/odysseus_tree/sources/Nero-2.0/ && git fetch && git checkout -f {}", cli.id)).await,
         Packages::WheelButtons => {
             eprintln!("UNSUPPORTED: SSH into the server and update the Odysseus repository to the new ref for wheel buttons!");
             Ok(0)

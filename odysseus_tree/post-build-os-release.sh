@@ -45,6 +45,10 @@ elif [[ "$2" == "WHEEL" ]];
 then
     variant="Built for Steering Wheel"
     variantid="wheel"
+elif [[ "$2" == "MESH" ]];
+then
+    variant="Built for Mesh Points"
+    variantid="wheel"
 else
     variant="UK"
     variantid="uk"

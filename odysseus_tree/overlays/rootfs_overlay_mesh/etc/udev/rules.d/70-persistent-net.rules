@@ -1,0 +1,5 @@
+# queticel mac addr
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="00:c0:ca:*", KERNEL=="wl*", NAME="wlan0"
+# pi mac addr with wl
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="2c:cf:67:*", KERNEL=="wl*", NAME="wlan1"
+

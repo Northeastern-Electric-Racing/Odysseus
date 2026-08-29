@@ -9,7 +9,7 @@ case "$1" in
     echo "Starting odysseus_daemon..."
     # start (S) executable (x) in background (b), make pid file (m) at p
     mkdir /root/data
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -f /root/data --net --net-ifaces eth0 --net-ifaces wlan0 --halow --base-node "AP"
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -f /root/data --net --net-ifaces eth0 --net-ifaces wlan0 --halow --base-node "AP" --zenoh-rev --zenoh-conf /etc/zenoh/odysseus-daemon.json5
     ;;
   stop)
     echo "Stopping odysseus_daemon..."

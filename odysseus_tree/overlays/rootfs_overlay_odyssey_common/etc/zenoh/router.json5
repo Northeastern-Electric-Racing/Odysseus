@@ -54,8 +54,8 @@
     /// See https://docs.rs/zenoh/latest/zenoh/config/struct.EndPoint.html
     endpoints: [
       // "<proto>/<address>"
-      "udp/10.42.0.1:7447"
-      "udp/192.168.100.11:7447"
+      "udp/10.42.0.1:7447?rel=1;multistream=1"
+      "tcp/192.168.100.11:7447?rel=1"
     ],
 
     /// Global connect configuration,
@@ -554,7 +554,7 @@
       /// Maximum number of transports that can be simultaneously alive for a single zenoh session
       max_sessions: 1000,
       /// Maximum number of incoming links that are admitted per transport
-      max_links: 1,
+      max_links: 2, // ***
       /// Enables the LowLatency transport
       /// This option does not make LowLatency transport mandatory, the actual implementation of transport
       /// used will depend on Establish procedure and other party's settings

@@ -1,0 +1,52 @@
+/dts-v1/;
+/plugin/;
+/ {
+    compatible = "brcm,bcm2835", "brcm,bcm2836", "brcm,bcm2837",
+    "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2710";
+
+    fragment@0 {
+        target = <&spi0>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi0_pins &spi0_cs_pins &mm6108_pins>;
+            cs-gpios = <&gpio 8 1>;   /* GPIO-driven CE0, active low */
+
+            mm6108: mm6108@0 {
+                compatible = "morse,mm610x-spi";
+                reg = <0>;            /* CE0 */
+                reset-gpios = <&gpio 17 1>;
+                power-gpios = <&gpio 23 0>,   /* WAKE */
+                <&gpio 24 0>;   /* BUSY */
+                spi-irq-gpios = <&gpio 5 0>;
+                spi-max-frequency = <10000000>;
+                status = "okay";
+            };
+            spidev@0 { reg = <0>; status = "disabled"; };
+            spidev@1 { reg = <1>; status = "disabled"; };
+        };
+    };
+
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            spi0_pins: spi0_pins {
+                brcm,pins     = <9 10 11>;
+                brcm,function = <4 4 4>;    /* ALT0 */
+                brcm,pull     = <2 2 2>;    /* up */
+            };
+            spi0_cs_pins: spi0_cs_pins {
+                brcm,pins     = <8>;        /* CE0 → GPIO 8 */
+                brcm,function = <1>;        /* output (driven by cs-gpios) */
+                brcm,pull     = <2>;        /* up */
+            };
+            mm6108_pins: mm6108_pins {
+                brcm,pins     = <5 17 23 24>;
+                brcm,function = <0 1 1 0>;  /* in, out, out, in */
+                brcm,pull     = <2 0 0 1>;  /* up, none, none, down */
+            };
+        };
+    };
+};

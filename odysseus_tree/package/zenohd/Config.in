@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ZENOHD
+    bool "zenohd"
+    depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+    select BR2_PACKAGE_HOST_RUSTC
+    help
+        The Zenoh router daemon.
+        
+        https://github.com/eclipse-zenoh/zenoh

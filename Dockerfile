@@ -33,7 +33,8 @@ RUN apt-get update && apt-get install -y \
     git-lfs \
     util-linux \ 
     wpasupplicant \
-    curl
+    curl \
+    libcrypt-dev
 
 # add all buildroot files there
 WORKDIR /home/odysseus/build

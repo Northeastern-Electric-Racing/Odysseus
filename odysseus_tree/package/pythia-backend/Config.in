@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHIA_BACKEND
+    bool "pythia backend"
+    depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+    select BR2_PACKAGE_HOST_RUSTC
+    select BR2_PACKAGE_SQLITE
+    help
+        The Pythia HIL test profile backend.
+
+        Written in Rust, serves a REST API on port 3000 backed by
+        a SQLite database of test profiles and CAN messages.
+
+        https://github.com/Northeastern-Electric-Racing/Pythia

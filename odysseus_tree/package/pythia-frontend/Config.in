@@ -1,0 +1,18 @@
+config BR2_PACKAGE_PYTHIA_FRONTEND
+    bool "pythia frontend"
+    depends on BR2_PACKAGE_HOST_NODEJS_BIN_ARCH_SUPPORTS || BR2_HOST_GCC_AT_LEAST_8
+    depends on BR2_PACKAGE_PYTHIA_BACKEND
+    select BR2_PACKAGE_HOST_NODEJS
+    select BR2_PACKAGE_NGINX
+    select BR2_PACKAGE_NGINX_HTTP
+    select BR2_PACKAGE_NGINX_HTTP_PROXY_MODULE
+    help
+        The Pythia HIL test profile web UI.
+
+        Angular app served by nginx on port 80, proxying API calls
+        to pythia-backend. Not started at boot, toggle it with
+        `pythia-frontend start|stop|status`.
+
+        NOTE: Runs `npm ci` during the build, requires network access!
+
+        https://github.com/Northeastern-Electric-Racing/Pythia

@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Start/stop the pythia web UI, intentionally not started at boot
+#
+
+NGINX=/usr/sbin/nginx
+CONF=/etc/nginx/pythia.conf
+PIDFILE=/run/pythia-frontend.pid
+
+case "$1" in
+  start)
+    echo "Starting pythia-frontend..."
+    mkdir -p /var/log/nginx /var/cache/nginx
+    start-stop-daemon -S -x "$NGINX" -p "$PIDFILE" -- -c "$CONF"
+    ;;
+  stop)
+    echo "Stopping pythia-frontend..."
+    start-stop-daemon -K -x "$NGINX" -p "$PIDFILE" -o
+    ;;
+  restart|reload)
+    "$0" stop
+    sleep 1
+    "$0" start
+    ;;
+  status)
+    if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+      echo "pythia-frontend is running on port 80"
+    else
+      echo "pythia-frontend is stopped"
+      exit 1
+    fi
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload|status}"
+    exit 1
+esac

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+PIDFILE=/var/run/pythia-backend.pid
+EXECUTABLE=/usr/bin/pythia-backend
+DB_DIR=/var/lib/pythia
+# also read by calypso test mode
+export DATABASE_URL=$DB_DIR/pythia.db
+
+case "$1" in
+  start)
+    echo "Starting pythia-backend..."
+    mkdir -p "$DB_DIR"
+    # start (S) executable (x) in background (b), make pid file (m) at p
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE"
+    ;;
+  stop)
+    echo "Stopping pythia-backend..."
+    # stop (K) and remove pidfile
+    start-stop-daemon -K -p "$PIDFILE"
+    rm "$PIDFILE"
+    ;;
+  restart|reload)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: {start|stop|restart/reload}"
+    exit 1
+esac

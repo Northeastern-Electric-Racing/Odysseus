@@ -53,6 +53,7 @@ enum Packages {
     OdysseusDaemon,
     Nero,
     WheelButtons,
+    Ajax,
 }
 
 impl Packages {
@@ -62,6 +63,7 @@ impl Packages {
             Packages::OdysseusDaemon => "odysseus-daemon",
             Packages::Nero => "nero2",
             Packages::WheelButtons => "wheel-buttons",
+             Packages::Ajax => "ajax",
         }
     }
 
@@ -71,6 +73,7 @@ impl Packages {
             Packages::OdysseusDaemon => vec!["odysseus-daemon", "odysseus-uploader"],
             Packages::Nero => vec!["NEROApp"],
             Packages::WheelButtons => vec!["wheel_buttons"],
+            Packages::Ajax => vec!["ajax"],
         }
     }
 
@@ -80,6 +83,7 @@ impl Packages {
             Packages::OdysseusDaemon => "/etc/init.d/S99odysseus-daemon",
             Packages::Nero => "/etc/init.d/S99nero2",
             Packages::WheelButtons => "/etc/init.d/S97wheel-buttons",
+            Packages::Ajax => "/etc/init.d/S76calypso", // TODO replace when daeomonzed
         }
     }
 }
@@ -220,12 +224,17 @@ async fn main() {
                 "sed -i \"1 s/.*/CALYPSO_VERSION = {}/\" ~/Projects/Odysseus/odysseus_tree/package/calypso/calypso.mk", cli.id
             ))
             .await,
+            Packages::Ajax => ssh_server
+            .call(&format!(
+                "sed -i \"1 s/.*/AJAX_VERSION = {}/\" ~/Projects/Odysseus/odysseus_tree/package/ajax/ajax.mk", cli.id
+            ))
+            .await,
         Packages::OdysseusDaemon => ssh_server
             .call(&format!(
                 "sed -i \"1 s/.*/ODYSSEUS_DAEMON_VERSION = {}/\" ~/Projects/Odysseus/odysseus_tree/package/odysseus-daemon/odysseus-daemon.mk", cli.id
             ))
             .await,
-        Packages::Nero => ssh_server.call(&format!("cd ~/Projects/Odysseus/odysseus_tree/sources/Nero-2.0/ && git pull && git checkout -f {}", cli.id)).await,
+        Packages::Nero => ssh_server.call(&format!("cd ~/Projects/Odysseus/odysseus_tree/sources/Nero-2.0/ && git fetch && git checkout -f {}", cli.id)).await,
         Packages::WheelButtons => {
             eprintln!("UNSUPPORTED: SSH into the server and update the Odysseus repository to the new ref for wheel buttons!");
             Ok(0)

@@ -20,6 +20,7 @@ dtoverlay=vc4-kms-v3d
 dtoverlay=krnbt=on
 
 # for can
+dtoverlay=spi0-1cs
 dtoverlay=mcp2515-can0,oscillator=16000000,spimaxfrequency=10000000
 dtparam=interrupt=25
 

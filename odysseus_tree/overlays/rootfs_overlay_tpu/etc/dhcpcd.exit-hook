@@ -1,0 +1,1 @@
+ip route add 192.168.100.0/24 via 10.42.0.1 dev wlan0 metric 400

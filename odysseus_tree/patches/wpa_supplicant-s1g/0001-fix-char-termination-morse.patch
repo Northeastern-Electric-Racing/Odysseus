@@ -1,0 +1,13 @@
+diff --git a/src/utils/morse.h b/src/utils/morse.h
+index c89c84db8..7a449be79 100644
+--- a/src/utils/morse.h
++++ b/src/utils/morse.h
+@@ -79,7 +79,7 @@ struct ah_class {
+ 	u8 s1g_op_class_idx;
+ 	u8 global_op_class;
+ 	u8 s1g_width;
+-	char cc_list[COUNTRY_CODE_MAX][COUNTRY_CODE_LEN];
++	char cc_list[COUNTRY_CODE_MAX][COUNTRY_CODE_LEN] __attribute__((nonstring));
+ 	u64 chans;
+ };
+ 

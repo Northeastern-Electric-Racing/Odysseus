@@ -9,7 +9,7 @@ case "$1" in
   start)
     echo "Starting calypso..."
     # start (S) executable (x) in background (b), make pid file (m) at p
-    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -u $BROKER_IP -c $INTERFACE_NAME
+    start-stop-daemon -S -x "$EXECUTABLE" -b -m -p "$PIDFILE" -- -u $BROKER_IP -c $INTERFACE_NAME --zenoh --zenoh-conf /etc/zenoh/calypso.json5
     ;;
   stop)
     echo "Stopping calypso..."

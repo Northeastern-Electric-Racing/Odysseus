@@ -1,0 +1,8 @@
+[server]
+port = 3000 # default is 3000
+address = "0.0.0.0" # default is 0.0.0.0
+
+[[server.users]]
+name = "tpu"
+token = "ner"
+access = "all" # Optional, defaults to "all"

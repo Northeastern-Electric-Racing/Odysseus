@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PROBE_RS
+	bool "probe-rs"
+	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	select BR2_PACKAGE_LIBUSB
+	select BR2_PACKAGE_HAS_UDEV
+	help
+	  A modern, Rust-focused software suite designed to work with
+	  debuggers in embedded systems.
+
+	  https://probe.rs

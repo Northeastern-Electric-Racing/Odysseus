@@ -1,7 +1,7 @@
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:develop-stability-and-improvements
+        image: ghcr.io/northeastern-electric-racing/odysseus:mesh
         command: /bin/bash
         tty: true
         stdin_open: true
@@ -21,10 +21,13 @@ services:
             - BR2_CCACHE_DIR=/home/odysseus/shared_data/ccache
             - ODY_TPU_ROOT_PASSWORD=password
             - ODY_IROH_ROOT_PASSWORD=password
+            - ODY_MESH_ROOT_PASSWORD=password
+            - ODY_MESH_AP_PASSWORD=password
             - ODY_AP_ROOT_PASSWORD=password
             - ODY_BASE_WIFI_PASSWORD=password
             - ODY_WHEEL_ROOT_PASSWORD=password
             - ODY_WHEEL_AP_PASSWORD=password
+            - ODY_MESH_SAE_PASSWORD=password
 volumes:
     shared_data:
         labels:

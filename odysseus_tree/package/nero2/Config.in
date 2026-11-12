@@ -2,8 +2,12 @@ config BR2_PACKAGE_NERO2
     bool "nero2"
     depends on BR2_PACKAGE_QT6 && BR2_PACKAGE_QT6BASE_NETWORK && BR2_PACKAGE_QT6BASE_PNG
     depends on BR2_PACKAGE_QT6DECLARATIVE && BR2_PACKAGE_QT6DECLARATIVE_QUICK
-    depends on BR2_PACKAGE_QT6MQTT && BR2_PACKAGE_QT6SVG && BR2_PACKAGE_QT6GRPC
+    depends on BR2_PACKAGE_QT6SVG && BR2_PACKAGE_QT6GRPC
+    depends on BR2_PACKAGE_LIBZENOH_C_ARCH_SUPPORTS # nerlibzenoh-c
+    depends on BR2_TOOLCHAIN_USES_GLIBC # nerlibzenoh-c
+    depends on !BR2_PACKAGE_LIBZENOH_C # nerlibzenoh-c
     select BR2_PACKAGE_QT6CORE5COMPAT
+    select BR2_PACKAGE_NERLIBZENOH_C
     help
         Nero v2.0 custom dashboard for NER.
 

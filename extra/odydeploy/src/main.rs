@@ -83,7 +83,7 @@ impl Packages {
             Packages::OdysseusDaemon => "/etc/init.d/S99odysseus-daemon",
             Packages::Nero => "/etc/init.d/S99nero2",
             Packages::WheelButtons => "/etc/init.d/S97wheel-buttons",
-            Packages::Ajax => "/etc/init.d/S76calypso", // TODO replace when daeomonzed
+            Packages::Ajax => "/etc/init.d/S77ajax",
         }
     }
 }

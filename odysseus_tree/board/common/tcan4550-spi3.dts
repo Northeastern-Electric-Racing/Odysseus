@@ -1,0 +1,53 @@
+/dts-v1/;
+/plugin/;
+
+
+/ {
+	compatible = "brcm,bcm2712";
+
+	fragment@0 {
+		target = <&spi3>;
+		frag1: __overlay__ {
+			/* needed to avoid dtc warning */
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			cs-gpios = <&gpio 4 1>;
+			status = "okay";
+
+            tcan:can@0 {
+                compatible = "ti,tcan4x5x";     
+				reg = <0>;                      
+				spi-max-frequency = <10000000>; 
+
+				clocks = <&tcan0_osc>;          
+				clock-names = "cclk";
+
+				interrupt-parent = <&gpio>;
+				interrupts = <25 8>;            
+
+				reset-gpios = <&gpio 0 0>;      
+				device-state-gpios = <&gpio 16 1>; 
+				ti,nwkrq-voltage-vio;           
+
+				bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>; 
+            };
+		};
+	};
+	
+    fragment@1 {
+		target-path = "/";
+		__overlay__ {
+			tcan0_osc: tcan0_osc {
+				compatible = "fixed-clock";
+				#clock-cells = <0>;
+				clock-frequency = <40000000>;
+			};
+		};
+	};
+
+	__overrides__ {
+		cs0_pin  = <&frag1>,"cs-gpios:4";
+		cs0_spidev = <&spidev3_0>,"status";
+	};
+};

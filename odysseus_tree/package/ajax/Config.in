@@ -1,0 +1,10 @@
+config BR2_PACKAGE_AJAX
+    bool "ajax"
+    depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+    select BR2_PACKAGE_HOST_RUSTC
+    help
+        The NER Flash-over-CAN utility.
+        
+        Written in Rust, utlizing socketcand.
+
+        https://github.com/Northeastern-Electric-Racing/Ajax

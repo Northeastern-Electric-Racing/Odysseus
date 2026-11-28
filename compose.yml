@@ -1,7 +1,7 @@
 services:
     odysseus:
         build: .
-        image: ghcr.io/northeastern-electric-racing/odysseus:mesh
+        image: ghcr.io/northeastern-electric-racing/odysseus:ajax-fixups-and-bump
         command: /bin/bash
         tty: true
         stdin_open: true
